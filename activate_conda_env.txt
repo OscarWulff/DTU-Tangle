@@ -1,0 +1,7 @@
+For the first time:
+
+conda init
+
+To activate the conda env, type the following:
+
+conda activate tangles-env
