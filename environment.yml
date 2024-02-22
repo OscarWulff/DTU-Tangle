@@ -35,3 +35,5 @@ dependencies:
   - build
   # Dev setup
   - conda-build
+  # GUI
+  - pyqt
