@@ -1,6 +1,36 @@
 import pandas as pd
 import numpy as np
 from scipy.linalg import svd
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+
+
+# we need something that can giv ecoordinates from the dimension_reduction_binary
+
+def perform_pca(matrix, num_components=2):
+    """
+    Perform Principal Component Analysis (PCA) on a binary matrix.
+
+    Parameters:
+    - matrix: Binary matrix where rows represent people and columns represent questions.
+    - num_components: Number of components to keep (default is 2 for 2D visualization).
+
+    Returns:
+    - pca_coordinates: DataFrame containing the PCA coordinates for each person.
+    """
+
+    # Initialize PCA with the specified number of components
+    pca = PCA(n_components=num_components)
+
+    # Fit the PCA model to the data and transform the data
+    pca_result = pca.fit_transform(matrix)
+
+    # Create a DataFrame with the PCA coordinates
+    pca_coordinates = pd.DataFrame(data=pca_result, columns=[f'PC{i+1}' for i in range(num_components)])
+
+    return pca_coordinates
+
+
 
 def calculate_explained_varince(S):
         rho = (S * S) / (S * S).sum()
@@ -156,11 +186,41 @@ def cut_generator_binary(csv_file_path):
     return cuts_y, cuts_n
 
 
+
+#  ----------------------------------------------test------------------------------------------------
+
+def plot_2d_coordinates(dataframe, x_col='x', y_col='y', title="2D Plot", xlabel="X-axis", ylabel="Y-axis"):
+    """
+    Plot 2D coordinates from a Pandas DataFrame using matplotlib.
+
+    Parameters:
+    - dataframe: Pandas DataFrame containing 2D coordinates with specified column names.
+    - x_col: Column name for x-axis coordinates (default is 'x').
+    - y_col: Column name for y-axis coordinates (default is 'y').
+    - title: Title for the plot (default is "2D Plot").
+    - xlabel: Label for the x-axis (default is "X-axis").
+    - ylabel: Label for the y-axis (default is "Y-axis").
+    """
+
+    plt.figure(figsize=(8, 8))
+    plt.scatter(dataframe[x_col], dataframe[y_col])
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.grid(True)
+    plt.show()
+
 # dimension_reduction_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
 
 cy, cn = cut_generator_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
 q = get_questionnaires("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
 
-for i in range(len(cy)):
-   cost_of_cut = cost_function_binary(cy[i], cn[i], q)
-   print(cost_of_cut)
+# for i in range(len(cy)):
+#    cost_of_cut = cost_function_binary(cy[i], cn[i], q)
+#    print(cost_of_cut)
+
+res = perform_pca(q, 2)
+
+plot_2d_coordinates(res, x_col='PC1', y_col='PC2', title="2D PCA Plot", xlabel="PC1", ylabel="PC2")
+
+# print(res)
