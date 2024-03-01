@@ -9,7 +9,7 @@ def order_function():
     Returns: 
     An order of the cuts    
     """
-    pass
+    
 
 def create_searchtree():
     """ 
