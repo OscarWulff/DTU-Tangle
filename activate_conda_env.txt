@@ -3,5 +3,6 @@ For the first time:
 conda init
 
 To activate the conda env, type the following:
+conda env create -f environment.yml
 
 conda activate tangles-env
