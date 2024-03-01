@@ -1,3 +1,49 @@
+import math
+
+class SearchTree:
+    def __init__(self, propability) -> None:
+        self.propability = propability
+        self.children = []
+
+
+
+
+def is_consistent(chosen_cuts, cut_layer, agrrement_parameter):
+    intersection = set(chosen_cuts).intersection(cut_layer)
+    return len(intersection) >= agrrement_parameter
+
+    pass
+
+
+def h(cost):
+    return math.exp(-cost)
+
+
+def calculate_propability(v, cut_object):
+    """ 
+    Calculate the propability of a cut 
+    
+    Parameters:
+    Some point that the cut has to be oriented towards
+    Cut of the dataset
+
+    Returns:
+    Propability of the cut
+    """
+
+    
+    
+
+
+
+
+
+
+    pass
+
+
+
+
 def contracting_search_tree():
     """ 
     contracting the searchtree 
