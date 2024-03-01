@@ -280,7 +280,8 @@ res_ordered = order_cuts_by_cost(res)
 #    print(cost_of_cut)
 
 # for i in range(len(res_ordered)):
-print(res_ordered[19])
+print(res_ordered)
+print(res_ordered[0])
 
 
 
