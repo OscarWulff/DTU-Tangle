@@ -25,19 +25,6 @@ class Searchtree():
         self.tangle = []
 
 
-def create_searchtree( P_matrix ):
-    """ 
-    create searchtree from the ordered cuts 
-    
-    Paramaters:
-    ordered cuts
-
-    Returns: 
-    Search tree
-    """
-
-    root = Searchtree(None)
-
 
 
 def calculate_propability(v, cut_object):

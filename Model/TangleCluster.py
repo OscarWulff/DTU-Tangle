@@ -1,4 +1,6 @@
 
+from SearchTree import SearchTree
+
 def order_function():
     """ 
     order the cuts after cost 
@@ -11,7 +13,7 @@ def order_function():
     """
 
 
-def create_searchtree():
+def create_searchtree( ):
     """ 
     create searchtree from the ordered cuts 
     
@@ -21,4 +23,8 @@ def create_searchtree():
     Returns: 
     Search tree
     """
-    pass
+
+    root = SearchTree(None)
+
+
+    return root
