@@ -6,11 +6,16 @@ class SearchTree:
         self.children = []
 
 
-def is_consistent(chosen_cuts, cut_layer, agrrement_parameter):
-    intersection = set(chosen_cuts).intersection(cut_layer)
-    return len(intersection) >= agrrement_parameter
 
-    pass
+
+def is_consistent(chosen_cuts, tangle, agrrement_parameter):
+    for a in tangle:
+        for b in tangle:
+            if a != b:
+                l = set.intersection(set.intersection(a, b),chosen_cuts)
+                if len(l) < agrrement_parameter:
+                    return False
+    return True
 
 
 def h(cost):

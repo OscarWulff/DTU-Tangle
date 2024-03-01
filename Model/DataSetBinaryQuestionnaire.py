@@ -279,8 +279,9 @@ res_ordered = order_cuts_by_cost(res)
 #    cost_of_cut = cost_function_binary(cy[i], cn[i], q)
 #    print(cost_of_cut)
 
-for i in range(len(res_ordered)):
-    print(res_ordered[i][3])
+# for i in range(len(res_ordered)):
+print(res_ordered)
+print(res_ordered[0])
 
 
 
