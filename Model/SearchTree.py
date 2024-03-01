@@ -6,8 +6,6 @@ class SearchTree:
         self.children = []
 
 
-
-
 def is_consistent(chosen_cuts, cut_layer, agrrement_parameter):
     intersection = set(chosen_cuts).intersection(cut_layer)
     return len(intersection) >= agrrement_parameter
@@ -17,6 +15,29 @@ def is_consistent(chosen_cuts, cut_layer, agrrement_parameter):
 
 def h(cost):
     return math.exp(-cost)
+
+class Searchtree():
+
+    def __init__(self, parent_node):
+        self.parent_node = parent_node
+        self.left_node = None
+        self.right_node = None
+        self.tangle = []
+
+
+def create_searchtree( P_matrix ):
+    """ 
+    create searchtree from the ordered cuts 
+    
+    Paramaters:
+    ordered cuts
+
+    Returns: 
+    Search tree
+    """
+
+    root = Searchtree(None)
+
 
 
 def calculate_propability(v, cut_object):
@@ -30,15 +51,6 @@ def calculate_propability(v, cut_object):
     Returns:
     Propability of the cut
     """
-
-    
-    
-
-
-
-
-
-
     pass
 
 

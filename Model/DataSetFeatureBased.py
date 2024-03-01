@@ -160,31 +160,4 @@ def order_function(P_matrix, points):
 
 
 
-
-class Searchtree():
-
-    def __init__(self, parent_node):
-        self.parent_node = parent_node
-        self.left_node = None
-        self.right_node = None
-        self.tangle = []
-
-
-def create_searchtree( P_matrix ):
-    """ 
-    create searchtree from the ordered cuts 
-    
-    Paramaters:
-    ordered cuts
-
-    Returns: 
-    Search tree
-    """
-
-    root = Searchtree(None)
-
-
-    
-
-
 main()
