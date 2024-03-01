@@ -24,6 +24,7 @@ def perform_pca(matrix, num_components=2):
 
     # Fit the PCA model to the data and transform the data
     pca_result = pca.fit_transform(matrix)
+    
 
     # Create a DataFrame with the PCA coordinates
     pca_coordinates = pd.DataFrame(data=pca_result, columns=[f'PC{i+1}' for i in range(num_components)])
@@ -147,6 +148,7 @@ def sim(v,w):
         
 
 def cut_generator_binary(csv_file_path):
+    
     """ 
     This function is used to generate the cuts for binary questionnaires data set
     
@@ -165,8 +167,10 @@ def cut_generator_binary(csv_file_path):
     example: cuts_y[i] = {p1,p2,p3}, this means that person p1, p2 and p3 answered yes to question i
     
     """
+    
     nd_questionnaires = pd.read_csv(csv_file_path).values
-   
+    cut_list = []
+    cost = 0
 
     num_of_participants = len(nd_questionnaires[0])
     num_of_quest = len(nd_questionnaires[1])
@@ -175,15 +179,70 @@ def cut_generator_binary(csv_file_path):
     cuts_n = [set() for _ in range(num_of_quest)]
      
 
-    for i in range(num_of_participants):
-        for j in range(num_of_quest):
-            if nd_questionnaires[i][j] == 1:
-                cuts_y[j].add(i)
+    for i in range(num_of_quest):
+        for j in range(num_of_participants):
+            if nd_questionnaires[j][i] == 1:
+                cuts_y[i].add(j)
             else:
-                cuts_n[j].add(i)
+                cuts_n[i].add(j)
         
+        cost = cost_function_binary(cuts_y[i], cuts_n[i], nd_questionnaires)
+        cut_list.append([cuts_y[i], cuts_n[i], i, cost])
 
-    return cuts_y, cuts_n
+    return cut_list
+
+
+def order_cuts_by_cost(lst):
+    """
+    This function orders the cuts based on their cost in ascending order.
+    
+    Parameters:
+    cuts_y (list): List of sets representing 'yes' cuts
+    cuts_n (list): List of sets representing 'no' cuts
+    questionnaires (numpy.ndarray): Array of questionnaires data
+    
+    Returns:
+    ordered_cuts (list): List of cuts ordered by cost
+    costs (list): List of costs corresponding to each cut
+    """
+    
+    return sorted(lst, key=lambda x: x[-1])
+
+
+def intersect_sets(set_list):
+    """
+    This function returns the intersection of all sets in the provided list.
+
+    Parameters:
+    set_list (list): List of sets to be intersected
+
+    Returns:
+    intersection_set (set): Intersection of all sets in the list
+    """
+    intersection_set = set_list[0]
+    for s in set_list[1:]:
+        intersection_set = intersection_set.intersection(s)
+    return intersection_set
+
+# {1,2,3,4}, 0.2, {643,3}
+# {1,4,62,3}, 0.3, {0,90,23}
+# {11,2,3}, 0.3, {14,80,33}
+
+
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -212,15 +271,51 @@ def plot_2d_coordinates(dataframe, x_col='x', y_col='y', title="2D Plot", xlabel
 
 # dimension_reduction_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
 
-cy, cn = cut_generator_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
+res = cut_generator_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
 q = get_questionnaires("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
+res_ordered = order_cuts_by_cost(res)
 
 # for i in range(len(cy)):
 #    cost_of_cut = cost_function_binary(cy[i], cn[i], q)
 #    print(cost_of_cut)
 
-res = perform_pca(q, 2)
+for i in range(len(res_ordered)):
+    print(res_ordered[i][3])
 
-plot_2d_coordinates(res, x_col='PC1', y_col='PC2', title="2D PCA Plot", xlabel="PC1", ylabel="PC2")
+
+
+# cost_of_cut = ordered_cuts = order_cuts_by_cost(cy, cn, q)
+# print(cost_of_cut[0][2])
+# print(cost_of_cut[0][2])
+   
+
+# Initialize a list of sets
+# list_of_sets = [set() for _ in range(3)]  # replace n with the desired number of sets
+
+# list_of_sets[0].add(1)
+# list_of_sets[0].add(2)
+# list_of_sets[0].add(3)
+# list_of_sets[0].add(4)
+# list_of_sets[0].add(5)
+# list_of_sets[0].add(6)
+
+# list_of_sets[1].add(1)
+# list_of_sets[1].add(2)
+# list_of_sets[1].add(3)
+# list_of_sets[1].add(5)
+
+# list_of_sets[2].add(1)
+# list_of_sets[2].add(2)
+# list_of_sets[2].add(3)
+# list_of_sets[2].add(6)
+
+# intersection = intersect_sets(list_of_sets)
+# print(intersection)
+
+
+# res = perform_pca(q, 2)
+
+
+# plot_2d_coordinates(res, x_col='PC1', y_col='PC2', title="2D PCA Plot", xlabel="PC1", ylabel="PC2")
 
 # print(res)
