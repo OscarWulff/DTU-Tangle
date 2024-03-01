@@ -24,8 +24,6 @@ def main():
     print(P)
     print(costs)
 
-def consistent():
-
 def sort_points(axis_values, points):
     combined = list(zip(axis_values, points))
     sorted_combined = sorted(combined, key=lambda x: x[0])
@@ -185,7 +183,7 @@ def create_searchtree( P_matrix ):
 
     root = Searchtree(None)
 
-    
+
     
 
 
