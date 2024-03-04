@@ -19,27 +19,26 @@ def cost_function_graph_based(graph, cut):
     expected_order : float
         The average order for the cut.
     """
-    in_cut = cut
-    out_cut = set(graph.nodes()) - cut
+    # Convert cut to a list for indexing purposes
+    cut_list = list(cut)
+    
+    # Extract subgraph induced by nodes in the cut
+    subgraph = graph.subgraph(cut_list)
+    
+    # Compute pairwise distances between nodes in the subgraph using node attributes
+    distances = []
+    for u in cut_list:
+        for v in cut_list:
+            if u != v:
+                distance = nx.shortest_path_length(graph, source=int(u), target=int(v))
+                distances.append(distance)
+    
+    # Compute cost function based on distances
+    cost = np.mean(distances)
+    
+    return cost
 
-    # Check if nodes have attributes
-    if nx.is_empty(graph):
-        return 0  # Return 0 if the graph is empty
-
-    in_cut_attrs = np.array([list(graph.nodes[node].values()) for node in in_cut if graph.nodes[node]])
-    out_cut_attrs = np.array([list(graph.nodes[node].values()) for node in out_cut if graph.nodes[node]])
-
-    if len(in_cut_attrs) == 0 or len(out_cut_attrs) == 0:
-        return 0  # Return 0 if no attributes are found
-
-    distance = pairwise_distances(in_cut_attrs, out_cut_attrs, metric='euclidean')
-    similarity = np.exp(-distance)
-    expected_similarity = np.sum(similarity)
-
-    return expected_similarity
-
-
-
+    
 def cut_costs_for_graph(G, unique_cuts):
     """
     Calculate the costs for each unique cut for a given graph.
@@ -57,8 +56,6 @@ def cut_costs_for_graph(G, unique_cuts):
         cut = set().union(*cut)
         cut_costs.append(cost_function_graph_based(G, cut))
     return cut_costs
-
-
 
 def cut_generator_graph_based(G):
     """
@@ -93,7 +90,6 @@ def cut_generator_graph_based(G):
         else:
             # If the graph has no weights
             partition = kernighan_lin_bisection(G, max_iter=iterations)
-
         # Convert partition to a frozenset to make it hashable
         frozen_partition = frozenset(map(frozenset, partition))
 
@@ -102,41 +98,36 @@ def cut_generator_graph_based(G):
 
     return list(unique_cuts)
 
-
-
-# Example usage
-# Example usage
-G = nx.Graph()
-G.add_weighted_edges_from([(1, 2, 0.5), (1, 3, 10), (2, 3, 0.6), (3, 4, 0.7), (4, 5, 0.9)])
-
+# Create a larger weighted graph
+G1 = nx.Graph()
+G1.add_weighted_edges_from([(1, 2, 0.5), (1, 3, 10), (2, 3, 0.6), (3, 4, 0.7), 
+                            (4, 5, 0.9), (5, 6, 0.3), (6, 7, 0.8), (7, 8, 1.2),
+                            (8, 9, 0.4), (9, 10, 0.5), (10, 11, 0.6), (11, 12, 0.7),
+                            (12, 13, 0.8), (13, 14, 0.9), (14, 15, 1.0), (15, 16, 1.1),
+                             (16, 17, 1.2), (17, 18, 1.3), (18, 19, 1.4), (19, 20, 1.5),
+                             (20, 21, 1.6), (21, 22, 1.7), (22, 23, 1.8), (23, 24, 1.9)])
 # Generate unique cuts for the graph
-unique_cuts = cut_generator_graph_based(G)
+unique_cuts1 = cut_generator_graph_based(G1)
 
-# Calculate costs for each unique cut
-cut_costs = cut_costs_for_graph(G, unique_cuts)
+cut_costs1 = cut_costs_for_graph(G1, unique_cuts1)
 
 # Print the costs
-for i, cost in enumerate(cut_costs, 1):
-    print(f"Cut {i} Cost: {cost}")
+for i, (cut1, cost1) in enumerate(zip(unique_cuts1, cut_costs1), 1):
+    print(f"Cut {i} Cost: {cost1}")
+    print(f"Cut {i}: {cut1}")
 
-# Create a larger weighted graph
-# G1 = nx.Graph()
-# G1.add_weighted_edges_from([(1, 2, 0.5), (1, 3, 10), (2, 3, 0.6), (3, 4, 0.7), 
-#                            (4, 5, 0.9), (5, 6, 0.3), (6, 7, 0.8), (7, 8, 1.2),
-#                            (8, 9, 0.4), (9, 10, 0.5), (10, 11, 0.6), (11, 12, 0.7),
-#                            (12, 13, 0.8), (13, 14, 0.9), (14, 15, 1.0), (15, 16, 1.1),
-#                             (16, 17, 1.2), (17, 18, 1.3), (18, 19, 1.4), (19, 20, 1.5),
-#                             (20, 21, 1.6), (21, 22, 1.7), (22, 23, 1.8), (23, 24, 1.9)])
-# # Generate unique cuts for the graph
-# unique_cuts1 = cut_generator_graph_based(G1)
 
-# cut_costs1 = cost_function_graph_based(G1, unique_cuts1)
+# Example usage
+#G = nx.Graph()
+#G.add_weighted_edges_from([(1, 2, 0.5), (1, 3, 10), (2, 3, 0.6), (3, 4, 0.7), (4, 5, 0.9)])
 
-# # Print the costs
-# for i, cost in enumerate(cut_costs1, 1):
-#     print(f"Cut {i} Cost: {cost}")
+# Generate unique cuts for the graph
+#unique_cuts = cut_generator_graph_based(G)
 
-# print(cost_function_graph_based(G1, unique_cuts1))
-# # Access the unique partitioned sets
-# for i, cut in enumerate(unique_cuts1, 1):
-#     print(f"Cut {i}: {cut}")
+# Calculate costs for each unique cut
+#cut_costs = cut_costs_for_graph(G, unique_cuts)
+
+# Print the costs and cuts
+#for i, (cut, cost) in enumerate(zip(unique_cuts, cut_costs), 1):
+#    print(f"Cut {i} Cost: {cost}")
+#    print(f"Cut {i}: {cut}")
