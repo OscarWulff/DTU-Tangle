@@ -15,26 +15,44 @@ def main():
     pc2 = V[:, 1]
 
     Points = []
-    for x, y in zip(pc1, pc2):
-        Points.append((x, y))
+    for z, (x, y) in enumerate(zip(pc1, pc2)):
+        Points.append((x, y, z))
 
-    P, points = cut_generator_axis(Points, a, 0)
+    cuts = cut_generator_axis(Points, a, 0)
+    costs = cost_function(cuts, Points)
 
-    costs = cost_function(P, points)
-    print(P)
-    print(costs)
 
-def sort_points(axis_values, points):
-    combined = list(zip(axis_values, points))
-    sorted_combined = sorted(combined, key=lambda x: x[0])
-    return zip(*sorted_combined)
+def cost_function(cuts, points):
+    """ 
+    This function is used to calculate the cost of cuts for feature based data set
+    
+    Parameters:
+    cuts of the dataset
+
+    Returns:
+    cost of each cut
+    """
+    # The index of the array represent the cut and the value represent the cost
+    costs = []
+
+    # We transpose it such that we can go through the column instead of row
+    for cut in cuts:
+
+        sum_cost = 0.0
+        left_oriented = cut[0]
+        right_oriented = cut[1]
+
+        # Calcualte the cost
+        for left_or in left_oriented:
+            for right_or in right_oriented:
+                sum_cost += -(euclidean_distance(points[left_or][0], points[right_or][0], points[left_or][1], points[right_or][1]))
+        
+        costs.append(sum_cost)
+    return costs
 
 def cut_generator_axis(objects, a, axis):
     n = len(objects)
-    number_cuts = math.ceil(n/a) - 1
-    # creates matrix where row are objects and columns are cuts
-    # 0 means left orientation and 1 means right orientation
-    matrix = np.zeros((n, number_cuts))
+    cuts = []
 
     values = []
     sorted_points = []
@@ -42,16 +60,45 @@ def cut_generator_axis(objects, a, axis):
     for point in objects:
         values.append(point[axis])
   
-    _, sorted_points = sort_points(sorted(values), objects)
-    k = 1
-    cut_numb = 0
-    while(n - k >= a):
-        for i in range(k, n):
-            matrix[i, cut_numb] = 1
-        k += a
-        cut_numb += 1
+    _, sorted_points = sort_for_list(values, objects)
 
-    return matrix, sorted_points
+
+    i = a
+    while( n >= i + a ):
+        cut = []
+        A = set()
+        for k in range(0, i):
+            A.add(sorted_points[k][2])
+        Ac = set()
+        for k in range(i, n):
+            Ac.add(sorted_points[k][2])
+        cut.append(A)
+        cut.append(Ac)
+        cuts.append(cut)
+        i += a
+
+    return cuts
+
+
+def order_function_featurebased(cuts, points):
+    """ 
+    order the cuts after cost 
+    
+    Paramaters:
+    Cuts
+
+    Returns: 
+    An order of the cuts    
+    """
+    costs = cost_function(cuts, points)
+    _, cuts_ordered = sort_for_list(costs, cuts)
+    return cuts_ordered
+
+
+def sort_for_list(axis_values, points):
+    combined = list(zip(axis_values, points))
+    sorted_combined = sorted(combined, key=lambda x: x[0])
+    return zip(*sorted_combined)
 
 def dimension_reduction_feature_based(filename):
     """ 
@@ -98,66 +145,10 @@ def order_projections(rho, V):
     indices = np.argsort(rho)
     indices = indices[::-1]
     
-def euclidean_distance(x1, y1, x2, y2):
+def euclidean_distance(x1, x2, y1, y2):
     distance = math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
     return distance
 
-def euclidean_distance_eulers(x1, y1, x2, y2):
+def euclidean_distance_eulers(x1, x2, y1, y2):
     distance = math.e(-math.sqrt((x1 - x2)**2 + (y1 - y2)**2))
     return distance
-
-def cost_function(P_matrix, points):
-    """ 
-    This function is used to calculate the cost of cuts for feature based data set
-    
-    Parameters:
-    cuts of the dataset
-
-    Returns:
-    cost of each cut
-    """
-    # The index of the array represent the cut and the value represent the cost
-    costs = []
-
-    # We transpose it such that we can go through the column instead of row
-    for column in P_matrix.T:
-
-        sum_cost = 0
-        left_oriented = []
-        right_oriented = []
-
-        # Opdel objects for hver orientation
-        for i, orientation in enumerate(column):
-            if orientation == 0: 
-                left_oriented.append(i)
-            else:
-                right_oriented.append(i)
-
-        # Calcualte the cost
-        for left_or in left_oriented:
-            for right_or in right_oriented:
-                sum_cost += -(euclidean_distance(points[left_or][0], points[right_or][0], points[left_or][1], points[right_or][1]))
-        
-        costs.append(sum_cost)
-
-    return costs
-
-def order_function(P_matrix, points):
-    """ 
-    order the cuts after cost 
-    
-    Paramaters:
-    Cuts
-
-    Returns: 
-    An order of the cuts    
-    """
-    costs = cost_function(P_matrix, points)
-
-    costs_order = np.argsort(costs)
-    
-    return costs_order
-
-
-
-main()
