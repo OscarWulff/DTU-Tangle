@@ -50,6 +50,25 @@ def calculate_propability(v, cut_object):
 def condense_tree(root: Searchtree):
     nodes = []
     leaves = []
+    prune_length = 1
+
+    def prune_tree(node, max_branch_length):
+        """ 
+        Kan max bruges til at 'max_branch_length' op til 2
+        
+        """
+        current_node = node
+        
+        while max_branch_length > 0:
+            if current_node.parent_node == root:
+                if root.left_node == current_node:
+                    root.left_node = None
+                else: 
+                    root.right_node = None
+            if max_branch_length == 0: 
+                break
+            max_branch_length -= 1
+            current_node = current_node.parent_node
 
     def traverse(current_node):
         if current_node is not None:
@@ -62,20 +81,14 @@ def condense_tree(root: Searchtree):
 
     traverse(root)
 
-     # Ask Karl how you prune a tree
-    def prune(leaf, length):
-        pass
-
-    for leaf in leaves: 
-        prune(leaf, 1)
-
-   
-
+    for leaf in leaves:
+        prune_tree(leaf, prune_length)
 
     def condense_leaf(leaf):
         if leaf.parent_node != None:
             if leaf.parent_node.left_node == None or leaf.parent_node.right_node == None:
-                leaf.condensed_oritentations.append(f"{leaf.parent_node.cut_id}"+ leaf.parent_node.cut_orientation)
+                if leaf.parent_node != root: # kan måske laves om til 'if leaf.parent_node.id != 0'
+                    leaf.condensed_oritentations.append(f"{leaf.parent_node.cut_id}"+ leaf.parent_node.cut_orientation)
                 if leaf.parent_node.parent_node == None: 
                     leaf.parent_node = None
                 else: 
@@ -114,25 +127,24 @@ def contracting_search_tree(node : Searchtree):
         if node.leaf == False:
             contracting_search_tree(node.left_node)
             contracting_search_tree(node.right_node)
-            for co in node.left_node.condensed_oritentations:
-                if co in node.right_node.condensed_oritentations:
-                    node.condensed_oritentations.append(co)
-                else:
-                    cut_nr = co[0]
-                    cut_or = co[1]
-                    if cut_or == "L":
-                        if cut_nr+"R" in node.right_node.condensed_oritentations:
-                            node.characterizing_cuts.append(co)
+            print(node.cut_id)
+            print(node.cut_orientation)
+            if node.left_node != None and node.right_node != None:
+                for co in node.left_node.condensed_oritentations:
+                    if co in node.right_node.condensed_oritentations:
+                        node.condensed_oritentations.append(co)
                     else:
-                        if cut_nr+"L" in node.right_node.condensed_oritentations:
-                            node.characterizing_cuts.append(co)
+                        cut_nr = co[0]
+                        cut_or = co[1]
+                        if cut_or == "L":
+                            if cut_nr+"R" in node.right_node.condensed_oritentations:
+                                node.characterizing_cuts.append(co)
+                        else:
+                            if cut_nr+"L" in node.right_node.condensed_oritentations:
+                                node.characterizing_cuts.append(co)
                  
 
-def p_l(v):
-    pass
 
-def p_r(v):
-    pass
 
 
 
@@ -146,6 +158,11 @@ def soft_clustering(node, v, accumulated, softClustering):
     Returns:
     Soft clustering of the point
     """
+    def p_l(v):
+        pass
+
+    def p_r(v):
+        return 1 - p_l(v)
     softClustering = {}
     if node.leaf:
         softClustering[node.cut_id] = accumulated
