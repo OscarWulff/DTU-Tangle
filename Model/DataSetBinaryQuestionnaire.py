@@ -2,7 +2,10 @@ import pandas as pd
 import numpy as np
 from scipy.linalg import svd
 from sklearn.decomposition import PCA
+
 import matplotlib.pyplot as plt
+
+from Model.DataSet import extract_data
 
 
 # we need something that can giv ecoordinates from the dimension_reduction_binary
@@ -37,9 +40,7 @@ def calculate_explained_varince(S):
         rho = (S * S) / (S * S).sum()
         return rho
 
-def get_questionnaires(csv_file_path):
-    df = pd.read_csv(csv_file_path).values 
-    return df
+
 
 def dimension_reduction_binary(csv_file_path):
 
@@ -140,7 +141,7 @@ def sim(v,w):
                
         
 
-def cut_generator_binary(csv_file_path):
+def cut_generator_binary(nd_questionnaires):
     
     """ 
     This function is used to generate the cuts for binary questionnaires data set
@@ -161,7 +162,7 @@ def cut_generator_binary(csv_file_path):
     
     """
     
-    nd_questionnaires = pd.read_csv(csv_file_path).values
+    
     cut_list = []
     cost = 0
 
@@ -222,7 +223,11 @@ def intersect_sets(set_list):
 # {11,2,3}, 0.3, {14,80,33}
 
 
-    
+def remove_cost_and_id(list):
+    new_list = []
+    for [A, Ac, _, _] in list:
+        new_list.append([A, Ac])
+
     
     
 
@@ -265,7 +270,7 @@ def plot_2d_coordinates(dataframe, x_col='x', y_col='y', title="2D Plot", xlabel
 # dimension_reduction_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
 
 res = cut_generator_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
-q = get_questionnaires("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
+q = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
 res_ordered = order_cuts_by_cost(res)
 
 # for i in range(len(cy)):
@@ -306,10 +311,9 @@ print(res_ordered[0])
 # intersection = intersect_sets(list_of_sets)
 # print(intersection)
 
+# res1 = perform_pca(q, 2)
 
-# res = perform_pca(q, 2)
 
-
-# plot_2d_coordinates(res, x_col='PC1', y_col='PC2', title="2D PCA Plot", xlabel="PC1", ylabel="PC2")
+# plot_2d_coordinates(res1, x_col='PC1', y_col='PC2', title="2D PCA Plot", xlabel="PC1", ylabel="PC2")
 
 # print(res)

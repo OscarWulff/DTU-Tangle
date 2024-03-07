@@ -1,4 +1,6 @@
 import math
+from matplotlib import pyplot as plt
+import networkx as nx
 class Searchtree():
 
     def __init__(self, parent_node, cut_id):
@@ -11,14 +13,19 @@ class Searchtree():
         self.leaf = True
         self.characterizing_cuts = []
         self.condensed_oritentations = []
+        self.id = 0
     
     def add_left_child(self, left_child ):
         self.left_node = left_child
         self.leaf = False
+        # self.id = self.id + 1
 
     def add_right_child(self, right_child ):
         self.right_node = right_child
         self.leaf = False
+        # self.id = self.id + 1
+
+    
 
 def h(cost):
     return math.exp(-cost)
@@ -175,6 +182,37 @@ def print_tree(node, indent=0, prefix="Root: "):
             print_tree(node.left_node, indent + 1, "L--- ")
             print_tree(node.right_node, indent + 1, "R--- ")
 
+
+            
+def plot_search_tree(tree, pos=None, parent_name=None, graph=None, x_pos=0, y_pos=0, horizontal_gap=1.0, level_height=1.0):
+    if graph is None:
+        graph = nx.Graph()
+    if pos is None:
+        pos = {tree.id: (x_pos, y_pos)}
+
+    if parent_name is not None:
+        graph.add_edge(parent_name, tree.id)
+
+    x, y = pos[tree.id]
+
+    if tree.left_node is not None:
+        x_new_left = x - horizontal_gap / 2
+        y_new_left = y - level_height
+        pos[tree.left_node.id] = (x_new_left, y_new_left)
+        plot_search_tree(tree.left_node, pos, tree.id, graph, x_new_left, y_new_left, horizontal_gap / 2, level_height)
+
+    if tree.right_node is not None:
+        x_new_right = x + horizontal_gap / 2
+        y_new_right = y - level_height
+        pos[tree.right_node.id] = (x_new_right, y_new_right)
+        plot_search_tree(tree.right_node, pos, tree.id, graph, x_new_right, y_new_right, horizontal_gap / 2, level_height)
+
+    return graph, pos
+
+def show_tree(tree):
+    graph, pos = plot_search_tree(tree)
+    nx.draw(graph, pos=pos, with_labels=True, node_size=700, node_color="lightblue", font_size=8, font_weight="bold", font_color="black", edge_color="gray", linewidths=1, alpha=0.7)
+    plt.show()
 
 
 
