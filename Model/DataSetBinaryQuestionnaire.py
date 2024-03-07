@@ -79,13 +79,6 @@ def dimension_reduction_binary(csv_file_path):
 
     return S,V
 
-   
-
-
-
-
-    pass
-
 
 def cost_function_binary(A, Ac, questionnaires):
     """ 
