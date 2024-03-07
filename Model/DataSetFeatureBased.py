@@ -51,6 +51,12 @@ def cost_function(cuts, points):
     return costs
 
 def cut_generator_axis(objects, a, axis):
+
+    def sort_for_list(axis_values, points):
+        combined = list(zip(axis_values, points))
+        sorted_combined = sorted(combined, key=lambda x: x[0])
+        return zip(*sorted_combined)
+
     n = len(objects)
     cuts = []
 
@@ -59,6 +65,7 @@ def cut_generator_axis(objects, a, axis):
 
     for point in objects:
         values.append(point[axis])
+
   
     _, sorted_points = sort_for_list(values, objects)
 
@@ -90,15 +97,15 @@ def order_function_featurebased(cuts, points):
     Returns: 
     An order of the cuts    
     """
+    def sort_for_list(axis_values, points):
+        combined = list(zip(axis_values, points))
+        sorted_combined = sorted(combined, key=lambda x: x[0])
+        return zip(*sorted_combined)
+    
     costs = cost_function(cuts, points)
     _, cuts_ordered = sort_for_list(costs, cuts)
     return cuts_ordered
 
-
-def sort_for_list(axis_values, points):
-    combined = list(zip(axis_values, points))
-    sorted_combined = sorted(combined, key=lambda x: x[0])
-    return zip(*sorted_combined)
 
 def dimension_reduction_feature_based(filename):
     """ 
