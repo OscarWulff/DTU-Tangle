@@ -11,8 +11,8 @@ class Searchtree():
         self.cut_id = cut_id
         self.cut_orientation = ""
         self.leaf = True
-        self.characterizing_cuts = []
-        self.condensed_oritentations = []
+        self.characterizing_cuts = set()
+        self.condensed_oritentations = set()
         self.id = 0
     
     def add_left_child(self, left_child ):
@@ -28,22 +28,6 @@ class Searchtree():
 def h(cost):
     return math.exp(-cost)
 
-
-
-
-def calculate_propability(v, cut_object):
-    """ 
-    Calculate the propability of a cut 
-    
-    Parameters:
-    Some point that the cut has to be oriented towards
-    Cut of the dataset
-
-    Returns:
-    Propability of the cut
-    """
-    pass
-    
     
 def condense_tree(root: Searchtree):
     nodes = []
@@ -83,22 +67,24 @@ def condense_tree(root: Searchtree):
         prune_tree(leaf, prune_length)
 
     def condense_leaf(leaf):
+        nonlocal root
         if leaf.parent_node != None:
             if leaf.parent_node.left_node == None or leaf.parent_node.right_node == None:
-                if leaf.parent_node != root: # kan måske laves om til 'if leaf.parent_node.id != 0'
-                    leaf.condensed_oritentations.append(f"{leaf.parent_node.cut_id}"+ leaf.parent_node.cut_orientation)
                 if leaf.parent_node.parent_node == None: 
+                    root = leaf
                     leaf.parent_node = None
                 else: 
                     if leaf.parent_node.parent_node.left_node == leaf.parent_node:
                         leaf.parent_node.parent_node.left_node = leaf
                     else:
                         leaf.parent_node.parent_node.right_node = leaf
+                    leaf.condensed_oritentations.add(f"{leaf.parent_node.cut_id}"+ leaf.parent_node.cut_orientation)
+                    leaf.condensed_oritentations.add(f"{leaf.cut_id}"+ leaf.cut_orientation)
                     leaf.parent_node = leaf.parent_node.parent_node 
                     condense_leaf(leaf)
             elif leaf.parent_node.left_node != None and leaf.parent_node.right_node != None:
                 condense_leaf(leaf.parent_node)
-                
+        
 
     for leaf in leaves: 
         condense_leaf(leaf)
@@ -125,21 +111,19 @@ def contracting_search_tree(node : Searchtree):
         if node.leaf == False:
             contracting_search_tree(node.left_node)
             contracting_search_tree(node.right_node)
-            print(node.cut_id)
-            print(node.cut_orientation)
             if node.left_node != None and node.right_node != None:
                 for co in node.left_node.condensed_oritentations:
                     if co in node.right_node.condensed_oritentations:
-                        node.condensed_oritentations.append(co)
+                        node.condensed_oritentations.add(co)
                     else:
                         cut_nr = co[0]
                         cut_or = co[1]
                         if cut_or == "L":
                             if cut_nr+"R" in node.right_node.condensed_oritentations:
-                                node.characterizing_cuts.append(co)
+                                node.characterizing_cuts.add(cut_nr)
                         else:
                             if cut_nr+"L" in node.right_node.condensed_oritentations:
-                                node.characterizing_cuts.append(co)
+                                node.characterizing_cuts.add(cut_nr)
                  
 
 
@@ -153,17 +137,29 @@ def soft_clustering(node, v, accumulated, softClustering):
     Returns:
     Soft clustering of the point
     """
+    
     def p_l(v):
-        pass
+        sum_right = 0
+        sum_all = 0
+        for cut in node.characterizing_cuts:
+            # Lige tager vi bare cuttet, men vi skal tage the cost of the cut
+            sum_all += h(cut)
 
-    def p_r(v):
-        return 1 - p_l(v)
+            if v in cut: 
+                sum_right += h(cut)
+
+        return (sum_right/sum_all)
+
     softClustering = {}
     if node.leaf:
         softClustering[node.cut_id] = accumulated
     else:
-        soft_clustering(node.left_node, v, accumulated * p_l(v), softClustering)
-        soft_clustering(node.right_node, v, accumulated * p_r(v), softClustering)
+        pl = p_l(v)
+        pr = 1 - p_l
+        if node.left_node != None: 
+            soft_clustering(node.left_node, v, accumulated * pl, softClustering)
+        if node.right_node != None: 
+            soft_clustering(node.right_node, v, accumulated * pr, softClustering)
 
     return softClustering
 

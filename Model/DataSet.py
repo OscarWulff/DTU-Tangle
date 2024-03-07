@@ -1,6 +1,6 @@
 import pandas as pd
 
-from Model.DataSetBinaryQuestionnaire import *
+from DataSetBinaryQuestionnaire import *
 class DataSet():
     a = 0
 
