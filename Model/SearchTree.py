@@ -18,12 +18,10 @@ class Searchtree():
     def add_left_child(self, left_child ):
         self.left_node = left_child
         self.leaf = False
-        # self.id = self.id + 1
 
     def add_right_child(self, right_child ):
         self.right_node = right_child
         self.leaf = False
-        # self.id = self.id + 1
 
     
 
@@ -143,9 +141,6 @@ def contracting_search_tree(node : Searchtree):
                             if cut_nr+"L" in node.right_node.condensed_oritentations:
                                 node.characterizing_cuts.append(co)
                  
-
-
-
 
 
 def soft_clustering(node, v, accumulated, softClustering):
