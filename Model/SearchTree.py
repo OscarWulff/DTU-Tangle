@@ -125,7 +125,7 @@ def p_l(v):
     pass
 
 def p_r(v):
-    pass
+    return 1 - p_l(v)
 
 
 
