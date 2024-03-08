@@ -4,8 +4,71 @@ from scipy.linalg import svd
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 
-from Model.Cut import Cuts
+# from Model.Cut import Cuts
 from DataSet import extract_data
+from DataType import DataType
+from Cut import Cut
+
+class DataSetBinaryQuestionnaire(DataType):
+    def __init__(self, agreement_param, cuts=[], search_tree=None):
+        super().__init__(agreement_param, cuts, search_tree)
+        
+
+    
+    
+    def cut_generator_binary(self,nd_questionnaires):
+        
+        """ 
+        This function is used to generate the cuts for binary questionnaires data set
+        
+        Parameters:
+        Takes a csv-file of zeros and ones. Zero represents "No" and ones represent "yes" to a question. 
+        Each row represent object.
+        Example of a file: 
+        "1,0,0,0,0,1,1,1,1
+        0,1,0,0,1,1,1,0,0
+        ....
+        ...
+        "
+
+        Returns:
+        cuts of the dataset
+        example: cuts_y[i] = {p1,p2,p3}, this means that person p1, p2 and p3 answered yes to question i
+        
+        """
+        
+        
+        cut_list = []
+        cost = 0
+        orientation = "None"
+
+        num_of_participants = len(nd_questionnaires[0])
+        num_of_quest = len(nd_questionnaires[1])
+
+        cuts_list = []
+        cuts_y = [set() for _ in range(num_of_quest)]
+        cuts_n = [set() for _ in range(num_of_quest)]
+        
+
+        for i in range(num_of_quest):
+            self.cuts.append(Cut(i, cost, orientation, set(), set()))
+            for j in range(num_of_participants):
+                
+                if nd_questionnaires[j][i] == 1:
+                    self.cuts[i].A.add(j)
+                    # cuts_y[i].add(j)
+                else:
+                   
+                    self.cuts[i].Ac.add(j)
+
+            
+            cost = cost_function_binary(self.cuts[i].A, self.cuts[i].Ac, nd_questionnaires)
+            self.cuts[i].cost = cost
+            # cuts_list.append(Cuts(i, cost, orientation, cuts_y[i], cuts_n[i]))
+
+        return self
+
+
 
 
 
@@ -34,6 +97,22 @@ def perform_pca(matrix, num_components=2):
     pca_coordinates = pd.DataFrame(data=pca_result, columns=[f'PC{i+1}' for i in range(num_components)])
 
     return pca_coordinates
+
+def order_cuts_by_cost(self):
+    """
+    This function orders the cuts based on their cost in ascending order.
+    
+    Parameters:
+    cuts_y (list): List of sets representing 'yes' cuts
+    cuts_n (list): List of sets representing 'no' cuts
+    questionnaires (numpy.ndarray): Array of questionnaires data
+    
+    Returns:
+    ordered_cuts (list): List of cuts ordered by cost
+    costs (list): List of costs corresponding to each cut
+    """
+    
+    return sorted(self.cuts, key=lambda x: x.cost)
 
 
 
@@ -82,39 +161,6 @@ def perform_pca(matrix, num_components=2):
 #     return S,V
 
 
-def cost_function_binary(A, Ac, questionnaires):
-    """ 
-    This function is used to calculate the cost of cuts for binary questionnaires data set 
-    
-    Parameters:
-    cuts of the dataset
-
-    Returns:
-    cost of each cut
-    """
-    print(A, Ac)
-    n = questionnaires.shape[0]
-
-    cost = 0
-    norm = 1.0/(len(A)*(n-len(A)))
-
-    # for i in range(len(A)):
-    #     for j in range(len(Ac)):
-           
-    #        cost += sim(questionnaires(A[i]), questionnaires(Ac[j]))
-    
-    # cost = cost*norm
-
-
-    for yes in A:
-        for no in Ac:
-            cost += sim(questionnaires[yes], questionnaires[no])
-
-    cost = cost*norm
-
-    return cost
-
-
 
 
 
@@ -140,70 +186,42 @@ def sim(v,w):
     return similarity
 
                
-        
-
-def cut_generator_binary(nd_questionnaires):
-    
+def cost_function_binary(A, Ac, questionnaires):
     """ 
-    This function is used to generate the cuts for binary questionnaires data set
+    This function is used to calculate the cost of cuts for binary questionnaires data set 
     
     Parameters:
-    Takes a csv-file of zeros and ones. Zero represents "No" and ones represent "yes" to a question. 
-    Each row represent object.
-    Example of a file: 
-    "1,0,0,0,0,1,1,1,1
-     0,1,0,0,1,1,1,0,0
-     ....
-     ...
-    "
-
-    Returns:
     cuts of the dataset
-    example: cuts_y[i] = {p1,p2,p3}, this means that person p1, p2 and p3 answered yes to question i
-    
-    """
-    
-    
-    cut_list = []
-    cost = 0
-    orientation = "None"
 
-    num_of_participants = len(nd_questionnaires[0])
-    num_of_quest = len(nd_questionnaires[1])
-
-    cuts_list = []
-    cuts_y = [set() for _ in range(num_of_quest)]
-    cuts_n = [set() for _ in range(num_of_quest)]
-     
-
-    for i in range(num_of_quest):
-        for j in range(num_of_participants):
-            if nd_questionnaires[j][i] == 1:
-                cuts_y[i].add(j)
-            else:
-                cuts_n[i].add(j)
-        
-        cost = cost_function_binary(cuts_y[i], cuts_n[i], nd_questionnaires)
-        cuts_list.append(Cuts(i, cost, orientation, cuts_y[i], cuts_n[i]))
-
-    return cuts_list
-
-
-def order_cuts_by_cost(lst):
-    """
-    This function orders the cuts based on their cost in ascending order.
-    
-    Parameters:
-    cuts_y (list): List of sets representing 'yes' cuts
-    cuts_n (list): List of sets representing 'no' cuts
-    questionnaires (numpy.ndarray): Array of questionnaires data
-    
     Returns:
-    ordered_cuts (list): List of cuts ordered by cost
-    costs (list): List of costs corresponding to each cut
+    cost of each cut
     """
     
-    return sorted(lst, key=lambda x: x.cost)
+    n = questionnaires.shape[0]
+
+    cost = 0
+    norm = 1.0/(len(A)*(n-len(A)))
+
+    # for i in range(len(A)):
+    #     for j in range(len(Ac)):
+        
+    #        cost += sim(questionnaires(A[i]), questionnaires(Ac[j]))
+    
+    # cost = cost*norm
+
+
+    for yes in A:
+        for no in Ac:
+            cost += sim(questionnaires[yes], questionnaires[no])
+
+    cost = cost*norm
+
+    return cost
+
+
+
+
+
 
 
 def intersect_sets(set_list):
@@ -271,12 +289,23 @@ def plot_2d_coordinates(dataframe, x_col='x', y_col='y', title="2D Plot", xlabel
     plt.show()
 
 # dimension_reduction_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
+    
+
 
 data = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
-res = cut_generator_binary(data)
+res = DataSetBinaryQuestionnaire(1)
 
+j = res.cut_generator_binary(data)
 
-order_res = order_cuts_by_cost(res)
-
-for i in order_res:
+for i in j.cuts:
     print(i.A)
+    print(i.Ac)
+    print(i.cost)
+    print("")
+
+
+
+
+
+# for i in order_res:
+#     print(i.A)
