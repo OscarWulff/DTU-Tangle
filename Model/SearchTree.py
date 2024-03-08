@@ -1,6 +1,8 @@
 import math
 from matplotlib import pyplot as plt
 import networkx as nx
+from Cut import Cut
+
 class Searchtree():
 
     def __init__(self, parent_node, cut_id):
@@ -8,6 +10,7 @@ class Searchtree():
         self.left_node : Searchtree = None
         self.right_node : Searchtree = None
         self.tangle = []
+        self.cut : Cut = None
         self.cut_id = cut_id
         self.cut_orientation = ""
         self.leaf = True

@@ -6,7 +6,7 @@ from DataSetFeatureBased import order_function_featurebased
 
 from DataType import DataType
 
-def is_consistent(chosen_cut, tangles, agrrement_parameter):
+def consistent(chosen_cut, tangles, agrrement_parameter):
     if len(tangles) == 0:
         return len(chosen_cut) >= agrrement_parameter
     elif len(tangles) == 1: 
@@ -45,7 +45,7 @@ def create_searchtree(data : DataType):
         new_leaves = []
         for leaf in leaves:
             # print(leaf.tangle)
-            if is_consistent(A, leaf.tangle, data.a):
+            if consistent(A, leaf.tangle, data.a):
                 left_child = Searchtree(leaf, leaf.cut_id+1)
                 left_child.cut_orientation = "L"
                 left_child.tangle.append([A])
@@ -54,7 +54,7 @@ def create_searchtree(data : DataType):
                 left_child.id = id
                 leaf.add_left_child(left_child)
                 new_leaves.append(left_child)
-            if is_consistent(Ac, leaf.tangle, data.a):
+            if consistent(Ac, leaf.tangle, data.a):
                 right_child = Searchtree(leaf, leaf.cut_id+1)
                 right_child.cut_orientation = "R"
                 right_child.tangle.append([Ac])

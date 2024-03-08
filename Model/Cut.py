@@ -1,8 +1,8 @@
 class Cut:
-    def __init__(self, id : int, cost : float, oreientation : str, A : set, Ac : set ):
+    def __init__(self, id : int = None, cost : float = None, orientation : str = None, A : set = set(), Ac : set = set()):
         self.id = id
         self.cost = cost
-        self.oreientation = oreientation
+        self.orientation = orientation
         self.A = A
         self.Ac = Ac
         
