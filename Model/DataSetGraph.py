@@ -1,7 +1,17 @@
 import networkx as nx
-import random
 
-def generate_multiple_cuts(G, max_iter=1, weight='weight', seed=None): #Max iter is the number of iterations
+def generate_multiple_cuts(G, max_iter=1, weight='weight', seed=None): 
+    """ 
+    This function is used to generate the cuts for binary questionnaires data set
+    parameters:
+    G (networkx.Graph): Graph
+    max_iter (int): Maximum number of iterations
+    weight (str): The edge attribute that holds the numerical value used as a weight. If None, then each edge has unit weight.
+    seed (int): Seed for random number generator
+
+    Return:
+    cuts of the dataset
+    """
     a = 5  # Adjust this value according to your needs
     cuts = []
     for _ in range(a):
@@ -17,7 +27,16 @@ def cost_function_helper(G, partition):
             cut += G[u][v]['weight']
     return cut
 
-def cost_function(G, cuts):
+def cost_function_Graph(G, cuts):
+    """ 
+    This function is used to calculate the cost of cuts for Data Set Graph
+    parameters:
+    G (networkx.Graph): Graph
+    cuts (list): List of cuts of the dataset
+
+    Returns:
+    cost of each cut
+    """
     return [cost_function_helper(G, cut) for cut in cuts]
 
 # Example usage:
@@ -30,7 +49,7 @@ G.add_weighted_edges_from([(1, 2, 0.5), (1, 3, 10), (2, 3, 0.6), (3, 4, 0.7),
                              (20, 21, 1.6), (21, 22, 1.7), (22, 23, 1.8), (23, 24, 1.9)])
 
 cuts = generate_multiple_cuts(G)
-cost = cost_function(G, cuts)
+cost = cost_function_Graph(G, cuts)
 
 print(cuts)
 print(cost)
