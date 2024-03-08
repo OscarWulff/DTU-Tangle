@@ -143,16 +143,16 @@ def soft_clustering(node, v, accumulated, softClustering):
         sum_all = 0
         for cut in node.characterizing_cuts:
             # Lige tager vi bare cuttet, men vi skal tage the cost of the cut
-            sum_all += h(cut)
+            sum_all += h(cut.cost)
 
-            if v in cut: 
-                sum_right += h(cut)
+            if v in cut.A: 
+                sum_right += h(cut.cost)
 
         return (sum_right/sum_all)
 
     softClustering = {}
     if node.leaf:
-        softClustering[node.cut_id] = accumulated
+        softClustering[node.id] = accumulated
     else:
         pl = p_l(v)
         pr = 1 - p_l
@@ -180,8 +180,9 @@ def hard_clustering(softClustering):
     for cluster, propability in softClustering.items():
         if propability > max_prob:
             hard_cluster = cluster
+            max_prob = propability
 
-    return hard_cluster
+    return hard_cluster, propability
 
 def print_tree(node, indent=0, prefix="Root: "):
     if node is not None:
