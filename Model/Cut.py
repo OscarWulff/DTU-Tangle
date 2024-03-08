@@ -1,4 +1,4 @@
-   class Cut:
+class Cut:
     def __init__(self, id : int, cost : float, oreientation : str, A : set, Ac : set ):
         self.id = id
         self.cost = cost
