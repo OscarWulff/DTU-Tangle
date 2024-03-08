@@ -24,8 +24,10 @@ def cost_function_helper(G, partition):
     cut = 0
     for u, v in G.edges():
         if (u in partition[0] and v in partition[1]) or (u in partition[1] and v in partition[0]):
-            cut += G[u][v]['weight']
+            # For unweighted graph, increment the cut by 1 for each edge
+            cut += 1
     return cut
+
 
 def cost_function_Graph(G, cuts):
     """ 
@@ -37,7 +39,10 @@ def cost_function_Graph(G, cuts):
     Returns:
     cost of each cut
     """
+
     return [cost_function_helper(G, cut) for cut in cuts]
+
+
 
 # Example usage:
 G = nx.Graph()
@@ -48,8 +53,11 @@ G.add_weighted_edges_from([(1, 2, 0.5), (1, 3, 10), (2, 3, 0.6), (3, 4, 0.7),
                              (16, 17, 1.2), (17, 18, 1.3), (18, 19, 1.4), (19, 20, 1.5),
                              (20, 21, 1.6), (21, 22, 1.7), (22, 23, 1.8), (23, 24, 1.9)])
 
-cuts = generate_multiple_cuts(G)
-cost = cost_function_Graph(G, cuts)
+G1 = nx.Graph()
+G1.add_edges_from([(1,2), (2,3), (3,4), (4,5), (5,6), (6,7), (7,8), (8,9), (9,10), (10,11), (11,12), (12,13), (13,14), (14,15), (15,16), (16,17), (17,18), (18,19), (19,20), (20,21), (21,22), (22,23), (23,24)])
+
+cuts = generate_multiple_cuts(G1)
+cost = cost_function_Graph(G1, cuts)
 
 print(cuts)
 print(cost)
