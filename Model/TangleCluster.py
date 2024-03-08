@@ -4,17 +4,7 @@ from SearchTree import *
 
 from DataSetFeatureBased import order_function_featurebased
 
-def order_function():
-    """ 
-    order the cuts after cost 
-    
-    Paramaters:
-    Cuts
-
-    Returns: 
-    An order of the cuts    
-    """
-    pass
+from DataType import DataType
 
 def is_consistent(chosen_cut, tangles, agrrement_parameter):
     if len(tangles) == 0:
@@ -33,8 +23,8 @@ def is_consistent(chosen_cut, tangles, agrrement_parameter):
                         return False
     return True
 
-
-def create_searchtree(cuts, a, points=None):
+# Skal ændres i forhold til 'data'
+def create_searchtree(data : DataType):
     """ 
     create searchtree from the cuts 
     
@@ -47,7 +37,7 @@ def create_searchtree(cuts, a, points=None):
     root = Searchtree(None, 0)
 
     leaves = [root]
-    cuts_ordered = order_function_featurebased(cuts, points)
+    cuts_ordered = data.order_function_featurebased()
     #cuts_ordered = order_cuts_by_cost(cuts)
     # print(cuts_ordered)
     id = 0
