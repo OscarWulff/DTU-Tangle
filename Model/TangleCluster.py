@@ -4,17 +4,7 @@ from SearchTree import *
 
 from DataSetFeatureBased import order_function_featurebased
 
-def order_function():
-    """ 
-    order the cuts after cost 
-    
-    Paramaters:
-    Cuts
-
-    Returns: 
-    An order of the cuts    
-    """
-    pass
+from DataType import DataType
 
 def is_consistent(chosen_cut, tangles, agrrement_parameter):
     if len(tangles) == 0:
@@ -33,8 +23,8 @@ def is_consistent(chosen_cut, tangles, agrrement_parameter):
                         return False
     return True
 
-
-def create_searchtree(cuts, a, points=None):
+# Skal ændres i forhold til 'data'
+def create_searchtree(data : DataType):
     """ 
     create searchtree from the cuts 
     
@@ -47,7 +37,7 @@ def create_searchtree(cuts, a, points=None):
     root = Searchtree(None, 0)
 
     leaves = [root]
-    cuts_ordered = order_function_featurebased(cuts, points)
+    cuts_ordered = data.order_function_featurebased()
     #cuts_ordered = order_cuts_by_cost(cuts)
     # print(cuts_ordered)
     id = 0
@@ -55,7 +45,7 @@ def create_searchtree(cuts, a, points=None):
         new_leaves = []
         for leaf in leaves:
             # print(leaf.tangle)
-            if is_consistent(A, leaf.tangle, a):
+            if is_consistent(A, leaf.tangle, data.a):
                 left_child = Searchtree(leaf, leaf.cut_id+1)
                 left_child.cut_orientation = "L"
                 left_child.tangle.append([A])
@@ -64,7 +54,7 @@ def create_searchtree(cuts, a, points=None):
                 left_child.id = id
                 leaf.add_left_child(left_child)
                 new_leaves.append(left_child)
-            if is_consistent(Ac, leaf.tangle, a):
+            if is_consistent(Ac, leaf.tangle, data.a):
                 right_child = Searchtree(leaf, leaf.cut_id+1)
                 right_child.cut_orientation = "R"
                 right_child.tangle.append([Ac])

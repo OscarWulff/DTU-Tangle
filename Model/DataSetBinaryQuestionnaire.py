@@ -2,10 +2,11 @@ import pandas as pd
 import numpy as np
 from scipy.linalg import svd
 from sklearn.decomposition import PCA
-
 import matplotlib.pyplot as plt
 
-from Model.DataSet import extract_data
+from Model.Cut import Cuts
+from DataSet import extract_data
+
 
 
 # we need something that can giv ecoordinates from the dimension_reduction_binary
@@ -36,49 +37,49 @@ def perform_pca(matrix, num_components=2):
 
 
 
-def calculate_explained_varince(S):
-        rho = (S * S) / (S * S).sum()
-        return rho
+# def calculate_explained_varince(S):
+#         rho = (S * S) / (S * S).sum()
+#         return rho
 
 
 
-def dimension_reduction_binary(csv_file_path):
+# def dimension_reduction_binary(csv_file_path):
 
-    # This can be put into DataSet.py
-    """ 
-    This function is used to reduce the dimension of binary questionnaires data set 
+#     # This can be put into DataSet.py
+#     """ 
+#     This function is used to reduce the dimension of binary questionnaires data set 
     
-    Parameters:
-    Takes a csv-file of zeros and ones. Zero represents "No" and ones represent "yes" to a question. 
-    Each row represent object.
-    Example of a file: 
-    "1,0,0,0,0,1,1,1,1
-     0,1,0,0,1,1,1,0,0
-     ....
-     ...
-    "
+#     Parameters:
+#     Takes a csv-file of zeros and ones. Zero represents "No" and ones represent "yes" to a question. 
+#     Each row represent object.
+#     Example of a file: 
+#     "1,0,0,0,0,1,1,1,1
+#      0,1,0,0,1,1,1,0,0
+#      ....
+#      ...
+#     "
 
-    Returns:
-    Eigenvectors and Projections of the PCA
-    """
+#     Returns:
+#     Eigenvectors and Projections of the PCA
+#     """
 
-    df = pd.read_csv(csv_file_path)
-    df = df.values
-    # eigen_vectors = np.linalg.eig(df)
+#     df = pd.read_csv(csv_file_path)
+#     df = df.values
+#     # eigen_vectors = np.linalg.eig(df)
     
-    N, _ = df.shape
+#     N, _ = df.shape
    
-    # Subtract mean value from data
-    Y = df - np.ones((N, 1)) * df.mean(0)
+#     # Subtract mean value from data
+#     Y = df - np.ones((N, 1)) * df.mean(0)
 
-    # PCA by computing SVD of Y
-    _, S, Vh = svd(Y, full_matrices=False)
-    # scipy.linalg.svd returns "Vh", which is the Hermitian (transpose)
-    # of the vector V. So, for us to obtain the correct V, we transpose:
-    V = Vh.T
+#     # PCA by computing SVD of Y
+#     _, S, Vh = svd(Y, full_matrices=False)
+#     # scipy.linalg.svd returns "Vh", which is the Hermitian (transpose)
+#     # of the vector V. So, for us to obtain the correct V, we transpose:
+#     V = Vh.T
 
 
-    return S,V
+#     return S,V
 
 
 def cost_function_binary(A, Ac, questionnaires):
@@ -165,10 +166,12 @@ def cut_generator_binary(nd_questionnaires):
     
     cut_list = []
     cost = 0
+    orientation = "None"
 
     num_of_participants = len(nd_questionnaires[0])
     num_of_quest = len(nd_questionnaires[1])
 
+    cuts_list = []
     cuts_y = [set() for _ in range(num_of_quest)]
     cuts_n = [set() for _ in range(num_of_quest)]
      
@@ -181,9 +184,9 @@ def cut_generator_binary(nd_questionnaires):
                 cuts_n[i].add(j)
         
         cost = cost_function_binary(cuts_y[i], cuts_n[i], nd_questionnaires)
-        cut_list.append([cuts_y[i], cuts_n[i], i, cost])
+        cuts_list.append(Cuts(i, cost, orientation, cuts_y[i], cuts_n[i]))
 
-    return cut_list
+    return cuts_list
 
 
 def order_cuts_by_cost(lst):
@@ -200,7 +203,7 @@ def order_cuts_by_cost(lst):
     costs (list): List of costs corresponding to each cut
     """
     
-    return sorted(lst, key=lambda x: x[-1])
+    return sorted(lst, key=lambda x: x.cost)
 
 
 def intersect_sets(set_list):
@@ -269,51 +272,11 @@ def plot_2d_coordinates(dataframe, x_col='x', y_col='y', title="2D Plot", xlabel
 
 # dimension_reduction_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
 
-res = cut_generator_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
-q = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
-res_ordered = order_cuts_by_cost(res)
-
-# for i in range(len(cy)):
-#    cost_of_cut = cost_function_binary(cy[i], cn[i], q)
-#    print(cost_of_cut)
-
-# for i in range(len(res_ordered)):
-print(res_ordered)
-print(res_ordered[0])
+data = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
+res = cut_generator_binary(data)
 
 
+order_res = order_cuts_by_cost(res)
 
-# cost_of_cut = ordered_cuts = order_cuts_by_cost(cy, cn, q)
-# print(cost_of_cut[0][2])
-# print(cost_of_cut[0][2])
-   
-
-# Initialize a list of sets
-# list_of_sets = [set() for _ in range(3)]  # replace n with the desired number of sets
-
-# list_of_sets[0].add(1)
-# list_of_sets[0].add(2)
-# list_of_sets[0].add(3)
-# list_of_sets[0].add(4)
-# list_of_sets[0].add(5)
-# list_of_sets[0].add(6)
-
-# list_of_sets[1].add(1)
-# list_of_sets[1].add(2)
-# list_of_sets[1].add(3)
-# list_of_sets[1].add(5)
-
-# list_of_sets[2].add(1)
-# list_of_sets[2].add(2)
-# list_of_sets[2].add(3)
-# list_of_sets[2].add(6)
-
-# intersection = intersect_sets(list_of_sets)
-# print(intersection)
-
-# res1 = perform_pca(q, 2)
-
-
-# plot_2d_coordinates(res1, x_col='PC1', y_col='PC2', title="2D PCA Plot", xlabel="PC1", ylabel="PC2")
-
-# print(res)
+for i in order_res:
+    print(i.A)
