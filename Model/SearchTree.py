@@ -11,6 +11,7 @@ class Searchtree():
         self.right_node : Searchtree = None
         self.tangle = []
         self.cut : Cut = None
+        self.cuts : set[Cut] = set()
         self.cut_id = cut_id
         self.cut_orientation = ""
         self.leaf = True
@@ -83,6 +84,8 @@ def condense_tree(root: Searchtree):
                         leaf.parent_node.parent_node.right_node = leaf
                     leaf.condensed_oritentations.add(f"{leaf.parent_node.cut_id}"+ leaf.parent_node.cut_orientation)
                     leaf.condensed_oritentations.add(f"{leaf.cut_id}"+ leaf.cut_orientation)
+                    leaf.cuts.add(leaf.parent_node.cut)
+                    leaf.cuts.add(leaf.cut)
                     leaf.parent_node = leaf.parent_node.parent_node 
                     condense_leaf(leaf)
             elif leaf.parent_node.left_node != None and leaf.parent_node.right_node != None:
@@ -107,8 +110,6 @@ def contracting_search_tree(node : Searchtree):
     contracted Search tree
 
     """
-    # Vi mangler at tilføje nodens selv til condensed_oritentations.
-    # Herefter vil få den rigtige contradiction.
 
     if node != None:
         if node.leaf == False:
@@ -123,10 +124,14 @@ def contracting_search_tree(node : Searchtree):
                         cut_or = co[1]
                         if cut_or == "L":
                             if cut_nr+"R" in node.right_node.condensed_oritentations:
-                                node.characterizing_cuts.add(cut_nr)
+                                for cut in node.right_node.cuts:
+                                    if str(cut.id) == cut_nr:
+                                        node.characterizing_cuts.add(cut)
                         else:
                             if cut_nr+"L" in node.right_node.condensed_oritentations:
-                                node.characterizing_cuts.add(cut_nr)
+                                for cut in node.left_node.cuts:
+                                    if cut.id == cut_nr:
+                                        node.characterizing_cuts.add(cut)
                  
 
 
@@ -141,7 +146,7 @@ def soft_clustering(node, v, accumulated, softClustering):
     Soft clustering of the point
     """
     
-    def p_l(v):
+    def p_l(node, v):
         sum_right = 0
         sum_all = 0
         for cut in node.characterizing_cuts:
@@ -157,7 +162,7 @@ def soft_clustering(node, v, accumulated, softClustering):
     if node.leaf:
         softClustering[node.id] = accumulated
     else:
-        pl = p_l(v)
+        pl = p_l(node, v)
         pr = 1 - p_l
         if node.left_node != None: 
             soft_clustering(node.left_node, v, accumulated * pl, softClustering)
@@ -179,13 +184,13 @@ def hard_clustering(softClustering):
 
     """
     max_prob = 0
-    hard_cluster = 0
-    for cluster, propability in softClustering.items():
+    node_id = 0
+    for id, propability in softClustering.items():
         if propability > max_prob:
-            hard_cluster = cluster
+            node_id = id
             max_prob = propability
 
-    return hard_cluster, propability
+    return node_id, max_prob
 
 def print_tree(node, indent=0, prefix="Root: "):
     if node is not None:

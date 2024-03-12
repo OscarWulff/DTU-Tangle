@@ -8,7 +8,7 @@ from Cut import Cut
 
 class DataSetFeatureBased(DataType):
 
-    def __init__(self,agreement_param, cuts=[], search_tree=None):
+    def __init__(self,agreement_param, cuts : list[Cut] =[], search_tree=None):
         super().__init__(agreement_param, cuts, search_tree)
         self.points = []
         self.initialize()
@@ -20,7 +20,8 @@ class DataSetFeatureBased(DataType):
 
         for z, (x, y) in enumerate(zip(pc1, pc2)):
             self.points.append((x, y, z))
-
+        
+        print(self.points)
         self.cut_generator_axis(0)
         self.cost_function()
 
@@ -42,9 +43,6 @@ class DataSetFeatureBased(DataType):
             left_oriented = cut.A
             right_oriented = cut.Ac
 
-            print(left_oriented)
-            print(right_oriented)
-
             # Calcualte the cost
             for left_or in left_oriented:
                 for right_or in right_oriented:
@@ -55,7 +53,6 @@ class DataSetFeatureBased(DataType):
     def cut_generator_axis(self, axis):
 
         n = len(self.points)
-
         values = []
         sorted_points = self.points
 
@@ -64,18 +61,15 @@ class DataSetFeatureBased(DataType):
         
         _, sorted_points = self.sort_for_list(values, sorted_points)
 
-        print(sorted_points)
-
         i = self.agreement_param
         while( n >= i + self.agreement_param ):
             cut = Cut()
+            cut.A = set()
+            cut.Ac = set()
             for k in range(0, i):
-                print(f"A : {sorted_points[k][2]}")
                 cut.A.add(sorted_points[k][2])
             for k in range(i, n):
-                print(f"Ac : {sorted_points[k][2]}")
                 cut.Ac.add(sorted_points[k][2])
-            print("____")
             self.cuts.append(cut)
             i += self.agreement_param
 
@@ -96,7 +90,7 @@ class DataSetFeatureBased(DataType):
         costs = []
         for cut in self.cuts: 
             costs.append(cut.cost)
-
+        
         _, cuts_ordered = self.sort_for_list(costs, self.cuts)
         return cuts_ordered
 
@@ -159,14 +153,5 @@ def order_projections(rho, V):
     indices = np.argsort(rho)
     indices = indices[::-1]
 
-def main():
-    test = DataSetFeatureBased(1)
-    for cut in test.cuts:
-        print(cut.A)
-        print(cut.Ac)
-        print(cut.cost)
-        
-
-main()
 
 
