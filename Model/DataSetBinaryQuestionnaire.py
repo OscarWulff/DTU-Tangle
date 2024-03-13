@@ -14,7 +14,22 @@ class DataSetBinaryQuestionnaire(DataType):
         super().__init__(agreement_param, cuts, search_tree)
         
 
-    
+    def order_function(self):
+        """
+        This function orders the cuts based on their cost in ascending order.
+
+        Parameters:
+        cuts_y (list): List of sets representing 'yes' cuts
+        cuts_n (list): List of sets representing 'no' cuts
+        questionnaires (numpy.ndarray): Array of questionnaires data
+
+        Returns:
+        ordered_cuts (list): List of cuts ordered by cost
+        costs (list): List of costs corresponding to each cut
+        """
+
+        return sorted(self.cuts, key=lambda x: x.cost)
+
     
     def cut_generator_binary(self,nd_questionnaires):
         
@@ -98,21 +113,6 @@ def perform_pca(matrix, num_components=2):
 
     return pca_coordinates
 
-def order_cuts_by_cost(self):
-    """
-    This function orders the cuts based on their cost in ascending order.
-    
-    Parameters:
-    cuts_y (list): List of sets representing 'yes' cuts
-    cuts_n (list): List of sets representing 'no' cuts
-    questionnaires (numpy.ndarray): Array of questionnaires data
-    
-    Returns:
-    ordered_cuts (list): List of cuts ordered by cost
-    costs (list): List of costs corresponding to each cut
-    """
-    
-    return sorted(self.cuts, key=lambda x: x.cost)
 
 
 
@@ -122,43 +122,6 @@ def order_cuts_by_cost(self):
 
 
 
-# def dimension_reduction_binary(csv_file_path):
-
-#     # This can be put into DataSet.py
-#     """ 
-#     This function is used to reduce the dimension of binary questionnaires data set 
-    
-#     Parameters:
-#     Takes a csv-file of zeros and ones. Zero represents "No" and ones represent "yes" to a question. 
-#     Each row represent object.
-#     Example of a file: 
-#     "1,0,0,0,0,1,1,1,1
-#      0,1,0,0,1,1,1,0,0
-#      ....
-#      ...
-#     "
-
-#     Returns:
-#     Eigenvectors and Projections of the PCA
-#     """
-
-#     df = pd.read_csv(csv_file_path)
-#     df = df.values
-#     # eigen_vectors = np.linalg.eig(df)
-    
-#     N, _ = df.shape
-   
-#     # Subtract mean value from data
-#     Y = df - np.ones((N, 1)) * df.mean(0)
-
-#     # PCA by computing SVD of Y
-#     _, S, Vh = svd(Y, full_matrices=False)
-#     # scipy.linalg.svd returns "Vh", which is the Hermitian (transpose)
-#     # of the vector V. So, for us to obtain the correct V, we transpose:
-#     V = Vh.T
-
-
-#     return S,V
 
 
 
@@ -264,41 +227,46 @@ def remove_cost_and_id(list):
 
 #  ----------------------------------------------test------------------------------------------------
 
-def plot_2d_coordinates(dataframe, x_col='x', y_col='y', title="2D Plot", xlabel="X-axis", ylabel="Y-axis"):
+
+
+
+def plot_2d_coordinates(dataframe, title="2D Plot", xlabel="X-axis", ylabel="Y-axis"):
     """
     Plot 2D coordinates from a Pandas DataFrame using matplotlib.
 
     Parameters:
     - dataframe: Pandas DataFrame containing 2D coordinates with specified column names.
-    - x_col: Column name for x-axis coordinates (default is 'x').
-    - y_col: Column name for y-axis coordinates (default is 'y').
     - title: Title for the plot (default is "2D Plot").
     - xlabel: Label for the x-axis (default is "X-axis").
     - ylabel: Label for the y-axis (default is "Y-axis").
     """
 
     plt.figure(figsize=(8, 8))
-    plt.scatter(dataframe[x_col], dataframe[y_col])
+    plt.scatter(dataframe['PC1'], dataframe['PC2'])  # Assuming PC1 and PC2 are the column names of your principal components
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.grid(True)
     plt.show()
 
-# dimension_reduction_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
-    
+# data = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
+# data_h = perform_pca(data)
+# pd_data = pd.DataFrame(data)
+# print(data_h)
+# plot_2d_coordinates(data_h)
+# plot_2d_coordinates(perform_pca("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv"))        
 
 
-data = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
-res = DataSetBinaryQuestionnaire(1)
+# data = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
+# res = DataSetBinaryQuestionnaire(1)
 
-j = res.cut_generator_binary(data)
+# sovs = res.cut_generator_binary(data)
 
-for i in j.cuts:
-    print(i.A)
-    print(i.Ac)
-    print(i.cost)
-    print("")
+# # for i in sovs.cuts:
+#     print(i.A)
+#     print(i.Ac)
+#     print(i.cost)
+#     print("")
 
 
 
