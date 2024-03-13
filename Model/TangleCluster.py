@@ -1,12 +1,12 @@
 
 from SearchTree import *
-#from DataSetBinaryQuestionnaire import *
+import copy
 
-from DataSetFeatureBased import order_function_featurebased
+from DataSetFeatureBased import DataSetFeatureBased
 
 from DataType import DataType
 
-def is_consistent(chosen_cut, tangles, agrrement_parameter):
+def consistent(chosen_cut, tangles, agrrement_parameter):
     if len(tangles) == 0:
         return len(chosen_cut) >= agrrement_parameter
     elif len(tangles) == 1: 
@@ -38,27 +38,27 @@ def create_searchtree(data : DataType):
 
     leaves = [root]
     cuts_ordered = data.order_function_featurebased()
-    #cuts_ordered = order_cuts_by_cost(cuts)
-    # print(cuts_ordered)
     id = 0
-    for  [A, Ac] in cuts_ordered:
+    for cutId, cut in enumerate(cuts_ordered):
         new_leaves = []
+        cut.id = cutId
         for leaf in leaves:
-            # print(leaf.tangle)
-            if is_consistent(A, leaf.tangle, data.a):
+            if consistent(cut.A, leaf.tangle, data.agreement_param):
                 left_child = Searchtree(leaf, leaf.cut_id+1)
                 left_child.cut_orientation = "L"
-                left_child.tangle.append([A])
+                left_child.tangle.append([cut.A])
                 left_child.tangle += leaf.tangle
+                left_child.cut = cut
                 id = id+1
                 left_child.id = id
                 leaf.add_left_child(left_child)
                 new_leaves.append(left_child)
-            if is_consistent(Ac, leaf.tangle, data.a):
+            if consistent(cut.Ac, leaf.tangle, data.agreement_param):
                 right_child = Searchtree(leaf, leaf.cut_id+1)
                 right_child.cut_orientation = "R"
-                right_child.tangle.append([Ac])
+                right_child.tangle.append([cut.Ac])
                 right_child.tangle += leaf.tangle
+                right_child.cut = cut
                 id = id+1
                 right_child.id = id
                 leaf.add_right_child(right_child)
@@ -82,35 +82,36 @@ def create_searchtree(data : DataType):
 
 # Example usage:
 # Constructing a simple tree
-root = Searchtree(None, "root")
-root.add_left_child(Searchtree(root, "1L"))
-root.add_right_child(Searchtree(root, "1R"))
-root.right_node.add_right_child(Searchtree(root.right_node, "2R"))
+# root = Searchtree(None, "root")
+# root.add_left_child(Searchtree(root, "1L"))
+# root.add_right_child(Searchtree(root, "1R"))
+# root.right_node.add_right_child(Searchtree(root.right_node, "2R"))
 
 
-split = root.right_node.right_node
+# split = root.right_node.right_node
 
-split.add_right_child(Searchtree(split, "3R"))
-split.right_node.add_right_child(Searchtree(split.right_node, "4R"))
-split.right_node.right_node.add_left_child(Searchtree(split.right_node.right_node, "5L"))
-split.right_node.right_node.left_node.add_right_child(Searchtree(split.right_node.right_node.left_node, "6R"))
-split.right_node.right_node.left_node.right_node.add_right_child(Searchtree(split.right_node.right_node.left_node.right_node, "7R"))
+# split.add_right_child(Searchtree(split, "3R"))
+# split.right_node.add_right_child(Searchtree(split.right_node, "4R"))
+# split.right_node.right_node.add_left_child(Searchtree(split.right_node.right_node, "5L"))
+# split.right_node.right_node.left_node.add_right_child(Searchtree(split.right_node.right_node.left_node, "6R"))
+# split.right_node.right_node.left_node.right_node.add_right_child(Searchtree(split.right_node.right_node.left_node.right_node, "7R"))
 
-split.add_left_child(Searchtree(split, "3L"))
-split.left_node.add_left_child(Searchtree(split.left_node, "4L"))
-split.left_node.left_node.add_left_child(Searchtree(split.left_node.left_node, "5L"))
+# split.add_left_child(Searchtree(split, "3L"))
+# split.left_node.add_left_child(Searchtree(split.left_node, "4L"))
+# split.left_node.left_node.add_left_child(Searchtree(split.left_node.left_node, "5L"))
 
 
-split2 = split.left_node.left_node.left_node
+# split2 = split.left_node.left_node.left_node
 
-split2.add_left_child(Searchtree(split2, "6L"))
-split2.left_node.add_left_child(Searchtree(split2.left_node, "7L"))
-split2.left_node.left_node.add_left_child(Searchtree(split2.left_node.left_node, "8L"))
+# split2.add_left_child(Searchtree(split2, "6L"))
+# split2.left_node.add_left_child(Searchtree(split2.left_node, "7L"))
+# split2.left_node.left_node.add_left_child(Searchtree(split2.left_node.left_node, "8L"))
 
-split2.add_right_child(Searchtree(split2, "6R"))
-split2.right_node.add_left_child(Searchtree(split2.right_node, "7L"))
-split2.right_node.left_node.add_left_child(Searchtree(split2.right_node.left_node, "8L"))
+# split2.add_right_child(Searchtree(split2, "6R"))
+# split2.right_node.add_left_child(Searchtree(split2.right_node, "7L"))
+# split2.right_node.left_node.add_left_child(Searchtree(split2.right_node.left_node, "8L"))
 
+root = create_searchtree(DataSetFeatureBased(1))
 print_tree(root)
 new_new_tree = condense_tree(root)
 print_tree(new_new_tree)
@@ -119,13 +120,15 @@ contracting_search_tree(new_new_tree)
 ben = [new_new_tree]
 
 for n in ben: 
-    print(n.cut_id+n.cut_orientation)
+    print("___")
+    print(str(n.cut_id)+n.cut_orientation)
     print(n.condensed_oritentations)
-    print(n.characterizing_cuts)
+    print({cut.id for cut in n.characterizing_cuts})
     if n.left_node != None:
         ben.append(n.left_node)
     if n.right_node != None: 
         ben.append(n.right_node)
+    print("___")
 
 # res = cut_generator_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
 

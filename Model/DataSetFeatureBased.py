@@ -8,13 +8,22 @@ from Cut import Cut
 
 class DataSetFeatureBased(DataType):
 
-    def __init__(self,points, agreement_param, cuts=None, search_tree=None):
+    def __init__(self,agreement_param, cuts : list[Cut] =[], search_tree=None):
         super().__init__(agreement_param, cuts, search_tree)
-        self.points = points
-        self.cuts = []
+        self.points = []
+        self.initialize()
 
     def initialize(self):
-        pass
+        _, V = dimension_reduction_feature_based("iris.csv")
+        pc1 = V[:, 0]
+        pc2 = V[:, 1]
+
+        for z, (x, y) in enumerate(zip(pc1, pc2)):
+            self.points.append((x, y, z))
+        
+        print(self.points)
+        self.cut_generator_axis(0)
+        self.cost_function()
 
     def cost_function(self):
         """ 
@@ -26,61 +35,45 @@ class DataSetFeatureBased(DataType):
         Returns:
         cost of each cut
         """
-        # The index of the array represent the cut and the value represent the cost
-        costs = []
 
         # We transpose it such that we can go through the column instead of row
         for cut in self.cuts:
 
             sum_cost = 0.0
-            left_oriented = cut[0]
-            right_oriented = cut[1]
+            left_oriented = cut.A
+            right_oriented = cut.Ac
 
             # Calcualte the cost
             for left_or in left_oriented:
                 for right_or in right_oriented:
                     sum_cost += -(self.euclidean_distance(self.points[left_or][0], self.points[right_or][0], self.points[left_or][1], self.points[right_or][1]))
             
-            costs.append(sum_cost)
-        return costs
+            cut.cost = sum_cost
 
     def cut_generator_axis(self, axis):
 
-        def sort_for_list(axis_values, points):
-            combined = list(zip(axis_values, points))
-            sorted_combined = sorted(combined, key=lambda x: x[0])
-            return zip(*sorted_combined)
-
         n = len(self.points)
-        cuts = []
-
         values = []
-        sorted_points = []
+        sorted_points = self.points
 
-        for point in self.objects:
+        for point in self.points:
             values.append(point[axis])
+        
+        _, sorted_points = self.sort_for_list(values, sorted_points)
+
+        i = self.agreement_param
+        while( n >= i + self.agreement_param ):
+            cut = Cut()
+            cut.A = set()
+            cut.Ac = set()
+            for k in range(0, i):
+                cut.A.add(sorted_points[k][2])
+            for k in range(i, n):
+                cut.Ac.add(sorted_points[k][2])
+            self.cuts.append(cut)
+            i += self.agreement_param
 
     
-        _, sorted_points = sort_for_list(values, self.points)
-
-
-        i = self.a
-        while( n >= i + self.a ):
-            cut = []
-            A = set()
-            for k in range(0, i):
-                A.add(sorted_points[k][2])
-            Ac = set()
-            for k in range(i, n):
-                Ac.add(sorted_points[k][2])
-            cut.append(A)
-            cut.append(Ac)
-            cuts.append(cut)
-            i += self.a
-
-        return cuts
-
-
     def order_function_featurebased(self):
         """ 
         order the cuts after cost 
@@ -91,17 +84,31 @@ class DataSetFeatureBased(DataType):
         Returns: 
         An order of the cuts    
         """
-        def sort_for_list(axis_values, points):
+        
+        self.cost_function()
+
+        costs = []
+        for cut in self.cuts: 
+            costs.append(cut.cost)
+        
+        _, cuts_ordered = self.sort_for_list(costs, self.cuts)
+        return cuts_ordered
+
+        
+    def euclidean_distance(self, x1, x2, y1, y2):
+        distance = math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+        return distance
+
+    def euclidean_distance_eulers(self, x1, x2, y1, y2):
+        distance = math.e(-math.sqrt((x1 - x2)**2 + (y1 - y2)**2))
+        return distance
+
+    def sort_for_list(self, axis_values, points):
             combined = list(zip(axis_values, points))
             sorted_combined = sorted(combined, key=lambda x: x[0])
             return zip(*sorted_combined)
-        
-        costs = self.cost_function(self.cuts, self.points)
-        _, cuts_ordered = sort_for_list(costs, self.cuts)
-        return cuts_ordered
 
-
-    def dimension_reduction_feature_based(filename):
+def dimension_reduction_feature_based(filename):
         """ 
         This function is used to reduce the dimension of feature based data set 
         
@@ -138,36 +145,13 @@ class DataSetFeatureBased(DataType):
 
         return S, V
 
-    def calculate_explained_varince(S):
-        rho = (S * S) / (S * S).sum()
-        return rho
+def calculate_explained_varince(S):
+    rho = (S * S) / (S * S).sum()
+    return rho
 
-    def order_projections(rho, V):
-        indices = np.argsort(rho)
-        indices = indices[::-1]
-        
-    def euclidean_distance(x1, x2, y1, y2):
-        distance = math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
-        return distance
-
-    def euclidean_distance_eulers(x1, x2, y1, y2):
-        distance = math.e(-math.sqrt((x1 - x2)**2 + (y1 - y2)**2))
-        return distance
-
-
-def main():
-    a = 1
-
-    _, V = dimension_reduction_feature_based("iris.csv")
-    pc1 = V[:, 0]
-    pc2 = V[:, 1]
-
-    Points = []
-    for z, (x, y) in enumerate(zip(pc1, pc2)):
-        Points.append((x, y, z))
-
-    cuts = cut_generator_axis(Points, a, 0)
-    costs = cost_function(cuts, Points)
+def order_projections(rho, V):
+    indices = np.argsort(rho)
+    indices = indices[::-1]
 
 
 
