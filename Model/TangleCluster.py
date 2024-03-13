@@ -39,7 +39,7 @@ def create_searchtree(data : DataType):
     leaves = [root]
     cuts_ordered = data.order_function_featurebased()
     id = 0
-    for cutId, cut in enumerate(cuts_ordered):
+    for cutId, cut in enumerate(cuts_ordered, start=1):
         new_leaves = []
         cut.id = cutId
         for leaf in leaves:
@@ -112,9 +112,7 @@ def create_searchtree(data : DataType):
 # split2.right_node.left_node.add_left_child(Searchtree(split2.right_node.left_node, "8L"))
 
 root = create_searchtree(DataSetFeatureBased(1))
-print_tree(root)
 new_new_tree = condense_tree(root)
-print_tree(new_new_tree)
 contracting_search_tree(new_new_tree)
 
 ben = [new_new_tree]
@@ -130,6 +128,10 @@ for n in ben:
         ben.append(n.right_node)
     print("___")
 
+soft = soft_clustering(root, 2, 1)
+print(soft)
+hard = hard_clustering(soft)
+print(hard)
 # res = cut_generator_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
 
 # john = create_searchtree(res, 3)

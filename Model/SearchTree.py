@@ -89,7 +89,10 @@ def condense_tree(root: Searchtree):
                     leaf.parent_node = leaf.parent_node.parent_node 
                     condense_leaf(leaf)
             elif leaf.parent_node.left_node != None and leaf.parent_node.right_node != None:
+                leaf.condensed_oritentations.add(f"{leaf.cut_id}"+ leaf.cut_orientation)
+                leaf.cuts.add(leaf.cut)
                 condense_leaf(leaf.parent_node)
+                
         
 
     for leaf in leaves: 
@@ -119,7 +122,7 @@ def contracting_search_tree(node : Searchtree):
                 for co in node.left_node.condensed_oritentations:
                     if co in node.right_node.condensed_oritentations:
                         node.condensed_oritentations.add(co)
-                    else:
+                    else:     
                         cut_nr = co[0]
                         cut_or = co[1]
                         if cut_or == "L":
@@ -135,7 +138,7 @@ def contracting_search_tree(node : Searchtree):
                  
 
 
-def soft_clustering(node, v, accumulated, softClustering):
+def soft_clustering(node, v, accumulated, softClustering = {}):
     """ 
     from a searchtree create a soft clustering of the objects 
     
@@ -155,15 +158,13 @@ def soft_clustering(node, v, accumulated, softClustering):
 
             if v in cut.A: 
                 sum_right += h(cut.cost)
-
         return (sum_right/sum_all)
 
-    softClustering = {}
     if node.leaf:
         softClustering[node.id] = accumulated
     else:
         pl = p_l(node, v)
-        pr = 1 - p_l
+        pr = 1 - pl
         if node.left_node != None: 
             soft_clustering(node.left_node, v, accumulated * pl, softClustering)
         if node.right_node != None: 
