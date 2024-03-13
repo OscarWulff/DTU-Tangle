@@ -163,9 +163,6 @@ def order_cuts_by_cost(self):
 
 
 
-
-    
-
 def sim(v,w):
 
     """
