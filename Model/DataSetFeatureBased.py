@@ -74,7 +74,7 @@ class DataSetFeatureBased(DataType):
             i += self.agreement_param
 
     
-    def order_function_featurebased(self):
+    def order_function(self):
         """ 
         order the cuts after cost 
         
