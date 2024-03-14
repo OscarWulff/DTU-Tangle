@@ -73,10 +73,8 @@ class GraphWindow(QMainWindow):
         # Sort cuts based on cost
         sorted_cuts = data_set_graph.order_function()
 
-
         # Plot the cuts on the graph
         for cut in sorted_cuts:
-            print("test")
             pos = nx.spring_layout(G)  # Define the layout of the graph
             nx.draw_networkx_nodes(G, pos, nodelist=cut.A, node_color='r')
             nx.draw_networkx_nodes(G, pos, nodelist=cut.Ac, node_color='b')
@@ -85,3 +83,4 @@ class GraphWindow(QMainWindow):
         
         plt.title('Graph with Cuts')
         plt.show()
+        

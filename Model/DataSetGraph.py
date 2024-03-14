@@ -11,10 +11,10 @@ class DataSetGraph(DataType):
         if self.G is None:
             raise ValueError("Graph G is not initialized. Please assign a graph to the G attribute.")
         
-        self.generate_multiple_cuts(self.G, max_iter=1, weight='weight', seed=None)
+        self.generate_multiple_cuts(self.G, max_iter=2, weight='weight', seed=None)
         self.cost_function_Graph(self.G)
 
-    def generate_multiple_cuts(self, G, max_iter=2, weight='weight', seed=None): 
+    def generate_multiple_cuts(self, G, max_iter, weight, seed): 
         """ 
         Generate multiple cuts for the graph.
         
@@ -49,9 +49,6 @@ class DataSetGraph(DataType):
 
     def order_function(self):
         """Return cuts in list of ascending order of the cost."""
-        for i in self.cuts: 
-            print(i.cost)
-        print(sorted(self.cuts, key=lambda x: x.cost))
         return sorted(self.cuts, key=lambda x: x.cost)
 
 def cost_function_helper(G, partition):
@@ -73,6 +70,5 @@ def cost_function_helper(G, partition):
             if weight is not None:
                 cut_cost += weight
             else:
-                print('test')
                 cut_cost += 1
     return cut_cost
