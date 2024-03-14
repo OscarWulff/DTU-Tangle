@@ -1,4 +1,4 @@
-from Cut import Cut
+from Model.Cut import Cut
 
 class DataType:
     def __init__(self,  agreement_param, cuts : list[Cut] = [], search_tree=None):

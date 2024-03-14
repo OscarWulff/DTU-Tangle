@@ -1,8 +1,11 @@
 
+from DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire
+from DataSet import extract_data
 from SearchTree import *
 import copy
 
 from DataSetFeatureBased import DataSetFeatureBased
+from DataSetGraph import DataSetGraph
 
 from DataType import DataType
 
@@ -61,6 +64,7 @@ def create_searchtree(data : DataType):
         new_leaves = []
         cut.id = cutId
         for leaf in leaves:
+            # print(leaf.tangle, cut.Ac)
             if consistent(cut.A, leaf.tangle, data.agreement_param):
                 id += 1
                 left_child = create_child(leaf, "L", cut, id)
@@ -136,18 +140,47 @@ new_new_tree = condense_tree(root)
 print_tree(new_new_tree)
 contracting_search_tree(new_new_tree)
 
-ben = [new_new_tree]
 
-for n in ben: 
-    print("___")
-    print(str(n.cut_id)+n.cut_orientation)
-    print(n.condensed_oritentations)
-    print({cut.id for cut in n.characterizing_cuts})
-    if n.left_node != None:
-        ben.append(n.left_node)
-    if n.right_node != None: 
-        ben.append(n.right_node)
-    print("___")
+# data = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
+# res = DataSetBinaryQuestionnaire(1)
+
+
+# # order_cuts = res_cuts.order_function()
+
+
+
+# root_binary = res.cut_generator_binary(data)
+
+# tree = create_searchtree(root_binary)
+# tree_condense = condense_tree(tree)
+# contracting_search_tree(tree_condense)
+
+# # tree_contract = contracting_search_tree(tree_condense)
+
+
+# soft = soft_clustering(tree_condense, 0, 1, {})
+# hard = hard_clustering(soft)
+# print(hard)
+
+
+
+# print_tree(root)
+# new_new_tree = condense_tree(root)
+# print_tree(new_new_tree)
+# contracting_search_tree(new_new_tree)
+
+# ben = [new_new_tree]
+
+# for n in ben: 
+#     print("___")
+#     print(str(n.cut_id)+n.cut_orientation)
+#     print(n.condensed_oritentations)
+#     print({cut.id for cut in n.characterizing_cuts})
+#     if n.left_node != None:
+#         ben.append(n.left_node)
+#     if n.right_node != None: 
+#         ben.append(n.right_node)
+#     print("___")
 
 soft = soft_clustering(root, 3, 1)
 print(soft)
