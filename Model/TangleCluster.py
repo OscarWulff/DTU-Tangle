@@ -1,13 +1,13 @@
 
-from DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire
-from DataSet import extract_data
-from SearchTree import *
+from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire
+from Model.DataSet import extract_data
+from Model.SearchTree import *
 import copy
 
-from DataSetFeatureBased import DataSetFeatureBased
-from DataSetGraph import DataSetGraph
+from Model.DataSetFeatureBased import DataSetFeatureBased
+from Model.DataSetGraph import DataSetGraph
 
-from DataType import DataType
+from Model.DataType import DataType
 
 def consistent(chosen_cut, tangles, agrrement_parameter):
     if len(tangles) == 0:

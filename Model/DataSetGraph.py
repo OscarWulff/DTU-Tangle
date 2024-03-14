@@ -1,6 +1,6 @@
 import networkx as nx
-from Cut import Cut
-from DataType import DataType
+from Model.Cut import Cut
+from Model.DataType import DataType
 
 class DataSetGraph(DataType):
     def __init__(self, agreement_param, cuts=[], search_tree=None):

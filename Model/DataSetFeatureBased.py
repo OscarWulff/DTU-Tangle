@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 from scipy.linalg import svd
 from sklearn.decomposition import PCA
-from DataType import DataType
-from Cut import Cut
+from Model.DataType import DataType
+from Model.Cut import Cut
 
 class DataSetFeatureBased(DataType):
 

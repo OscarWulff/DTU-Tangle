@@ -1,7 +1,7 @@
 import math
 from matplotlib import pyplot as plt
 import networkx as nx
-from Cut import Cut
+from Model.Cut import Cut
 
 class Searchtree():
 
