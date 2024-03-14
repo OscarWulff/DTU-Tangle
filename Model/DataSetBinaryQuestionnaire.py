@@ -5,9 +5,9 @@ from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 
 # from Model.Cut import Cuts
-from DataSet import extract_data
-from DataType import DataType
-from Cut import Cut
+from Model.DataSet import extract_data
+from Model.DataType import DataType
+from Model.Cut import Cut
 
 class DataSetBinaryQuestionnaire(DataType):
     def __init__(self, agreement_param, cuts=[], search_tree=None):
@@ -241,14 +241,13 @@ def plot_2d_coordinates(dataframe, title="2D Plot", xlabel="X-axis", ylabel="Y-a
     - ylabel: Label for the y-axis (default is "Y-axis").
     """
 
-    plt.figure(figsize=(8, 8))
+    fig = plt.figure(figsize=(8, 8))
     plt.scatter(dataframe['PC1'], dataframe['PC2'])  # Assuming PC1 and PC2 are the column names of your principal components
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.grid(True)
-    plt.show()
-
+    return fig
 # data = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
 # data_h = perform_pca(data)
 # pd_data = pd.DataFrame(data)

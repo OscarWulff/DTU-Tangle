@@ -117,26 +117,26 @@ def create_searchtree(data : DataType):
 # root_binary = create_searchtree(DataSetBinaryQuestionnaire(1))
 
 
-data = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
-res = DataSetBinaryQuestionnaire(1)
+# data = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
+# res = DataSetBinaryQuestionnaire(1)
 
 
-# order_cuts = res_cuts.order_function()
+# # order_cuts = res_cuts.order_function()
 
 
 
-root_binary = res.cut_generator_binary(data)
+# root_binary = res.cut_generator_binary(data)
 
-tree = create_searchtree(root_binary)
-tree_condense = condense_tree(tree)
-contracting_search_tree(tree_condense)
+# tree = create_searchtree(root_binary)
+# tree_condense = condense_tree(tree)
+# contracting_search_tree(tree_condense)
 
-# tree_contract = contracting_search_tree(tree_condense)
+# # tree_contract = contracting_search_tree(tree_condense)
 
 
-soft = soft_clustering(tree_condense, 0, 1, {})
-hard = hard_clustering(soft)
-print(hard)
+# soft = soft_clustering(tree_condense, 0, 1, {})
+# hard = hard_clustering(soft)
+# print(hard)
 
 
 
@@ -158,10 +158,10 @@ print(hard)
 #         ben.append(n.right_node)
 #     print("___")
 
-soft = soft_clustering(root, 2, 1)
-print(soft)
-hard = hard_clustering(soft)
-print(hard)
+# soft = soft_clustering(root, 2, 1)
+# print(soft)
+# hard = hard_clustering(soft)
+# print(hard)
 # res = cut_generator_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
 
 # john = create_searchtree(res, 3)

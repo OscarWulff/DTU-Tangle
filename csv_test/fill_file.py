@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 # Create a 3x3 matrix with random 1s and 0s
-data = np.random.randint(2, size=(200, 20))
+data = np.random.randint(2, size=(30, 20))
 
 # Create a DataFrame from the matrix
 df = pd.DataFrame(data)
