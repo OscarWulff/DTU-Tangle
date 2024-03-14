@@ -3,6 +3,7 @@ from SearchTree import *
 import copy
 
 from DataSetFeatureBased import DataSetFeatureBased
+from DataSetGraph import DataSetGraph
 
 from DataType import DataType
 
@@ -111,7 +112,7 @@ def create_searchtree(data : DataType):
 # split2.right_node.add_left_child(Searchtree(split2.right_node, "7L"))
 # split2.right_node.left_node.add_left_child(Searchtree(split2.right_node.left_node, "8L"))
 
-root = create_searchtree(DataSetFeatureBased(1))
+root = create_searchtree(DataSetGraph(1))
 new_new_tree = condense_tree(root)
 contracting_search_tree(new_new_tree)
 
