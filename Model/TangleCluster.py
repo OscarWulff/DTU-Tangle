@@ -37,6 +37,24 @@ def create_searchtree(data : DataType):
     Returns: 
     Search tree
     """
+
+    def create_child(node, orientation, cut, id):
+        child = Searchtree(node, node.cut_id+1)
+        child.cut_orientation = orientation
+        child.tangle += node.tangle
+        child.cut = cut
+        child.cuts.add(cut)
+        child.condensed_oritentations.add(f"{child.cut_id}"+ child.cut_orientation)
+        child.id = id
+        if orientation == "L":
+            child.tangle.append([cut.A])
+            node.add_left_child(child)
+        else: 
+            child.tangle.append([cut.Ac])
+            node.add_right_child(child)
+        return child
+
+
     root = Searchtree(None, 0)
 
     leaves = [root]
@@ -48,25 +66,15 @@ def create_searchtree(data : DataType):
         for leaf in leaves:
             # print(leaf.tangle, cut.Ac)
             if consistent(cut.A, leaf.tangle, data.agreement_param):
-                left_child = Searchtree(leaf, leaf.cut_id+1)
-                left_child.cut_orientation = "L"
-                left_child.tangle.append([cut.A])
-                left_child.tangle += leaf.tangle
-                left_child.cut = cut
-                id = id+1
-                left_child.id = id
-                leaf.add_left_child(left_child)
+                id += 1
+                left_child = create_child(leaf, "L", cut, id)
                 new_leaves.append(left_child)
+
             if consistent(cut.Ac, leaf.tangle, data.agreement_param):
-                right_child = Searchtree(leaf, leaf.cut_id+1)
-                right_child.cut_orientation = "R"
-                right_child.tangle.append([cut.Ac])
-                right_child.tangle += leaf.tangle
-                right_child.cut = cut
-                id = id+1
-                right_child.id = id
-                leaf.add_right_child(right_child)
+                id += 1
+                right_child = create_child(leaf, "R", cut, id)
                 new_leaves.append(right_child)
+
         if not new_leaves:
             break     
         leaves = new_leaves
@@ -83,10 +91,16 @@ def create_searchtree(data : DataType):
 # cuts = [[{0}, {1,2}], [{1}, {0, 2}], [{2}, {0,1}]]
 # points = [(1, 1), (2, 2), (3, 3)]
 # new_tree = create_searchtree(cuts, 1, points)
-
 # Example usage:
 # Constructing a simple tree
-# root = Searchtree(None, "root")
+
+# root = Searchtree(None, 0)
+# left_child = Searchtree(root, 1)
+# left_child.cut_orientation ="L"
+# left_child.cut = Cut()
+# left_child.cuts.add(left_child.cut)
+
+
 # root.add_left_child(Searchtree(root, "1L"))
 # root.add_right_child(Searchtree(root, "1R"))
 # root.right_node.add_right_child(Searchtree(root.right_node, "2R"))
@@ -115,9 +129,15 @@ def create_searchtree(data : DataType):
 # split2.right_node.add_left_child(Searchtree(split2.right_node, "7L"))
 # split2.right_node.left_node.add_left_child(Searchtree(split2.right_node.left_node, "8L"))
 
-# root_binary = create_searchtree(DataSetBinaryQuestionnaire(1))
-root = create_searchtree(DataSetGraph(1))
+# new_new_tree = condense_tree(root)
+# print_tree(new_new_tree)
+# contracting_search_tree(new_new_tree)
+
+
+root = create_searchtree(DataSetFeatureBased(2))
+print_tree(root)
 new_new_tree = condense_tree(root)
+print_tree(new_new_tree)
 contracting_search_tree(new_new_tree)
 
 
@@ -162,10 +182,10 @@ contracting_search_tree(new_new_tree)
 #         ben.append(n.right_node)
 #     print("___")
 
-# soft = soft_clustering(root, 2, 1)
-# print(soft)
-# hard = hard_clustering(soft)
-# print(hard)
+soft = soft_clustering(root, 3, 1)
+print(soft)
+hard = hard_clustering(soft)
+print(hard)
 # res = cut_generator_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
 
 # john = create_searchtree(res, 3)

@@ -45,7 +45,12 @@ class FeatureBasedWindow(QMainWindow):
 
     def upload_data(self):
         file_dialog = QFileDialog()
-        file_dialog.exec_()
+        if file_dialog.exec_():
+            selected_file = file_dialog.selectedFiles()[0]  # Get the path of the selected file
+            with open(selected_file, 'r') as file:
+                data = file.read()  # Read the contents of the file
+                # Process the data as needed
+                print(data)
 
     def generate_random_data(self):
         pass  # Placeholder for generating random data
