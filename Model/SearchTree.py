@@ -28,7 +28,6 @@ class Searchtree():
         self.leaf = False
 
     
-
 def h(cost):
     return math.exp(-cost)
 
@@ -67,8 +66,8 @@ def condense_tree(root: Searchtree):
 
     traverse(root)
 
-    for leaf in leaves:
-        prune_tree(leaf, prune_length)
+    #for leaf in leaves:
+    #    prune_tree(leaf, prune_length)
 
     def condense_leaf(leaf):
         nonlocal root
@@ -83,18 +82,12 @@ def condense_tree(root: Searchtree):
                     else:
                         leaf.parent_node.parent_node.right_node = leaf
                     leaf.condensed_oritentations.add(f"{leaf.parent_node.cut_id}"+ leaf.parent_node.cut_orientation)
-                    leaf.condensed_oritentations.add(f"{leaf.cut_id}"+ leaf.cut_orientation)
                     leaf.cuts.add(leaf.parent_node.cut)
-                    leaf.cuts.add(leaf.cut)
                     leaf.parent_node = leaf.parent_node.parent_node 
                     condense_leaf(leaf)
             elif leaf.parent_node.left_node != None and leaf.parent_node.right_node != None:
-                leaf.condensed_oritentations.add(f"{leaf.cut_id}"+ leaf.cut_orientation)
-                leaf.cuts.add(leaf.cut)
                 condense_leaf(leaf.parent_node)
                 
-        
-
     for leaf in leaves: 
         condense_leaf(leaf)
     
@@ -133,12 +126,12 @@ def contracting_search_tree(node : Searchtree):
                         else:
                             if cut_nr+"L" in node.right_node.condensed_oritentations:
                                 for cut in node.left_node.cuts:
-                                    if cut.id == cut_nr:
+                                    if str(cut.id) == cut_nr:
                                         node.characterizing_cuts.add(cut)
                  
 
 
-def soft_clustering(node, v, accumulated, softClustering = {}):
+def soft_clustering(node, v, accumulated : float, softClustering = {}):
     """ 
     from a searchtree create a soft clustering of the objects 
     
@@ -158,17 +151,18 @@ def soft_clustering(node, v, accumulated, softClustering = {}):
 
             if v in cut.A: 
                 sum_right += h(cut.cost)
+        if sum_all == 0: 
+            return 0
         return (sum_right/sum_all)
 
     if node.leaf:
         softClustering[node.id] = accumulated
     else:
         pl = p_l(node, v)
-        pr = 1 - pl
         if node.left_node != None: 
             soft_clustering(node.left_node, v, accumulated * pl, softClustering)
         if node.right_node != None: 
-            soft_clustering(node.right_node, v, accumulated * pr, softClustering)
+            soft_clustering(node.right_node, v, accumulated * (1-pl), softClustering)
 
     return softClustering
 
