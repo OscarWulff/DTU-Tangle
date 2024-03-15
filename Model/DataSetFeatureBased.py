@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 from scipy.linalg import svd
 from sklearn.decomposition import PCA
-from DataType import DataType
-from Cut import Cut
+from Model.DataType import DataType
+from Model.Cut import Cut
 
 class DataSetFeatureBased(DataType):
 
@@ -15,15 +15,15 @@ class DataSetFeatureBased(DataType):
         self.initialize()
 
     def initialize(self):
-        #_, X = dimension_reduction_feature_based("iris.csv")
-        #x1 = X[:, 0]
-        #x2 = X[:, 1]
+        _, X = dimension_reduction_feature_based("iris.csv")
+        x1 = X[:, 0]
+        x2 = X[:, 1]
 
-        #for z, (x, y) in enumerate(zip(x1, x2)):
-        #    self.points.append((x, y, z))
+        for z, (x, y) in enumerate(zip(x1, x2)):
+           self.points.append((x, y, z))
         
 
-        self.points = [(1,2,0),(3,2,1),(5,2,2),(6,2,3),(7,2,4),(9,2,5),(10,2,6),(12,2,7)]
+        #self.points = [(1,2,0),(3,2,1),(5,2,2),(6,2,3),(7,2,4),(9,2,5),(10,2,6),(12,2,7)]
 
         self.cut_generator_axis(0)
         self.cost_function()
@@ -131,26 +131,10 @@ def dimension_reduction_feature_based(filename):
         Returns:
         Eigenvectors and Projections of the PCA
         """
-        # df = pd.read_csv(filename)
-        # X = df.values
-
-        # X = X[:20, :-1]
-        # X = X.astype(float)
-        # N, _ = X.shape
-        # # Subtract mean value from data
-        # Y = X - np.ones((N, 1)) * X.mean(0)
-
-        # # PCA by computing SVD of Y
-        # _, S, Vh = svd(Y, full_matrices=False)
-        # # scipy.linalg.svd returns "Vh", which is the Hermitian (transpose)
-        # # of the vector V. So, for us to obtain the correct V, we transpose:
-        
-        # X_projected = np.dot(Y, Vh[:2, :].T)
-
         df = pd.read_csv(filename)
         X = df.values
 
-        X = X[:, :-1]
+        X = X[:20, :-1]
         X = X.astype(float)
         N, _ = X.shape
         # Subtract mean value from data
@@ -161,8 +145,26 @@ def dimension_reduction_feature_based(filename):
         # scipy.linalg.svd returns "Vh", which is the Hermitian (transpose)
         # of the vector V. So, for us to obtain the correct V, we transpose:
         
+        X_projected = np.dot(Y, Vh[:2, :].T)
+
+        return S, X_projected
+
+        # df = pd.read_csv(filename)
+        # X = df.values
+
+        # X = X[:, :-1]
+        # X = X.astype(float)
+        # N, _ = X.shape
+        # # Subtract mean value from data
+        # Y = X - np.ones((N, 1)) * X.mean(0)
+
+        # # PCA by computing SVD of Y
+        # _, S, Vh = svd(Y, full_matrices=False)
+        # # scipy.linalg.svd returns "Vh", which is the Hermitian (transpose)
+        # # of the vector V. So, for us to obtain the correct V, we transpose:
         
-        return S, Vh.T
+        
+        # return S, Vh.T
 
 def calculate_explained_varince(S):
     rho = (S * S) / (S * S).sum()
