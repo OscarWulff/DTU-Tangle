@@ -100,6 +100,8 @@ def perform_pca(matrix, num_components=2):
     Returns:
     - pca_coordinates: DataFrame containing the PCA coordinates for each person.
     """
+    matrix = matrix[1:]
+    print(matrix)
 
     # Initialize PCA with the specified number of components
     pca = PCA(n_components=num_components)

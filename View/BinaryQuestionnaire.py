@@ -28,7 +28,7 @@ class DataDisplayWindow(QMainWindow):
         # Plot the data
         new_data = perform_pca(data)
         print("New data:", new_data)  # Debugging
-        self.plot_data(perform_pca(new_data))
+        self.plot_data(new_data)
 
         # Add back button
         back_button = QPushButton("Back", self)
@@ -118,6 +118,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
         pass  # Placeholder for generating random data
 
     def display_data_window(self):
+        self.close()  # Close the current window
         print("Displaying data window")  # Debugging
         if self.data is not None:
             if not hasattr(self, 'data_display_window'):

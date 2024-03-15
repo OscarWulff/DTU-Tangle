@@ -5,7 +5,10 @@ from Model.SearchTree import *
 
 from Model.DataSetFeatureBased import DataSetFeatureBased
 from Model.DataSetGraph import DataSetGraph
+from Model.DataSetFeatureBased import DataSetFeatureBased
+from Model.DataSetGraph import DataSetGraph
 
+from Model.DataType import DataType
 from Model.DataType import DataType
 
 def consistent(chosen_cut, tangles, agrrement_parameter):
