@@ -14,7 +14,7 @@ class DataSetGraph(DataType):
         self.generate_multiple_cuts(self.G, max_iter=2, weight='weight', seed=None)
         self.cost_function_Graph(self.G)
 
-    def generate_multiple_cuts(self, G, max_iter, weight, seed): 
+    def generate_multiple_cuts(self, G, max_iter=2, weight='weight', seed=None): 
         """ 
         Generate multiple cuts for the graph.
         
