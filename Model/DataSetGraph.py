@@ -14,7 +14,7 @@ class DataSetGraph(DataType):
         self.generate_multiple_cuts(self.G, max_iter=2, weight='weight', seed=None)
         self.cost_function_Graph(self.G)
 
-    def generate_multiple_cuts(self, G, max_iter, weight, seed): 
+    def generate_multiple_cuts(self, G, max_iter=2, weight='weight', seed=None): 
         """ 
         Generate multiple cuts for the graph.
         
@@ -27,8 +27,9 @@ class DataSetGraph(DataType):
         Return:
         cuts of the dataset
         """
-        a = 1  # Adjust this value according to your needs
-        for _ in range(a):
+        # cuts set to amount of nodes divided by two
+        cuts = len(G.nodes) // 2
+        for _ in range(cuts):
             partition = nx.algorithms.community.kernighan_lin_bisection(G, max_iter=max_iter, weight=weight, seed=seed)
             cut = Cut()
             cut.A = partition[0]
