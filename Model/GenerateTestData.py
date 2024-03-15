@@ -8,7 +8,7 @@ class GenerateRandomGraph:
         self.num_of_nodes = num_of_nodes
         self.num_of_clusters = num_of_clusters
         self.average_edges_to_same_cluster = 5.0 #p
-        self.average_edges_to_other_clusters = 0.2 #q
+        self.average_edges_to_other_clusters = 0.6 #q
 
     def generate_random_graph(self):
         same_cluster_prob = self.average_edges_to_same_cluster / (self.num_of_nodes / self.num_of_clusters)

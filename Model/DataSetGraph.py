@@ -27,8 +27,9 @@ class DataSetGraph(DataType):
         Return:
         cuts of the dataset
         """
-        a = 1  # Adjust this value according to your needs
-        for _ in range(a):
+        # cuts set to amount of nodes divided by two
+        cuts = len(G.nodes) // 2
+        for _ in range(cuts):
             partition = nx.algorithms.community.kernighan_lin_bisection(G, max_iter=max_iter, weight=weight, seed=seed)
             cut = Cut()
             cut.A = partition[0]

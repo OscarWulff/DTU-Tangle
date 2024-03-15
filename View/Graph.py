@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 import networkx as nx
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QFileDialog
-from Model.DataSetGraph import DataSetGraph
-from Model.GenerateTestData import GenerateRandomGraph
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QFileDialog, QApplication
+from View.GraphGenerator import GraphGeneratorWindow
 
 class GraphWindow(QMainWindow):
     def __init__(self, main_page):
@@ -10,6 +9,13 @@ class GraphWindow(QMainWindow):
         self.main_page = main_page
         self.setWindowTitle("Graph Window")
         self.setGeometry(100, 100, 800, 600)
+
+         # Center the window on the screen
+        screen_geometry = QApplication.desktop().availableGeometry()
+        window_geometry = self.frameGeometry()
+        x = (screen_geometry.width() - window_geometry.width()) // 2
+        y = (screen_geometry.height() - window_geometry.height()) // 2
+        self.move(x, y)
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -27,7 +33,7 @@ class GraphWindow(QMainWindow):
         button_layout.addWidget(self.upload_data_button)
         
         self.generate_data_button = QPushButton("Generate Random Data", self)
-        self.generate_data_button.clicked.connect(self.generate_random_data)
+        self.generate_data_button.clicked.connect(self.OpenGenerateRandomDataGraph)
         button_layout.addWidget(self.generate_data_button)
 
         layout.addLayout(button_layout)
@@ -51,26 +57,14 @@ class GraphWindow(QMainWindow):
         file_dialog = QFileDialog()
         file_dialog.exec_()
 
-    def generate_random_data(self):
-        # Generate a random graph
-        graph_generator = GenerateRandomGraph(num_of_nodes=20, num_of_clusters=3)
-        random_graph, ground_truth = graph_generator.generate_random_graph()
+    def OpenGenerateRandomDataGraph(self):
+        # Close the MainPage
+        self.close()
 
-        # Create an instance of DataSetGraph
-        data_set_graph = DataSetGraph(agreement_param=1)
+        # Open the GraphWindow and pass a reference to MainPage
+        self.graph_generator_window = GraphGeneratorWindow(self)
+        self.graph_generator_window.show()
 
-        # Assign the generated graph to the G attribute
-        data_set_graph.G = random_graph
 
-        # Initialize the DataSetGraph instance
-        data_set_graph.initialize()  # Initialize the graph and generate cuts
 
-        # Sort cuts based on cost
-        sorted_cuts = data_set_graph.order_function()
-
-        # Visualize the graph with ground truth clusters
-        graph_generator.visualize_graph(random_graph, ground_truth=ground_truth, visualize_ground_truth=True)
-
-        plt.title('Graph with Cuts')
-        plt.show()
 
