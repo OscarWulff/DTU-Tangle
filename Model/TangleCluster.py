@@ -2,11 +2,13 @@
 from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire
 from Model.DataSet import extract_data
 from Model.SearchTree import *
-import copy
 
 from Model.DataSetFeatureBased import DataSetFeatureBased
 from Model.DataSetGraph import DataSetGraph
+from Model.DataSetFeatureBased import DataSetFeatureBased
+from Model.DataSetGraph import DataSetGraph
 
+from Model.DataType import DataType
 from Model.DataType import DataType
 
 def consistent(chosen_cut, tangles, agrrement_parameter):
@@ -42,7 +44,7 @@ def create_searchtree(data : DataType):
         child = Searchtree(node, node.cut_id+1)
         child.cut_orientation = orientation
         child.tangle += node.tangle
-        child.cut = cut
+        node.cut = cut
         child.cuts.add(cut)
         child.condensed_oritentations.add(f"{child.cut_id}"+ child.cut_orientation)
         child.id = id
@@ -64,7 +66,6 @@ def create_searchtree(data : DataType):
         new_leaves = []
         cut.id = cutId
         for leaf in leaves:
-            # print(leaf.tangle, cut.Ac)
             if consistent(cut.A, leaf.tangle, data.agreement_param):
                 id += 1
                 left_child = create_child(leaf, "L", cut, id)
@@ -134,11 +135,6 @@ def create_searchtree(data : DataType):
 # contracting_search_tree(new_new_tree)
 
 
-root = create_searchtree(DataSetFeatureBased(2))
-print_tree(root)
-new_new_tree = condense_tree(root)
-print_tree(new_new_tree)
-contracting_search_tree(new_new_tree)
 
 
 # data = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
@@ -182,10 +178,6 @@ contracting_search_tree(new_new_tree)
 #         ben.append(n.right_node)
 #     print("___")
 
-soft = soft_clustering(root, 3, 1)
-print(soft)
-hard = hard_clustering(soft)
-print(hard)
 # res = cut_generator_binary("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
 
 # john = create_searchtree(res, 3)

@@ -1,4 +1,7 @@
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QFileDialog, QVBoxLayout, QWidget, QHBoxLayout, QLabel
+import matplotlib.pyplot as plt
+import networkx as nx
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QFileDialog, QApplication
+from View.GraphGenerator import GraphGeneratorWindow
 
 class GraphWindow(QMainWindow):
     def __init__(self, main_page):
@@ -6,6 +9,13 @@ class GraphWindow(QMainWindow):
         self.main_page = main_page
         self.setWindowTitle("Graph Window")
         self.setGeometry(100, 100, 800, 600)
+
+         # Center the window on the screen
+        screen_geometry = QApplication.desktop().availableGeometry()
+        window_geometry = self.frameGeometry()
+        x = (screen_geometry.width() - window_geometry.width()) // 2
+        y = (screen_geometry.height() - window_geometry.height()) // 2
+        self.move(x, y)
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -23,7 +33,7 @@ class GraphWindow(QMainWindow):
         button_layout.addWidget(self.upload_data_button)
         
         self.generate_data_button = QPushButton("Generate Random Data", self)
-        self.generate_data_button.clicked.connect(self.generate_random_data)
+        self.generate_data_button.clicked.connect(self.OpenGenerateRandomDataGraph)
         button_layout.addWidget(self.generate_data_button)
 
         layout.addLayout(button_layout)
@@ -47,5 +57,14 @@ class GraphWindow(QMainWindow):
         file_dialog = QFileDialog()
         file_dialog.exec_()
 
-    def generate_random_data(self):
-        pass  # Placeholder for generating random data
+    def OpenGenerateRandomDataGraph(self):
+        # Close the MainPage
+        self.close()
+
+        # Open the GraphWindow and pass a reference to MainPage
+        self.graph_generator_window = GraphGeneratorWindow(self)
+        self.graph_generator_window.show()
+
+
+
+
