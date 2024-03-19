@@ -57,8 +57,11 @@ class DataSetBinaryQuestionnaire(DataType):
         cost = 0
         orientation = "None"
 
-        num_of_participants = len(nd_questionnaires[0])
-        num_of_quest = len(nd_questionnaires[1])
+        num_of_participants = nd_questionnaires.shape[0]
+        num_of_quest = nd_questionnaires.shape[1]
+        
+        # print(num_of_participants)
+        # print(num_of_quest)
 
         cuts_list = []
         cuts_y = [set() for _ in range(num_of_quest)]
@@ -70,8 +73,7 @@ class DataSetBinaryQuestionnaire(DataType):
             for j in range(num_of_participants):
                 
                 if nd_questionnaires[j][i] == 1:
-                    self.cuts[i].A.add(j)
-                    # cuts_y[i].add(j)
+                    self.cuts[i].A.add(j) 
                 else:
                    
                     self.cuts[i].Ac.add(j)
@@ -101,7 +103,7 @@ def perform_pca(matrix, num_components=2):
     - pca_coordinates: DataFrame containing the PCA coordinates for each person.
     """
     matrix = matrix[1:]
-    print(matrix)
+    # print(matrix)
 
     # Initialize PCA with the specified number of components
     pca = PCA(n_components=num_components)
@@ -250,28 +252,4 @@ def plot_2d_coordinates(dataframe, title="2D Plot", xlabel="X-axis", ylabel="Y-a
     plt.ylabel(ylabel)
     plt.grid(True)
     return fig
-# data = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
-# data_h = perform_pca(data)
-# pd_data = pd.DataFrame(data)
-# print(data_h)
-# plot_2d_coordinates(data_h)
-# plot_2d_coordinates(perform_pca("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv"))        
 
-
-# data = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
-# res = DataSetBinaryQuestionnaire(1)
-
-# sovs = res.cut_generator_binary(data)
-
-# # for i in sovs.cuts:
-#     print(i.A)
-#     print(i.Ac)
-#     print(i.cost)
-#     print("")
-
-
-
-
-
-# for i in order_res:
-#     print(i.A)

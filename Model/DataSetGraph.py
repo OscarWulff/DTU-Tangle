@@ -82,5 +82,5 @@ def cost_function_helper(G, partition):
 data_set_graph = DataSetGraph(agreement_param=3)
 data_set_graph.initialize()
 ordered_cuts = data_set_graph.order_function()
-for cut in ordered_cuts:
-    print(f"Cut A: {cut.A}, Cut Ac: {cut.Ac}, Cost: {cut.cost}")
+# for cut in ordered_cuts:
+#     print(f"Cut A: {cut.A}, Cut Ac: {cut.Ac}, Cost: {cut.cost}")

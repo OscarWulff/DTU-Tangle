@@ -1,10 +1,13 @@
+from turtle import pd
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog, QVBoxLayout, QWidget, QHBoxLayout, QLabel
 import sys
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import numpy as np
 import matplotlib.pyplot as plt
 
-from Model.DataSetBinaryQuestionnaire import perform_pca
+from Model.SearchTree import condense_tree, contracting_search_tree, generate_color_dict, print_tree
+from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire, perform_pca
+from Model.TangleCluster import create_searchtree
 
 class DataDisplayWindow(QMainWindow):
     def __init__(self, main_page, data):
@@ -13,6 +16,20 @@ class DataDisplayWindow(QMainWindow):
         self.data = data
         self.setWindowTitle("Data Display Window")
         self.setGeometry(100, 100, 800, 600)
+        
+        self.tree_holder = create_searchtree(DataSetBinaryQuestionnaire(5).cut_generator_binary(self.data))
+        self.tree = condense_tree(self.tree_holder)
+        contracting_search_tree(self.tree)
+        # der er noget galt her, den returner ikke så mamge som jeg gerne vil have at den skal returnere
+        dict_holder, tangle_holder, set_vals = generate_color_dict(self.data, self.tree) 
+        self.color_dict = dict_holder
+        self.tangle = tangle_holder
+
+        print(tangle_holder)
+        print(set_vals)
+        print(dict_holder)
+
+       
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -28,20 +45,49 @@ class DataDisplayWindow(QMainWindow):
         # Plot the data
         new_data = perform_pca(data)
         print("New data:", new_data)  # Debugging
-        self.plot_data(new_data)
+        self.plot_data(new_data, self.tangle, self.color_dict)
 
         # Add back button
         back_button = QPushButton("Back", self)
         back_button.clicked.connect(self.go_back_to_previous_window)
         layout.addWidget(back_button)
 
-    def plot_data(self, data):
+    # def plot_data(self, data):
+    #     # Clear the previous plot
+    #     self.figure.clear()
+
+    #     # Plot the new data as a scatter plot
+    #     ax = self.figure.add_subplot(111)
+    #     ax.scatter(data['PC1'], data['PC2'])
+
+    #     # Update the labels and title
+    #     ax.set_title("2D Plot")
+    #     ax.set_xlabel("X-axis")
+    #     ax.set_ylabel("Y-axis")
+
+    #     # Update the canvas
+    #     self.canvas.draw()
+        
+    def plot_data(self, data, tangle, color_dict):
         # Clear the previous plot
         self.figure.clear()
 
-        # Plot the new data as a scatter plot
+        # TODO: den nedenstående funktion går ikke igennem hele dict, men den skal farve alle den skal farve
+
+        # Plot the new data as a scatter plot with colors based on cuts
         ax = self.figure.add_subplot(111)
-        ax.scatter(data['PC1'], data['PC2'])
+        # print(tangle)
+        # print(color_dict)
+        print(tangle)
+        for i in range(len(data)):
+           
+            if tangle[i] in color_dict:
+               
+                color_rgb = color_dict[tangle[i]]
+                color_str = "#{:02x}{:02x}{:02x}".format(*color_rgb)
+                ax.scatter(data.iloc[i]['PC1'], data.iloc[i]['PC2'], color=color_str)
+            else:
+                print(f"Warning: Cluster label {tangle[i]} not found in color dictionary.")
 
         # Update the labels and title
         ax.set_title("2D Plot")
@@ -50,6 +96,10 @@ class DataDisplayWindow(QMainWindow):
 
         # Update the canvas
         self.canvas.draw()
+
+
+
+
 
 
     def go_back_to_previous_window(self):

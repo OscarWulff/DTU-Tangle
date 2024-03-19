@@ -1,4 +1,5 @@
 import math
+import random
 from matplotlib import pyplot as plt
 import networkx as nx
 from Model.Cut import Cut
@@ -227,7 +228,32 @@ def show_tree(tree):
     plt.show()
 
 
+def generate_random_color():
+    """
+    Generate a random color represented as a tuple of RGB values.
+    """
+    r = random.randint(0, 255)  # Red component
+    g = random.randint(0, 255)  # Green component
+    b = random.randint(0, 255)  # Blue component
+    return (r, g, b)
+
+def generate_color_dict(data, tree):
+    vals = []
+
+    for i in range(data.shape[0]-1):
+        soft = soft_clustering(tree, i, 1, {})
+        vals.append(hard_clustering(soft)[0])
+
+    
+    set_vals = set(vals)
+    color_dict = {}
+
+    for i in set_vals:
+        color_dict[i] = generate_random_color()
+    
+   
 
 
+    return color_dict, vals, set_vals
 
 
