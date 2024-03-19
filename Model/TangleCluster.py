@@ -44,7 +44,7 @@ def create_searchtree(data : DataType):
         child = Searchtree(node, node.cut_id+1)
         child.cut_orientation = orientation
         child.tangle += node.tangle
-        child.cut = cut
+        node.cut = cut
         child.cuts.add(cut)
         child.condensed_oritentations.add(f"{child.cut_id}"+ child.cut_orientation)
         child.id = id
@@ -66,7 +66,6 @@ def create_searchtree(data : DataType):
         new_leaves = []
         cut.id = cutId
         for leaf in leaves:
-            # print(leaf.tangle, cut.Ac)
             if consistent(cut.A, leaf.tangle, data.agreement_param):
                 id += 1
                 left_child = create_child(leaf, "L", cut, id)

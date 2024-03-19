@@ -12,7 +12,7 @@ class DataSetFeatureBased(DataType):
     def __init__(self,agreement_param, cuts : list[Cut] =[], search_tree=None):
         super().__init__(agreement_param, cuts, search_tree)
         self.points = []
-        self.initialize()
+        #self.initialize()
 
     def initialize(self):
         _, X = dimension_reduction_feature_based("iris.csv")
@@ -54,6 +54,7 @@ class DataSetFeatureBased(DataType):
                     sum_cost += -(self.euclidean_distance(self.points[left_or][0], self.points[right_or][0], self.points[left_or][1], self.points[right_or][1]))
             
             cut.cost = sum_cost
+            
 
     def cut_generator_axis(self, axis):
 

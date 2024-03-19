@@ -4,19 +4,31 @@ from Model.GenerateTestData import *
 
 def main():
 
-    gdfb = GenerateDataFeatureBased(10, 1)
+    gdfb = GenerateDataFeatureBased(3, 1)
 
-    gdfb.random_clusters(30)
+    gdfb.random_clusters(10)
 
     gdfb.plot_points()
-    # root = create_searchtree(DataSetFeatureBased(2))
-    # print_tree(root)
-    # new_new_tree = condense_tree(root)
-    # print_tree(new_new_tree)
-    # contracting_search_tree(new_new_tree)
-    # soft = soft_clustering(root, 3, 1)
-    # print(soft)
-    # hard = hard_clustering(soft)
-    # print(hard)
+
+
+    data = DataSetFeatureBased(10)
+    data.points = gdfb.points
+
+    for point in data.points:
+        print(point[0],point[1]) 
+
+    data.cut_generator_axis(0)
+    data.cost_function()
+
+    root = create_searchtree(data)
+    print_tree(root)
+    new_root = condense_tree(root)
+    contracting_search_tree(new_root)
+
+    soft = soft_clustering(new_root)
+    print(soft)
+
+    hard = hard_clustering(soft)
+    print(hard)
 
 main()

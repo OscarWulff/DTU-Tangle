@@ -83,8 +83,6 @@ class GenerateRandomGraph:
 
 
 class GenerateDataFeatureBased():
-    
-    # [(x, y, x)]
 
     def __init__(self, numb_clusters, std_deviation, centroids = [(1,1), (10,10)]):
         self.numb_clusters = numb_clusters
@@ -116,9 +114,6 @@ class GenerateDataFeatureBased():
                 self.ground_truth.append(truth)
 
         self.points = [(x, y, z) for z, (x, y) in enumerate(zip(points_x, points_y))]
-
-        print(self.points)
-        print(self.ground_truth)
            
 
     def random_clusters(self, cluster_points):
@@ -133,7 +128,7 @@ class GenerateDataFeatureBased():
         std_high = 2
 
         tries = 0
-        while(tries < 1200):
+        while(tries < 1000):
             tries += 1
             start_over = False
             centroids = []
@@ -179,12 +174,11 @@ class GenerateDataFeatureBased():
                         self.ground_truth.append(truth)
 
                 self.points = [(x, y, z) for z, (x, y) in enumerate(zip(points_x, points_y))]
-                print(self.points)
-                print(self.ground_truth)
+
                 print(tries)
                 break
         
-        if tries == 300: 
+        if tries == 1000: 
             print("to many tries")
 
     def plot_points(self):

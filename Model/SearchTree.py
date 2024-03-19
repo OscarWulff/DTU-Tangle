@@ -2,6 +2,8 @@ import math
 from matplotlib import pyplot as plt
 import networkx as nx
 from Model.Cut import Cut
+import numpy as np
+
 
 class Searchtree():
 
@@ -18,6 +20,8 @@ class Searchtree():
         self.characterizing_cuts = set()
         self.condensed_oritentations = set()
         self.id = 0
+        self.numb_tangles = 0
+        self.leaf_id = 0
     
     def add_left_child(self, left_child ):
         self.left_node = left_child
@@ -43,7 +47,7 @@ def condense_tree(root: Searchtree):
         
         """
         current_node = node
-        
+
         while max_branch_length > 0:
             if current_node.parent_node == root:
                 if root.left_node == current_node:
@@ -54,7 +58,7 @@ def condense_tree(root: Searchtree):
                 break
             max_branch_length -= 1
             current_node = current_node.parent_node
-
+    
     def traverse(current_node):
         if current_node is not None:
             if current_node.leaf:
@@ -87,8 +91,10 @@ def condense_tree(root: Searchtree):
                     condense_leaf(leaf)
             elif leaf.parent_node.left_node != None and leaf.parent_node.right_node != None:
                 condense_leaf(leaf.parent_node)
-                
-    for leaf in leaves: 
+    
+    root.numb_tangles = len(leaves)
+    for id, leaf in enumerate(leaves): 
+        leaf.leaf_id = id
         condense_leaf(leaf)
     
     return root
@@ -131,7 +137,7 @@ def contracting_search_tree(node : Searchtree):
                  
 
 
-def soft_clustering(node, v, accumulated : float, softClustering = {}):
+def soft_clustering(node):
     """ 
     from a searchtree create a soft clustering of the objects 
     
@@ -141,28 +147,39 @@ def soft_clustering(node, v, accumulated : float, softClustering = {}):
     Returns:
     Soft clustering of the point
     """
+
+    def calculate_softclustering(node, v, accumulated : float, softClustering):
+        if node.leaf:
+            softClustering[v][node.leaf_id] = accumulated
+        else:
+            pl = p_l(node, v)
+            if node.left_node != None: 
+                calculate_softclustering(node.left_node, v, accumulated * pl, softClustering)
+            if node.right_node != None: 
+                calculate_softclustering(node.right_node, v, accumulated * (1-pl), softClustering)
+
     
     def p_l(node, v):
         sum_right = 0
         sum_all = 0
         for cut in node.characterizing_cuts:
             # Lige tager vi bare cuttet, men vi skal tage the cost of the cut
-            sum_all += h(cut.cost)
-
+            sum_all += cut.cost
+            
             if v in cut.A: 
-                sum_right += h(cut.cost)
+                sum_right += cut.cost
         if sum_all == 0: 
             return 0
         return (sum_right/sum_all)
 
-    if node.leaf:
-        softClustering[node.id] = accumulated
-    else:
-        pl = p_l(node, v)
-        if node.left_node != None: 
-            soft_clustering(node.left_node, v, accumulated * pl, softClustering)
-        if node.right_node != None: 
-            soft_clustering(node.right_node, v, accumulated * (1-pl), softClustering)
+
+    # Calculating number of points
+    numb_points = len(node.cut.A.union(node.cut.Ac))
+
+    softClustering = np.zeros((numb_points, node.numb_tangles), dtype=float)
+
+    for k in range(numb_points):
+        calculate_softclustering(node, k, 1, softClustering)
 
     return softClustering
 
@@ -178,14 +195,14 @@ def hard_clustering(softClustering):
     Hard clustering 
 
     """
-    max_prob = 0
-    node_id = 0
-    for id, propability in softClustering.items():
-        if propability > max_prob:
-            node_id = id
-            max_prob = propability
+    hard_clustering = []
 
-    return node_id, max_prob
+    for i in range(len(softClustering)):
+        for j in range(len(softClustering[0])):
+            if softClustering[i][j] == 1: 
+                hard_clustering.append(j)
+
+    return hard_clustering
 
 def print_tree(node, indent=0, prefix="Root: "):
     if node is not None:
