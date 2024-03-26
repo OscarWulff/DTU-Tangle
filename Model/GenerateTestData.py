@@ -2,7 +2,8 @@ import random
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
-
+from sklearn.metrics.cluster import normalized_mutual_info_score
+from sklearn.cluster import KMeans, SpectralClustering
 
 
 
@@ -122,10 +123,10 @@ class GenerateDataFeatureBased():
         Standard deviation and centroids are choosen random. 
         """
         # Parameter that controls how much overlap is allowed
-        overlap = 0.2
+        overlap = 0.5
 
         std_low = 0.1
-        std_high = 2
+        std_high = 1
 
         tries = 0
         while(tries < 1000):
@@ -199,6 +200,64 @@ class GenerateDataFeatureBased():
 
         # Display the plot
         plt.show()
+
+    def plot_points_prob(self, probability):
+        """
+        Function to be used if you want to plot the points where the probability 
+        is plotted as the transparency.  
+        """
+
+        clusters = sorted(set(self.ground_truth))
+        colors = plt.cm.viridis(np.linspace(0, 1, len(clusters)))
+        color_map = {cluster: color for cluster, color in zip(clusters, colors)}
+
+        # Plot the points with color
+        for point, truth in zip(self.points, self.ground_truth):
+            plt.scatter(point[0], point[1], color=color_map[truth], alpha=probability[point[2]])
+
+        plt.xlim(self.box_low_x-1, self.box_high_x+1)  # Setting x-axis limits from 0 to 10
+        plt.ylim(self.box_low_y-1, self.box_high_y+1) 
+        # Add labels and title
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.title('Colorized Clusters')
+
+        # Display the plot
+        plt.show()
+
+    
+    def nmi_score(self, predicted_tangles):
+        """
+        Calculates the nmi score of the predicted tangles
+        """
+        nmi_score = normalized_mutual_info_score(self.ground_truth, predicted_tangles)
+        return nmi_score
+
+
+    def k_means(self, k):
+        """
+        Clusters the data with K-means algorithm
+        """
+        kmeans = KMeans(n_clusters=k)
+
+        points = [[x, y] for x, y, _ in self.points]
+
+        kmeans.fit(points)
+
+        return kmeans.labels_
+    
+    def spectral_clustering(self, k):
+        """
+        Clusters the data with spectral algorithm
+        """
+        spectral = SpectralClustering(n_clusters=k)
+
+        points = [[x, y] for x, y, _ in self.points]
+
+        spectral.fit(points)
+
+        return spectral.labels_
+
             
                 
                 

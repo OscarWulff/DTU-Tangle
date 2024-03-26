@@ -17,18 +17,33 @@ def main():
     for point in data.points:
         print(point[0],point[1]) 
 
-    data.cut_generator_axis(0)
+    data.cut_generator_axis()
     data.cost_function()
 
     root = create_searchtree(data)
     print_tree(root)
     new_root = condense_tree(root)
     contracting_search_tree(new_root)
+    print_tree(new_root)
 
     soft = soft_clustering(new_root)
     print(soft)
 
     hard = hard_clustering(soft)
     print(hard)
+
+    print("nmi-score = ", gdfb.nmi_score(hard))
+
+    truth1 = gdfb.k_means(3)
+    print(truth1)
+    print("nmi-score = ", gdfb.nmi_score(truth1))
+    truth2 = gdfb.spectral_clustering(3)
+    print(truth2)
+    print("nmi-score = ", gdfb.nmi_score(truth2))
+
+    gdfb.ground_truth = hard
+    gdfb.plot_points()            
+                
+
 
 main()
