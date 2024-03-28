@@ -2,6 +2,7 @@ import random
 from Model.DataSet import extract_data
 from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire
 from Model.SearchTree import generate_color_dict
+from Model.GenerateTestData import *
 
 from Model.SearchTree import condense_tree, contracting_search_tree, print_tree, soft_clustering, hard_clustering
 from Model.TangleCluster import create_searchtree
@@ -10,8 +11,12 @@ from Model.TangleCluster import create_searchtree
 data1 = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test2.csv")
 
 dbq = DataSetBinaryQuestionnaire(3)
+data = GenerateDataBinaryQuestionnaire(10, 10, 3).generate_data()
 
-data_cuts = dbq.cut_generator_binary(data1)
+# print(data)
+
+
+data_cuts = dbq.cut_generator_binary(data)
 
 
 # for cut in data_cuts.cuts:
