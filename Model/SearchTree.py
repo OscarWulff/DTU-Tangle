@@ -148,10 +148,12 @@ def soft_clustering(node):
     Returns:
     Soft clustering of the point
     """
+    acumulated = 1
 
     def calculate_softclustering(node, v, accumulated : float, softClustering):
         if node.leaf:
             softClustering[v][node.leaf_id] = accumulated
+            # print(accumulated)
         else:
             pl = p_l(node, v)
             if node.left_node != None: 
@@ -254,13 +256,7 @@ def generate_random_color():
     b = random.randint(0, 255)  # Blue component
     return (r, g, b)
 
-def generate_color_dict(data, tree):
-    vals = []
-
-    for i in range(data.shape[0]-1):
-        soft = soft_clustering(tree, i, 1, {})
-        vals.append(hard_clustering(soft)[0])
-
+def generate_color_dict(vals):
     
     set_vals = set(vals)
     color_dict = {}

@@ -54,11 +54,14 @@ class DataSetBinaryQuestionnaire(DataType):
         
         
         cut_list = []
+        nd_questionnaires = nd_questionnaires[1:]
         cost = 0
         orientation = "None"
 
         num_of_participants = nd_questionnaires.shape[0]
         num_of_quest = nd_questionnaires.shape[1]
+
+        print(nd_questionnaires)
         
         # print(num_of_participants)
         # print(num_of_quest)

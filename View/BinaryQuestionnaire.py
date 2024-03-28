@@ -4,8 +4,9 @@ import sys
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
-from Model.SearchTree import condense_tree, contracting_search_tree, generate_color_dict, print_tree
+from Model.SearchTree import condense_tree, contracting_search_tree, generate_color_dict, hard_clustering, print_tree, soft_clustering
 from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire, perform_pca
 from Model.TangleCluster import create_searchtree
 
@@ -18,16 +19,24 @@ class DataDisplayWindow(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
         
         self.tree_holder = create_searchtree(DataSetBinaryQuestionnaire(5).cut_generator_binary(self.data))
+     
         self.tree = condense_tree(self.tree_holder)
+        
         contracting_search_tree(self.tree)
+        print_tree(self.tree)
+        time.sleep(5)
+        self.soft = soft_clustering(self.tree)
+    
+        self.hard = hard_clustering(self.soft)
+        self.color_dict, self.tangle, set_vals = generate_color_dict(self.hard)
         # der er noget galt her, den returner ikke så mamge som jeg gerne vil have at den skal returnere
-        dict_holder, tangle_holder, set_vals = generate_color_dict(self.data, self.tree) 
-        self.color_dict = dict_holder
-        self.tangle = tangle_holder
+        # dict_holder, tangle_holder, set_vals = generate_color_dict(self.data, self.tree) 
+        # self.color_dict = dict_holder
+        # self.tangle = tangle_holder
 
-        print(tangle_holder)
-        print(set_vals)
-        print(dict_holder)
+        # print(tangle_holder)
+        # print(set_vals)
+        # print(dict_holder)
 
        
 
@@ -44,7 +53,8 @@ class DataDisplayWindow(QMainWindow):
 
         # Plot the data
         new_data = perform_pca(data)
-        print("New data:", new_data)  # Debugging
+        print("New data:", new_data) 
+        time.sleep(5) # Debugging
         self.plot_data(new_data, self.tangle, self.color_dict)
 
         # Add back button
@@ -79,6 +89,7 @@ class DataDisplayWindow(QMainWindow):
         # print(tangle)
         # print(color_dict)
         print(tangle)
+        print(len(tangle))
         for i in range(len(data)):
            
             if tangle[i] in color_dict:

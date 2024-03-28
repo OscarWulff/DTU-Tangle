@@ -1,20 +1,21 @@
 import random
 from Model.DataSet import extract_data
 from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire
+from Model.SearchTree import generate_color_dict
 
 from Model.SearchTree import condense_tree, contracting_search_tree, print_tree, soft_clustering, hard_clustering
 from Model.TangleCluster import create_searchtree
 
 
-data1 = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
+data1 = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test2.csv")
 
 dbq = DataSetBinaryQuestionnaire(3)
 
 data_cuts = dbq.cut_generator_binary(data1)
 
 
-for cut in data_cuts.cuts:
-    print(cut.A, " ", cut.Ac, " ", cut.cost)
+# for cut in data_cuts.cuts:
+#     print(cut.A, " ", cut.Ac, " ", cut.cost)
 
 
 
@@ -27,32 +28,58 @@ new_new_tree = condense_tree(tree)
 contracting_search_tree(new_new_tree)
 
 
+soft = soft_clustering(tree)
+hard = hard_clustering(soft)
 
-def generate_random_color():
-    """
-    Generate a random color represented as a tuple of RGB values.
-    """
-    r = random.randint(0, 255)  # Red component
-    g = random.randint(0, 255)  # Green component
-    b = random.randint(0, 255)  # Blue component
-    return (r, g, b)
+color_dict = generate_color_dict(hard)
+
+print(color_dict)
 
 
-def generate_color_dict(data, tree):
-    vals = []
 
-    for i in range(data.shape[0]):
-        soft = soft_clustering(tree, i, 1, {})
-        vals.append(hard_clustering(soft)[0])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def generate_random_color():
+#     """
+#     Generate a random color represented as a tuple of RGB values.
+#     """
+#     r = random.randint(0, 255)  # Red component
+#     g = random.randint(0, 255)  # Green component
+#     b = random.randint(0, 255)  # Blue component
+#     return (r, g, b)
+
+
+# def generate_color_dict(data, tree):
+#     vals = []
+
+#     for i in range(data.shape[0]):
+#         soft = soft_clustering(tree, i, 1, {})
+#         vals.append(hard_clustering(soft)[0])
 
     
-    set_vals = set(vals)
-    color_dict = {}
+#     set_vals = set(vals)
+#     color_dict = {}
 
-    for i in set_vals:
-        color_dict[i] = generate_random_color()
+#     for i in set_vals:
+#         color_dict[i] = generate_random_color()
 
 
-    return color_dict, vals
+#     return color_dict, vals
 
 
