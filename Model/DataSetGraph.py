@@ -1,3 +1,4 @@
+import random
 import networkx as nx
 from Model.Cut import Cut
 from Model.DataType import DataType
@@ -11,10 +12,10 @@ class DataSetGraph(DataType):
         if self.G is None:
             raise ValueError("Graph G is not initialized. Please assign a graph to the G attribute.")
         
-        self.generate_multiple_cuts(self.G, max_iter=2, weight='weight', seed=None)
+        self.generate_multiple_cuts(self.G)
         self.cost_function_Graph(self.G)
 
-    def generate_multiple_cuts(self, G, max_iter=2, weight='weight', seed=None): 
+    def generate_multiple_cuts(self, G): 
         """ 
         Generate multiple cuts for the graph.
         
@@ -28,9 +29,10 @@ class DataSetGraph(DataType):
         cuts of the dataset
         """
         # cuts set to amount of nodes divided by two
-        cuts = len(G.nodes) // 2
+        cuts = len(G.nodes)
         for _ in range(cuts):
-            partition = nx.algorithms.community.kernighan_lin_bisection(G, max_iter=max_iter, weight=weight, seed=seed)
+            initial_partition = generate_initial_partition(G)
+            partition = nx.algorithms.community.kernighan_lin_bisection(G, partition=initial_partition, max_iter=5, weight='weight', seed=None)
             cut = Cut()
             cut.A = partition[0]
             cut.Ac = partition[1]
@@ -73,3 +75,14 @@ def cost_function_helper(G, partition):
             else:
                 cut_cost += 1
     return cut_cost
+
+# , there is no obvious choice for the initial partitions in the pre-processing step
+def generate_initial_partition(G):
+    # Initialize an empty partition
+    partition = ([], [])
+
+    # Randomly assign each node to one of the two partitions
+    for node in G.nodes:
+        partition[random.randint(0, 1)].append(node)
+
+    return partition

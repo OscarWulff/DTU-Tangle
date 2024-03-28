@@ -1,10 +1,11 @@
+import time
 import matplotlib.pyplot as plt
 import networkx as nx
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QFileDialog, QComboBox, QLabel, QLineEdit, QApplication
 from PyQt5 import QtCore
-from Model.GenerateTestData import GenerateRandomGraph
 from Model.DataSetGraph import DataSetGraph
 from Model.TangleCluster import *
+from Model.GenerateTestData import GenerateRandomGraph
 
 class GraphGeneratorWindow(QMainWindow):
     def __init__(self, main_page):
@@ -96,6 +97,7 @@ class GraphGeneratorWindow(QMainWindow):
         else:
             self.algorithm_combo.hide()
 
+
     def generate_random_data(self):
         # Get the values from the text boxes
         num_nodes = int(self.node_textbox.text())
@@ -104,9 +106,10 @@ class GraphGeneratorWindow(QMainWindow):
         # Generate a random graph
         graph_generator = GenerateRandomGraph(num_of_nodes=num_nodes, num_of_clusters=num_clusters)
         random_graph, ground_truth = graph_generator.generate_random_graph()
+        print("Ground Truth: ", ground_truth)
 
         # Create an instance of DataSetGraph
-        data_set_graph = DataSetGraph(agreement_param=1)
+        data_set_graph = DataSetGraph(agreement_param=3)
 
         # Assign the generated graph to the G attribute
         data_set_graph.G = random_graph
@@ -115,24 +118,43 @@ class GraphGeneratorWindow(QMainWindow):
         data_set_graph.initialize()  # Initialize the graph and generate cuts
 
         root = create_searchtree(data_set_graph)
+        time.sleep(0.5)
+
         root_condense = condense_tree(root)
         contracting_search_tree(root_condense)
+        time.sleep(0.5)
 
         # Soft clustering
-        soft = soft_clustering(root_condense, 0, 1, {})
+        soft = soft_clustering(root_condense)
+        time.sleep(0.5)
+
         hard = hard_clustering(soft)
+        print(hard) # Print the hard clustering
 
         # Visualize the graph with ground truth clusters
         if (self.ground_truth_combo.currentText() == "Ground Truth: Off"):
-            # Get the colors for hard clustering
-            node_colors = [hard[node] for node in random_graph.nodes()]
 
-            # Plot the graph with hard clustering colors
-            plt.figure(figsize=(8, 6))  # Set figure size
+            time.sleep(2)
+
+            # Get unique clusters
+            unique_clusters = set(hard)
+            
+
+            # Create a color map for each unique cluster
+            colors = plt.cm.viridis(np.linspace(0, 1, len(unique_clusters)))
+            color_map = {cluster: color for cluster, color in zip(unique_clusters, colors)}
+
+            # Get node colors based on hard clustering
+            node_colors = [color_map[cluster] for cluster in hard]
+
+
+            # Plot the graph with hard clustering colors and edge weights
             pos = nx.spring_layout(random_graph)
-            nx.draw(random_graph, pos, with_labels=True, node_color=node_colors, node_size=500, edge_color='black', linewidths=1, font_size=10)
-            plt.title('Graph with Hard Clustering Colors')
-            plt.show()
+            nx.draw(random_graph, pos, with_labels=True, node_color=node_colors, cmap=plt.cm.viridis, node_size=500, edge_color='black', linewidths=1, font_size=10)
+
+            # Draw edge weights
+            edge_labels = nx.get_edge_attributes(random_graph, 'weight')
+            nx.draw_networkx_edge_labels(random_graph, pos, edge_labels=edge_labels)
 
         else:
             graph_generator.visualize_graph(random_graph, ground_truth=ground_truth, visualize_ground_truth=True)

@@ -13,7 +13,7 @@ class Searchtree():
         self.left_node : Searchtree = None
         self.right_node : Searchtree = None
         self.tangle = []
-        self.cut : Cut = None
+        self.cut : Cut = Cut()
         self.cuts : set[Cut] = set()
         self.cut_id = cut_id
         self.cut_orientation = ""
@@ -55,8 +55,6 @@ def condense_tree(root: Searchtree):
                     root.left_node = None
                 else: 
                     root.right_node = None
-            if max_branch_length == 0: 
-                break
             max_branch_length -= 1
             current_node = current_node.parent_node
     
@@ -71,8 +69,8 @@ def condense_tree(root: Searchtree):
 
     traverse(root)
 
-    #for leaf in leaves:
-    #    prune_tree(leaf, prune_length)
+    for leaf in leaves:
+       prune_tree(leaf, prune_length)
 
     def condense_leaf(leaf):
         nonlocal root
@@ -86,6 +84,8 @@ def condense_tree(root: Searchtree):
                         leaf.parent_node.parent_node.left_node = leaf
                     else:
                         leaf.parent_node.parent_node.right_node = leaf
+
+                    # Der er skal tilføjes noget til condensed_oritentations her
                     leaf.condensed_oritentations.add(f"{leaf.parent_node.cut_id}"+ leaf.parent_node.cut_orientation)
                     leaf.cuts.add(leaf.parent_node.cut)
                     leaf.parent_node = leaf.parent_node.parent_node 
@@ -93,7 +93,7 @@ def condense_tree(root: Searchtree):
             elif leaf.parent_node.left_node != None and leaf.parent_node.right_node != None:
                 condense_leaf(leaf.parent_node)
     
-    root.numb_tangles = len(leaves)
+    root.numb_tangles = len(leaves) 
     for id, leaf in enumerate(leaves): 
         leaf.leaf_id = id
         condense_leaf(leaf)
@@ -131,11 +131,11 @@ def contracting_search_tree(node : Searchtree):
                                     if str(cut.id) == cut_nr:
                                         node.characterizing_cuts.add(cut)
                         else:
-                            if cut_nr+"L" in node.right_node.condensed_oritentations:
+                            if cut_nr+"R" in node.right_node.condensed_oritentations:
                                 for cut in node.left_node.cuts:
                                     if str(cut.id) == cut_nr:
                                         node.characterizing_cuts.add(cut)
-                 
+                
 
 
 def soft_clustering(node):
@@ -163,18 +163,17 @@ def soft_clustering(node):
 
     
     def p_l(node, v):
-        sum_right = 0
-        sum_all = 0
+        sum_right = 0.0
+        sum_all = 0.0
         for cut in node.characterizing_cuts:
-            # Lige tager vi bare cuttet, men vi skal tage the cost of the cut
             sum_all += cut.cost
             
             if v in cut.A: 
                 sum_right += cut.cost
         if sum_all == 0: 
             return 0
-        return (sum_right/sum_all)
 
+        return float (sum_right/sum_all)
 
     # Calculating number of points
     numb_points = len(node.cut.A.union(node.cut.Ac))
@@ -201,9 +200,13 @@ def hard_clustering(softClustering):
     hard_clustering = []
 
     for i in range(len(softClustering)):
+        max_prob = 0
+        max_tangle = 0
         for j in range(len(softClustering[0])):
-            if softClustering[i][j] == 1: 
-                hard_clustering.append(j)
+            if softClustering[i][j] > max_prob:
+                max_tangle = j 
+                max_prob = softClustering[i][j]
+        hard_clustering.append(max_tangle)
 
     return hard_clustering
 

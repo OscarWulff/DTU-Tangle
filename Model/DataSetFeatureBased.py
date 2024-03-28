@@ -25,7 +25,7 @@ class DataSetFeatureBased(DataType):
 
         #self.points = [(1,2,0),(3,2,1),(5,2,2),(6,2,3),(7,2,4),(9,2,5),(10,2,6),(12,2,7)]
 
-        self.cut_generator_axis(0)
+        self.cut_generator_axis()
         self.cost_function()
 
 
@@ -41,14 +41,13 @@ class DataSetFeatureBased(DataType):
         cost of each cut
         """
 
-        # We transpose it such that we can go through the column instead of row
         for cut in self.cuts:
 
             sum_cost = 0.0
             left_oriented = cut.A
             right_oriented = cut.Ac
 
-            # Calcualte the cost
+            # Calculate the cost
             for left_or in left_oriented:
                 for right_or in right_oriented:
                     sum_cost += -(self.euclidean_distance(self.points[left_or][0], self.points[right_or][0], self.points[left_or][1], self.points[right_or][1]))
@@ -56,27 +55,36 @@ class DataSetFeatureBased(DataType):
             cut.cost = sum_cost
             
 
-    def cut_generator_axis(self, axis):
+    def cut_generator_axis(self):
 
         n = len(self.points)
-        values = []
-        sorted_points = self.points
+        x_values = []                
+        y_values = []
 
         for point in self.points:
-            values.append(point[axis])
+            x_values.append(point[0])
+            y_values.append(point[1])
         
-        _, sorted_points = self.sort_for_list(values, sorted_points)
+        _, sorted_points_x = self.sort_for_list(x_values, self.points)
+        _, sorted_points_y = self.sort_for_list(y_values, self.points)
+    
 
         i = self.agreement_param
         while( n >= i + self.agreement_param ):
-            cut = Cut()
-            cut.A = set()
-            cut.Ac = set()
+            cut_x = Cut()
+            cut_x.A = set()
+            cut_x.Ac = set()
+            cut_y = Cut()
+            cut_y.A = set()
+            cut_y.Ac = set()
             for k in range(0, i):
-                cut.A.add(sorted_points[k][2])
+                cut_x.A.add(sorted_points_x[k][2])
+                cut_y.A.add(sorted_points_y[k][2])
             for k in range(i, n):
-                cut.Ac.add(sorted_points[k][2])
-            self.cuts.append(cut)
+                cut_x.Ac.add(sorted_points_x[k][2])
+                cut_y.Ac.add(sorted_points_y[k][2])
+            self.cuts.append(cut_x)
+            self.cuts.append(cut_y)
             i += self.agreement_param
 
     
@@ -110,9 +118,9 @@ class DataSetFeatureBased(DataType):
         return distance
 
     def sort_for_list(self, axis_values, points):
-            combined = list(zip(axis_values, points))
-            sorted_combined = sorted(combined, key=lambda x: x[0])
-            return zip(*sorted_combined)
+        combined = list(zip(axis_values, points))
+        sorted_combined = sorted(combined, key=lambda x: x[0])
+        return zip(*sorted_combined)
 
 def dimension_reduction_feature_based(filename):
         """ 
