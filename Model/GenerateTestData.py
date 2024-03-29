@@ -261,8 +261,26 @@ class GenerateDataFeatureBased():
                 
                 
              
+class GenerateDataBinaryQuestionnaire:
+    def __init__(self, num_questions, num_samples_per_cluster, num_clusters):
+        self.num_questions = num_questions
+        self.num_samples_per_cluster = num_samples_per_cluster
+        self.num_clusters = num_clusters
 
-
+    def generate_data(self):
+        data = np.zeros((self.num_clusters * self.num_samples_per_cluster, self.num_questions), dtype=int)
+        for cluster in range(self.num_clusters):
+            # Generate a pattern for this cluster
+            cluster_pattern = np.random.choice([0, 1], size=self.num_questions)
+            for i in range(self.num_samples_per_cluster):
+                # Use the cluster pattern to generate samples for this cluster
+                sample = cluster_pattern.copy()  # Make a copy to avoid modifying the original pattern
+                # Introduce randomness by flipping some bits
+                for j in range(len(sample)):
+                    if random.random() < 0.2:  # Adjust the probability as needed
+                        sample[j] = 1 - sample[j]  # Flip the bit
+                data[cluster * self.num_samples_per_cluster + i] = sample
+        return data
 
 
 

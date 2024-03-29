@@ -1,4 +1,5 @@
 import math
+import random
 from matplotlib import pyplot as plt
 import networkx as nx
 from Model.Cut import Cut
@@ -151,10 +152,12 @@ def soft_clustering(node):
     Returns:
     Soft clustering of the point
     """
+    acumulated = 1
 
     def calculate_softclustering(node, v, softClustering, accumulated : float = 1.0):
         if node.leaf:
             softClustering[v][node.leaf_id] = accumulated
+            # print(accumulated)
         else:
             pl = p_l(node, v)
             if node.left_node != None: 
@@ -250,7 +253,26 @@ def show_tree(tree):
     plt.show()
 
 
+def generate_random_color():
+    """
+    Generate a random color represented as a tuple of RGB values.
+    """
+    r = random.randint(0, 255)  # Red component
+    g = random.randint(0, 255)  # Green component
+    b = random.randint(0, 255)  # Blue component
+    return (r, g, b)
+
+def generate_color_dict(vals):
+    
+    set_vals = set(vals)
+    color_dict = {}
+
+    for i in set_vals:
+        color_dict[i] = generate_random_color()
+    
+   
 
 
+    return color_dict, vals, set_vals
 
 

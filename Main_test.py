@@ -1,15 +1,30 @@
 import random
 from Model.DataSet import extract_data
 from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire
+from Model.SearchTree import generate_color_dict
+from Model.GenerateTestData import *
 
 from Model.SearchTree import condense_tree, contracting_search_tree, print_tree, soft_clustering, hard_clustering
 from Model.TangleCluster import create_searchtree
 
 
-data = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test.csv")
+data1 = extract_data("/Users/MortenHelsoe/Desktop/DTU/6. Semester/Bachelor Projekt/Tangle-lib-ORM/DTU-Tangle/csv_test/test2.csv")
 
 dbq = DataSetBinaryQuestionnaire(3)
+data = GenerateDataBinaryQuestionnaire(10, 10, 3).generate_data()
+
+# print(data)
+
+
 data_cuts = dbq.cut_generator_binary(data)
+
+
+# for cut in data_cuts.cuts:
+#     print(cut.A, " ", cut.Ac, " ", cut.cost)
+
+
+
+
 tree = create_searchtree(data_cuts)
 
 # print_tree(tree)
@@ -17,38 +32,59 @@ new_new_tree = condense_tree(tree)
 # print_tree(new_new_tree)
 contracting_search_tree(new_new_tree)
 
-# data.shape[1]
-# print(data.shape[1])
-# soft = soft_clustering(new_new_tree, 0, 1, {})
-# hard = hard_clustering(soft)
-# print(hard[0])
 
+soft = soft_clustering(tree)
+hard = hard_clustering(soft)
 
-def generate_random_color():
-    """
-    Generate a random color represented as a tuple of RGB values.
-    """
-    r = random.randint(0, 255)  # Red component
-    g = random.randint(0, 255)  # Green component
-    b = random.randint(0, 255)  # Blue component
-    return (r, g, b)
-
-vals = []
-
-for i in range(data.shape[1]):
-    soft = soft_clustering(new_new_tree, i, 1, {})
-    vals.append(hard_clustering(soft)[0])
-
-print(vals)
-set_vals = set(vals)
-print(set_vals)
-
-color_dict = {}
-
-for i in set_vals:
-    color_dict[i] = generate_random_color()
-
+color_dict = generate_color_dict(hard)
 
 print(color_dict)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def generate_random_color():
+#     """
+#     Generate a random color represented as a tuple of RGB values.
+#     """
+#     r = random.randint(0, 255)  # Red component
+#     g = random.randint(0, 255)  # Green component
+#     b = random.randint(0, 255)  # Blue component
+#     return (r, g, b)
+
+
+# def generate_color_dict(data, tree):
+#     vals = []
+
+#     for i in range(data.shape[0]):
+#         soft = soft_clustering(tree, i, 1, {})
+#         vals.append(hard_clustering(soft)[0])
+
     
+#     set_vals = set(vals)
+#     color_dict = {}
+
+#     for i in set_vals:
+#         color_dict[i] = generate_random_color()
+
+
+#     return color_dict, vals
+
+
