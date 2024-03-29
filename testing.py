@@ -4,7 +4,7 @@ from Model.GenerateTestData import *
 
 def main():
 
-    gdfb = GenerateDataFeatureBased(3, 1)
+    gdfb = GenerateDataFeatureBased(5, 0.4)
 
     gdfb.random_clusters(10)
 
@@ -13,9 +13,6 @@ def main():
 
     data = DataSetFeatureBased(10)
     data.points = gdfb.points
-
-    for point in data.points:
-        print(point[0],point[1]) 
 
     data.cut_generator_axis()
     data.cost_function()
@@ -34,10 +31,10 @@ def main():
 
     print("nmi-score = ", gdfb.nmi_score(hard))
 
-    truth1 = gdfb.k_means(3)
+    truth1 = gdfb.k_means(5)
     print(truth1)
     print("nmi-score = ", gdfb.nmi_score(truth1))
-    truth2 = gdfb.spectral_clustering(3)
+    truth2 = gdfb.spectral_clustering(5)
     print(truth2)
     print("nmi-score = ", gdfb.nmi_score(truth2))
 

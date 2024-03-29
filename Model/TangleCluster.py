@@ -61,6 +61,7 @@ def create_searchtree(data : DataType):
 
     leaves = [root]
     cuts_ordered = data.order_function()
+
     id = 0
     for cutId, cut in enumerate(cuts_ordered, start=1):
         new_leaves = []

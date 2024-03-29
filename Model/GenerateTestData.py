@@ -85,10 +85,9 @@ class GenerateRandomGraph:
 
 class GenerateDataFeatureBased():
 
-    def __init__(self, numb_clusters, std_deviation, centroids = [(1,1), (10,10)]):
+    def __init__(self, numb_clusters, std_deviation):
         self.numb_clusters = numb_clusters
         self.std_deviation = std_deviation
-        self.centroids = centroids
         self.points = []
         self.ground_truth = []
 
@@ -98,7 +97,7 @@ class GenerateDataFeatureBased():
         self.box_low_y = 0
         self.box_high_y = 20
 
-    def fixed_clusters(self, cluster_points):
+    def fixed_clusters(self, cluster_points, centroids):
         """
         Creating two clusters in 2 dimension for two fixed centroids.
         The points is created from Gaussian Distribution. 
@@ -106,7 +105,7 @@ class GenerateDataFeatureBased():
         points_x = []
         points_y = []
 
-        for truth, (center_x, center_y) in enumerate(self.centroids):
+        for truth, (center_x, center_y) in enumerate(centroids):
             # Generate points using Gaussian distribution
             points_x.extend(np.random.normal(loc=center_x, scale=self.std_deviation, size=cluster_points))
             points_y.extend(np.random.normal(loc=center_y, scale=self.std_deviation, size=cluster_points))
@@ -123,10 +122,10 @@ class GenerateDataFeatureBased():
         Standard deviation and centroids are choosen random. 
         """
         # Parameter that controls how much overlap is allowed
-        overlap = 0.5
+        overlap = 0.3
 
         std_low = 0.1
-        std_high = 1
+        std_high = 0.5
 
         tries = 0
         while(tries < 1000):

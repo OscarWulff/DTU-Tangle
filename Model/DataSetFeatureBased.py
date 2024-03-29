@@ -22,9 +22,6 @@ class DataSetFeatureBased(DataType):
         for z, (x, y) in enumerate(zip(x1, x2)):
            self.points.append((x, y, z))
         
-
-        #self.points = [(1,2,0),(3,2,1),(5,2,2),(6,2,3),(7,2,4),(9,2,5),(10,2,6),(12,2,7)]
-
         self.cut_generator_axis()
         self.cost_function()
 
@@ -158,22 +155,7 @@ def dimension_reduction_feature_based(filename):
 
         return S, X_projected
 
-        # df = pd.read_csv(filename)
-        # X = df.values
-
-        # X = X[:, :-1]
-        # X = X.astype(float)
-        # N, _ = X.shape
-        # # Subtract mean value from data
-        # Y = X - np.ones((N, 1)) * X.mean(0)
-
-        # # PCA by computing SVD of Y
-        # _, S, Vh = svd(Y, full_matrices=False)
-        # # scipy.linalg.svd returns "Vh", which is the Hermitian (transpose)
-        # # of the vector V. So, for us to obtain the correct V, we transpose:
-        
-        
-        # return S, Vh.T
+    
 
 def calculate_explained_varince(S):
     rho = (S * S) / (S * S).sum()

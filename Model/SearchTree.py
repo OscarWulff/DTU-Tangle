@@ -11,7 +11,7 @@ class Searchtree():
         self.parent_node : Searchtree = parent_node
         self.left_node : Searchtree = None
         self.right_node : Searchtree = None
-        self.tangle = []
+        self.tangle = []    
         self.cut : Cut = Cut()
         self.cuts : set[Cut] = set()
         self.cut_id = cut_id
@@ -54,6 +54,7 @@ def condense_tree(root: Searchtree):
                     root.left_node = None
                 else: 
                     root.right_node = None
+                break
             max_branch_length -= 1
             current_node = current_node.parent_node
     
@@ -68,8 +69,11 @@ def condense_tree(root: Searchtree):
 
     traverse(root)
 
-    for leaf in leaves:
-       prune_tree(leaf, prune_length)
+    # for leaf in leaves[:]:
+    #    prune_tree(leaf, prune_length)
+    #    if leaf.parent_node.left_node != leaf or leaf.parent_node.right_node != leaf:
+    #        leaves.remove(leaf)
+
 
     def condense_leaf(leaf):
         nonlocal root
@@ -84,9 +88,9 @@ def condense_tree(root: Searchtree):
                     else:
                         leaf.parent_node.parent_node.right_node = leaf
 
-                    # Der er skal tilføjes noget til condensed_oritentations her
                     leaf.condensed_oritentations.add(f"{leaf.parent_node.cut_id}"+ leaf.parent_node.cut_orientation)
                     leaf.cuts.add(leaf.parent_node.cut)
+                    leaf.cuts = leaf.cuts.union(leaf.parent_node.cuts)
                     leaf.parent_node = leaf.parent_node.parent_node 
                     condense_leaf(leaf)
             elif leaf.parent_node.left_node != None and leaf.parent_node.right_node != None:
@@ -121,7 +125,7 @@ def contracting_search_tree(node : Searchtree):
                 for co in node.left_node.condensed_oritentations:
                     if co in node.right_node.condensed_oritentations:
                         node.condensed_oritentations.add(co)
-                    else:     
+                    else:
                         cut_nr = co[0]
                         cut_or = co[1]
                         if cut_or == "L":
@@ -130,7 +134,7 @@ def contracting_search_tree(node : Searchtree):
                                     if str(cut.id) == cut_nr:
                                         node.characterizing_cuts.add(cut)
                         else:
-                            if cut_nr+"R" in node.right_node.condensed_oritentations:
+                            if cut_nr+"L" in node.right_node.condensed_oritentations:
                                 for cut in node.left_node.cuts:
                                     if str(cut.id) == cut_nr:
                                         node.characterizing_cuts.add(cut)
@@ -148,15 +152,15 @@ def soft_clustering(node):
     Soft clustering of the point
     """
 
-    def calculate_softclustering(node, v, accumulated : float, softClustering):
+    def calculate_softclustering(node, v, softClustering, accumulated : float = 1.0):
         if node.leaf:
             softClustering[v][node.leaf_id] = accumulated
         else:
             pl = p_l(node, v)
             if node.left_node != None: 
-                calculate_softclustering(node.left_node, v, accumulated * pl, softClustering)
+                calculate_softclustering(node.left_node, v, softClustering, accumulated * pl)
             if node.right_node != None: 
-                calculate_softclustering(node.right_node, v, accumulated * (1-pl), softClustering)
+                calculate_softclustering(node.right_node, v, softClustering, accumulated * (1-pl))
 
     
     def p_l(node, v):
@@ -164,7 +168,6 @@ def soft_clustering(node):
         sum_all = 0.0
         for cut in node.characterizing_cuts:
             sum_all += cut.cost
-            
             if v in cut.A: 
                 sum_right += cut.cost
         if sum_all == 0: 
@@ -178,7 +181,7 @@ def soft_clustering(node):
     softClustering = np.zeros((numb_points, node.numb_tangles), dtype=float)
 
     for k in range(numb_points):
-        calculate_softclustering(node, k, 1, softClustering)
+        calculate_softclustering(node, k, softClustering)
 
     return softClustering
 
