@@ -5,6 +5,7 @@ class Cut:
         self.orientation = orientation
         self.A = A
         self.Ac = Ac
+        self.line_placement = None
         
 
     def is_in(self, v):

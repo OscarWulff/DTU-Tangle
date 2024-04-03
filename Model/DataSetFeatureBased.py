@@ -54,6 +54,7 @@ class DataSetFeatureBased(DataType):
 
     def cut_generator_axis(self):
 
+        self.cuts = []
         n = len(self.points)
         x_values = []                
         y_values = []
@@ -64,8 +65,6 @@ class DataSetFeatureBased(DataType):
         
         _, sorted_points_x = self.sort_for_list(x_values, self.points)
         _, sorted_points_y = self.sort_for_list(y_values, self.points)
-    
-
         i = self.agreement_param
         while( n >= i + self.agreement_param ):
             cut_x = Cut()
@@ -77,6 +76,9 @@ class DataSetFeatureBased(DataType):
             for k in range(0, i):
                 cut_x.A.add(sorted_points_x[k][2])
                 cut_y.A.add(sorted_points_y[k][2])
+                if k == i-1:
+                    cut_x.line_placement = (sorted_points_x[k][0], "x")
+                    cut_y.line_placement = (sorted_points_y[k][1], "y")
             for k in range(i, n):
                 cut_x.Ac.add(sorted_points_x[k][2])
                 cut_y.Ac.add(sorted_points_y[k][2])

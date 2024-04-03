@@ -136,7 +136,7 @@ def contracting_search_tree(node : Searchtree):
                                         node.characterizing_cuts.add(cut)
                         else:
                             if cut_nr+"L" in node.right_node.condensed_oritentations:
-                                for cut in node.left_node.cuts:
+                                for cut in node.right_node.cuts:
                                     if str(cut.id) == cut_nr:
                                         node.characterizing_cuts.add(cut)
                 
@@ -152,8 +152,6 @@ def soft_clustering(node):
     Returns:
     Soft clustering of the point
     """
-    acumulated = 1
-
     def calculate_softclustering(node, v, softClustering, accumulated : float = 1.0):
         if node.leaf:
             softClustering[v][node.leaf_id] = accumulated
@@ -175,7 +173,6 @@ def soft_clustering(node):
                 sum_right += cut.cost
         if sum_all == 0: 
             return 0
-
         return float (sum_right/sum_all)
 
     # Calculating number of points
@@ -215,7 +212,7 @@ def hard_clustering(softClustering):
 
 def print_tree(node, indent=0, prefix="Root: "):
     if node is not None:
-        print("  " * indent + prefix + f"{node.cut_id}")
+        print("  " * indent + prefix + f"{node.cut_id} - A = {[cut.A for cut in node.characterizing_cuts]} - Ac = {[cut.Ac for cut in node.characterizing_cuts]} - condensed = {node.condensed_oritentations}")
         if node.left_node is not None or node.right_node is not None:
             print_tree(node.left_node, indent + 1, "L--- ")
             print_tree(node.right_node, indent + 1, "R--- ")
