@@ -84,6 +84,9 @@ class BinaryQuestionnaireWindow(QMainWindow):
 
     def generate_random_data(self):
         # Generate random data
+        self.figure.clear()
+       
+        print("Generating random data...")  # Debugging
         num_questions = int(self.num_questions_input.text())
         num_samples_per_cluster = int(self.num_samples_per_cluster_input.text())
         num_clusters = int(self.num_clusters_input.text())
@@ -92,7 +95,9 @@ class BinaryQuestionnaireWindow(QMainWindow):
                                                          num_samples_per_cluster=num_samples_per_cluster,
                                                          num_clusters=num_clusters)
         self.data = np.array(data_generator.generate_data())
+        
 
+        # self.display_data_window()
         # Display the random data
         # self.plot_data(self.data)
 
