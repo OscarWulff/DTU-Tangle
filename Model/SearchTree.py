@@ -165,15 +165,21 @@ def soft_clustering(node):
 
     
     def p_l(node, v):
-        sum_right = 0.0
+        sum_branch = 0.0
         sum_all = 0.0
         for cut in node.characterizing_cuts:
-            sum_all += cut.cost
-            if v in cut.A: 
-                sum_right += cut.cost
+            for orientation in node.left_node.condensed_oritentations:
+                if cut.id == int(orientation[0]):
+                    sum_all += cut.cost
+                    if orientation[1] == "L":
+                        if v in cut.A: 
+                            sum_branch += cut.cost
+                    else:
+                        if v in cut.Ac: 
+                            sum_branch += cut.cost
         if sum_all == 0: 
             return 0
-        return float (sum_right/sum_all)
+        return float (sum_branch/sum_all)
 
     # Calculating number of points
     numb_points = len(node.cut.A.union(node.cut.Ac))
