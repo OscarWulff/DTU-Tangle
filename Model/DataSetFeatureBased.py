@@ -60,7 +60,7 @@ class DataSetFeatureBased(DataType):
         y_values = []
 
         for point in self.points:
-            x_values.append(point[0])
+            x_values.append(point[0]) 
             y_values.append(point[1])
         
         _, sorted_points_x = self.sort_for_list(x_values, self.points)

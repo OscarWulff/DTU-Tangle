@@ -221,7 +221,7 @@ class FeatureBasedWindow(QMainWindow):
     def tangles(self):
     
         # Creating the tangles
-        data = DataSetFeatureBased(10)
+        data = DataSetFeatureBased(5)
         self.tangles_points = self.generated_data.points
         data.points = self.generated_data.points
         data.cut_generator_axis()
@@ -235,9 +235,6 @@ class FeatureBasedWindow(QMainWindow):
         print(soft)
         hard = hard_clustering(soft)
 
-        print(f"({self.generated_data.points[0][0]}, {self.generated_data.points[0][1]}) - {self.generated_data.points[0][2]}")
-        print(f"({self.generated_data.points[10][0]}, {self.generated_data.points[10][1]}) - {self.generated_data.points[10][2]}")
-        print(f"({self.generated_data.points[20][0]}, {self.generated_data.points[20][1]}) - {self.generated_data.points[20][2]}")
 
         if self.tangles_plot == None: 
             self.numb_plots += 1
@@ -379,12 +376,12 @@ class FeatureBasedWindow(QMainWindow):
 
         if self.numb_plots == 1:
             plot = self.figure.add_subplot(111)
-            plot.set_title('Generated points')
+            plot.set_title('Ground thruth')
             self.plot_points(self.generated_data.points, self.generated_data.ground_truth, plot)
         elif self.numb_plots == 2:
             if self.generated_data != None: 
                 plot = self.figure.add_subplot(121)
-                plot.set_title('Generated points')
+                plot.set_title('Ground truth')
                 self.plot_points(self.generated_data.points, self.generated_data.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(122)
@@ -401,7 +398,7 @@ class FeatureBasedWindow(QMainWindow):
         else:
             if self.generated_data != None: 
                 plot = self.figure.add_subplot(221)
-                plot.set_title('Generated points')
+                plot.set_title('Ground truth')
                 self.plot_points(self.generated_data.points, self.generated_data.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(222)
@@ -477,12 +474,12 @@ class FeatureBasedWindow(QMainWindow):
 
         if self.numb_plots == 1:
             plot = self.figure.add_subplot(111)
-            plot.set_title('Generated points')
+            plot.set_title('Ground truth')
             self.plot_uploaded_points(self.generated_data.points, self.generated_data.ground_truth, plot)
         elif self.numb_plots == 2:
             if self.generated_data != None: 
                 plot = self.figure.add_subplot(121)
-                plot.set_title('Generated points')
+                plot.set_title('Ground truth')
                 self.plot_uploaded_points(self.generated_data.points, self.generated_data.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(122)
@@ -499,7 +496,7 @@ class FeatureBasedWindow(QMainWindow):
         else:
             if self.generated_data != None: 
                 plot = self.figure.add_subplot(221)
-                plot.set_title('Generated points')
+                plot.set_title('Ground truth')
                 self.plot_uploaded_points(self.generated_data.points, self.generated_data.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(222)
