@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import time
 
 from Model.GenerateTestData import GenerateDataBinaryQuestionnaire
-from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire, perform_pca
+from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire, perform_tsne
 from Model.SearchTree import generate_color_dict
 from Model.TangleCluster import create_searchtree, condense_tree, contracting_search_tree, soft_clustering, hard_clustering
 
@@ -83,18 +83,18 @@ class BinaryQuestionnaireWindow(QMainWindow):
                 print("Data uploaded:", self.data)  # Debugging
 
     def generate_random_data(self):
-        # Generate random data
         self.figure.clear()
-       
-        print("Generating random data...")  # Debugging
+
+        # Retrieve user inputs
         num_questions = int(self.num_questions_input.text())
         num_samples_per_cluster = int(self.num_samples_per_cluster_input.text())
         num_clusters = int(self.num_clusters_input.text())
 
-        data_generator = GenerateDataBinaryQuestionnaire(num_questions=num_questions,
-                                                         num_samples_per_cluster=num_samples_per_cluster,
-                                                         num_clusters=num_clusters)
-        self.data = np.array(data_generator.generate_data())
+        # Initialize and generate data
+        data_generator = GenerateDataBinaryQuestionnaire(num_questions, num_clusters, num_samples_per_cluster)
+        data = data_generator.generate_binary_data_multiple_clusters(num_questions, num_samples_per_cluster, num_clusters)  # Assuming your class has a generate method to populate the data attribute
+        self.data = data
+        print(self.data)
         
 
         # self.display_data_window()
@@ -112,7 +112,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
             hard = hard_clustering(soft)
             color_dict, tangle, set_vals = generate_color_dict(hard)
 
-            new_data = perform_pca(self.data)
+            new_data = perform_tsne(self.data)
             self.plot_data(new_data, tangle, color_dict)
         else:
             print("No data available")  # Debugging
@@ -127,7 +127,8 @@ class BinaryQuestionnaireWindow(QMainWindow):
             if tangle[i] in color_dict:
                 color_rgb = color_dict[tangle[i]]
                 color_str = "#{:02x}{:02x}{:02x}".format(*color_rgb)
-                ax.scatter(data.iloc[i]['PC1'], data.iloc[i]['PC2'], color=color_str)
+                # ax.scatter(data.iloc[i]['PC1'], data.iloc[i]['PC2'], color=color_str)
+                ax.scatter(data.iloc[i]['Dim1'], data.iloc[i]['Dim2'], color=color_str)
             else:
                 print(f"Warning: Cluster label {tangle[i]} not found in color dictionary.")
 
