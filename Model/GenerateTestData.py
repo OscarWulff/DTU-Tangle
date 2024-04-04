@@ -90,6 +90,7 @@ class GenerateDataFeatureBased():
         self.std_deviation = std_deviation
         self.points = []
         self.ground_truth = []
+        self.overlap = 0.3
 
         # The parameters for the encirclement 
         self.box_low_x = 0
@@ -102,6 +103,7 @@ class GenerateDataFeatureBased():
         Creating two clusters in 2 dimension for two fixed centroids.
         The points is created from Gaussian Distribution. 
         """
+        print(centroids)
         points_x = []
         points_y = []
 
@@ -122,7 +124,7 @@ class GenerateDataFeatureBased():
         Standard deviation and centroids are choosen random. 
         """
         # Parameter that controls how much overlap is allowed
-        overlap = 0.3
+        
 
         std_low = 0.1
         std_high = 0.5
@@ -144,9 +146,9 @@ class GenerateDataFeatureBased():
                     std_x, std_y = std_deviations[i]
 
                     # Check if it is not too close to another cluster
-                    if np.abs(center_x-x1) < (std_deviation_x + std_x) * overlap:
+                    if np.abs(center_x-x1) < (std_deviation_x + std_x) * self.overlap:
                         start_over = True
-                    if np.abs(center_y-y1) < (std_deviation_y + std_y) * overlap:
+                    if np.abs(center_y-y1) < (std_deviation_y + std_y) * self.overlap:
                         start_over = True
                     # Check clusters are inside the box
                     if center_y - std_deviation_y*3 < self.box_low_y and center_y + std_deviation_y*3 > self.box_high_y:
@@ -174,8 +176,6 @@ class GenerateDataFeatureBased():
                         self.ground_truth.append(truth)
 
                 self.points = [(x, y, z) for z, (x, y) in enumerate(zip(points_x, points_y))]
-
-                print(tries)
                 break
         
         if tries == 1000: 
@@ -252,7 +252,6 @@ class GenerateDataFeatureBased():
         spectral = SpectralClustering(n_clusters=k)
 
         points = [[x, y] for x, y, _ in self.points]
-
         spectral.fit(points)
 
         return spectral.labels_
