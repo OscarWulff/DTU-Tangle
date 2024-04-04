@@ -13,7 +13,7 @@ class DataSetGraph(DataType):
             raise ValueError("Graph G is not initialized. Please assign a graph to the G attribute.")
         
         self.generate_multiple_cuts(self.G)
-        self.cost_function_Graph(self.G)
+        self.cost_function_Graph()
 
     def generate_multiple_cuts(self, G): 
         """ 
@@ -21,68 +21,79 @@ class DataSetGraph(DataType):
         
         Parameters:
         G (networkx.Graph): Graph
-        max_iter (int): Maximum number of iterations
-        weight (str): The edge attribute that holds the numerical value used as a weight. If None, then each edge has unit weight.
-        seed (int): Seed for random number generator
-
-        Return:
-        cuts of the dataset
         """
         # cuts set to amount of nodes divided by two
         cuts = len(G.nodes)
         for _ in range(cuts):
             initial_partition = generate_initial_partition(G)
-            partition = nx.algorithms.community.kernighan_lin_bisection(G, partition=initial_partition, max_iter=5, weight='weight', seed=None)
+            partition = nx.algorithms.community.kernighan_lin_bisection(G, partition=initial_partition, max_iter=2, weight='weight', seed=None)
             cut = Cut()
             cut.A = partition[0]
             cut.Ac = partition[1]
             self.cuts.append(cut)
 
-    def cost_function_Graph(self, G):
+    def cost_function_Graph(self):
         """ 
         Calculate the cost of cuts for Data Set Graph.
-        
-        Parameters:
-        G (networkx.Graph): Graph
         """
+        if self.G is None:
+            raise ValueError("Graph G is not initialized.")
+        
         for cut in self.cuts:
             # Initialize the cost to 0 before calculating
-            cut.cost = cost_function_helper(G, [cut.A, cut.Ac])
+            cut.cost = self.calculate_cut_cost(cut)
+
+    def calculate_cut_cost(self, cut):
+        """ 
+        Helper function to calculate the cost of cuts for Data Set Graph.
+        
+        Parameters:
+        cut (Cut): Cut instance
+
+        Returns:
+        cost of the cut
+        """
+        if self.G is None:
+            raise ValueError("Graph G is not initialized.")
+
+        # Initialize cost for the current cut
+        cut_cost = 0
+
+        # Calculate the cost for the cut based on the described procedure
+        A_size = len(cut.A)
+        Ac_size = len(cut.Ac)
+        total_nodes = A_size + Ac_size
+
+        if A_size == 0 or Ac_size == 0:
+            return 0
+
+        # Calculate the sum of edge weights between nodes in A and nodes in Ac
+        edge_weight_sum = 0
+        for u in cut.A:
+            for v in cut.Ac:
+                # Check if there is an edge between nodes u and v
+                if u in self.G and v in self.G[u]:
+                    edge_weight_sum += self.G[u][v].get('weight', 0)
+
+        # Calculate the average edge weight
+        avg_edge_weight = edge_weight_sum / (A_size * Ac_size)
+
+        # Calculate the cost based on the average edge weight
+        cut_cost = avg_edge_weight / (A_size * (total_nodes - A_size))
+
+        print ("Cut cost: ", cut_cost)
+        return cut_cost
+
 
 
     def order_function(self):
         """Return cuts in list of ascending order of the cost."""
         return sorted(self.cuts, key=lambda x: x.cost)
 
-def cost_function_helper(G, partition):
-    """ 
-    Helper function to calculate the cost of cuts for Data Set Graph.
-    
-    Parameters:
-    G (networkx.Graph): Graph
-    partition (list): Partition of nodes
 
-    Returns:
-    cost of the cut
-    """
-    cut_cost = 0
-    for u, v, weight in G.edges(data='weight'):
-        if (u in partition[0] and v in partition[1]) or (u in partition[1] and v in partition[0]):
-            # Increment the cut by the weight of the edge if the graph is weighted,
-            # otherwise, increment the cut by 1 for each edge
-            if weight is not None:
-                cut_cost += weight
-            else:
-                cut_cost += 1
-    return cut_cost
-
-# , there is no obvious choice for the initial partitions in the pre-processing step
 def generate_initial_partition(G):
-    # Initialize an empty partition
-    partition = ([], [])
-
-    # Randomly assign each node to one of the two partitions
-    for node in G.nodes:
-        partition[random.randint(0, 1)].append(node)
-
-    return partition
+        """Generate initial partition randomly."""
+        partition = ([], [])
+        for node in G.nodes:
+            partition[random.randint(0, 1)].append(node)
+        return partition
