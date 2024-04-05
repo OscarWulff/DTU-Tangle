@@ -10,79 +10,38 @@ from sklearn.metrics.cluster import normalized_mutual_info_score
 
 
 class GenerateRandomGraph:
-    def __init__(self, num_of_nodes, num_of_clusters):
+    def __init__(self, num_of_nodes, num_of_clusters, average_edges_to_same_cluster, average_edges_to_other_clusters):
         self.num_of_nodes = num_of_nodes
         self.num_of_clusters = num_of_clusters
-        self.average_edges_to_same_cluster = 5.0 #p
-        self.average_edges_to_other_clusters = 0.6 #q
+        self.average_edges_to_same_cluster = average_edges_to_same_cluster
+        self.average_edges_to_other_clusters = average_edges_to_other_clusters
 
     def generate_random_graph(self):
-        same_cluster_prob = self.average_edges_to_same_cluster / (self.num_of_nodes / self.num_of_clusters)
-        different_cluster_prob = self.average_edges_to_other_clusters / (self.num_of_nodes - self.num_of_nodes / self.num_of_clusters)
-
         G = nx.Graph()
-        ground_truth_list = []
-        added = [False] * self.num_of_nodes
-        names_map = [-1] * self.num_of_nodes
 
+        # Create nodes and assign them to clusters
         for i in range(self.num_of_nodes):
-            centroid = i // (self.num_of_nodes // self.num_of_clusters)
-            edges_list = []
+            cluster_id = i % self.num_of_clusters  # Assign nodes to clusters
+            G.add_node(i, cluster=cluster_id)  # Add node with cluster attribute
 
-            if not added[i] and i > 0 and (centroid != (i+1) // (self.num_of_nodes // self.num_of_clusters) or i+1 >= self.num_of_nodes):
-                names_map[i] = len(ground_truth_list)
-                ground_truth_list.append(centroid)
-                added[i] = True
-                weight = max(1, int(random.gauss(5, 3)))
-                edges_list.append((names_map[i-1], weight))
+        # Generate edges within the same cluster with weight p
+        for i in range(self.num_of_nodes):
+            for j in range(i + 1, self.num_of_nodes):
+                if G.nodes[i]['cluster'] == G.nodes[j]['cluster']:
+                    if random.random() < self.average_edges_to_same_cluster:
+                        G.add_edge(i, j, weight=self.average_edges_to_same_cluster)
 
-            for j in range(i+1, self.num_of_nodes):
-                force_add = not added[i] and ((centroid != (j+1) // (self.num_of_nodes // self.num_of_clusters)) or j+1 >= self.num_of_nodes)
-                if force_add or (centroid == j // (self.num_of_nodes // self.num_of_clusters) and random.random() <= same_cluster_prob) \
-                        or (centroid != j // (self.num_of_nodes // self.num_of_clusters) and random.random() <= different_cluster_prob):
-                    if not added[i]:
-                        names_map[i] = len(ground_truth_list)
-                        ground_truth_list.append(centroid)
-                        added[i] = True
-                    if not added[j]:
-                        names_map[j] = len(ground_truth_list)
-                        ground_truth_list.append(j // (self.num_of_nodes // self.num_of_clusters))
-                        added[j] = True
-                    weight = max(1, int(random.gauss(5 if centroid == j // (self.num_of_nodes // self.num_of_clusters) else 10, 3)))
-                    edges_list.append((names_map[j], weight))
+        # Generate edges between different clusters with weight q
+        for i in range(self.num_of_nodes):
+            for j in range(i + 1, self.num_of_nodes):
+                if G.nodes[i]['cluster'] != G.nodes[j]['cluster']:
+                    if random.random() < self.average_edges_to_other_clusters:
+                        G.add_edge(i, j, weight=self.average_edges_to_other_clusters)
 
-            G.add_node(names_map[i])  # Add node to graph with the mapped name
-            for edge in edges_list:
-                G.add_edge(names_map[i], edge[0], weight=edge[1])  # Add edge to graph
+        # Assign ground truth labels
+        ground_truth = [G.nodes[i]['cluster'] for i in range(self.num_of_nodes)]
 
-        ground_truth = ground_truth_list
         return G, ground_truth
-
-    def visualize_graph(self, graph, ground_truth=None, visualize_ground_truth=True):
-        pos = nx.spring_layout(graph)  # Layout for visualization
-
-        if visualize_ground_truth and ground_truth is not None:
-            # Draw nodes with different colors for each cluster
-            clusters = sorted(set(ground_truth))
-            colors = plt.cm.viridis(np.linspace(0, 1, len(clusters)))
-            color_map = {cluster: color for cluster, color in zip(clusters, colors)}
-
-            node_colors = [color_map[cluster] for cluster in ground_truth]
-        else:
-            node_colors = 'skyblue'
-
-        nx.draw(graph, pos, with_labels=True, node_color=node_colors, node_size=500, edge_color='black', linewidths=1, font_size=10)
-
-        # Draw edge labels
-        labels = nx.get_edge_attributes(graph, 'weight')
-        nx.draw_networkx_edge_labels(graph, pos, edge_labels=labels)
-
-        if visualize_ground_truth and ground_truth is not None:
-            plt.title("Random Weighted Graph with Ground Truth Clusters")
-        else:
-            plt.title("Random Weighted Graph")
-
-        plt.show()
 
 
 class GenerateDataFeatureBased():
@@ -202,31 +161,7 @@ class GenerateDataFeatureBased():
         # Display the plot
         plt.show()
 
-    def plot_points_prob(self, probability):
-        """
-        Function to be used if you want to plot the points where the probability 
-        is plotted as the transparency.  
-        """
-
-        clusters = sorted(set(self.ground_truth))
-        colors = plt.cm.viridis(np.linspace(0, 1, len(clusters)))
-        color_map = {cluster: color for cluster, color in zip(clusters, colors)}
-
-        # Plot the points with color
-        for point, truth in zip(self.points, self.ground_truth):
-            plt.scatter(point[0], point[1], color=color_map[truth], alpha=probability[point[2]])
-
-        plt.xlim(self.box_low_x-1, self.box_high_x+1)  # Setting x-axis limits from 0 to 10
-        plt.ylim(self.box_low_y-1, self.box_high_y+1) 
-        # Add labels and title
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.title('Colorized Clusters')
-
-        # Display the plot
-        plt.show()
-
-    
+        
     def nmi_score(self, predicted_tangles):
         """
         Calculates the nmi score of the predicted tangles
