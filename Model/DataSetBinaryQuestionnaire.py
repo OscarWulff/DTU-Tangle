@@ -121,6 +121,55 @@ def perform_pca(matrix, num_components=2):
     return pca_coordinates
 
 
+import pandas as pd
+from sklearn.manifold import TSNE
+
+import pandas as pd
+from sklearn.manifold import TSNE
+
+def perform_tsne(matrix, num_components=2, random_state=42, perplexity=None, learning_rate=200, n_iter=3000, early_exaggeration=12):
+    """
+    Perform t-Distributed Stochastic Neighbor Embedding (t-SNE) on a binary matrix.
+
+    Parameters:
+    - matrix: Binary matrix where rows represent individuals and columns represent questions.
+    - num_components: Number of components to keep for visualization (default is 2 for 2D visualization).
+    - random_state: Seed for random number generator to make the results reproducible (default is 42).
+    - perplexity: The perplexity is related to the number of nearest neighbors that is used in other manifold learning algorithms. Larger datasets usually require a larger perplexity. Consider selecting a value between 5 and 50. Default is calculated as min(30, n_samples - 1) / 3.
+    - learning_rate: The learning rate for t-SNE, which can significantly affect the outcome. Common values range from 10 to 1000.
+    - n_iter: The number of iterations for optimization. More complex datasets might require more iterations.
+    - early_exaggeration: Controls how tight natural clusters in the original space are in the embedded space and how much space will be between them.
+
+    Returns:
+    - tsne_coordinates: DataFrame containing the t-SNE coordinates for each individual.
+    """
+    # Remove potential header or first row if necessary
+    matrix = matrix[1:]
+    
+    # Automatically adjust perplexity if not set
+    if perplexity is None:
+        perplexity = min(30, len(matrix) - 1) / 3
+    
+    # Ensure perplexity is less than the number of samples
+    perplexity = min(perplexity, len(matrix) - 1)
+    
+    # Initialize t-SNE with the specified parameters
+    tsne = TSNE(n_components=num_components, 
+                random_state=random_state, 
+                perplexity=perplexity, 
+                learning_rate=learning_rate, 
+                n_iter=n_iter, 
+                early_exaggeration=early_exaggeration)
+    
+    # Run t-SNE on the data
+    tsne_result = tsne.fit_transform(matrix)
+    
+    # Create a DataFrame with the t-SNE coordinates
+    tsne_coordinates = pd.DataFrame(data=tsne_result, columns=[f'Dim{i+1}' for i in range(num_components)])
+
+    return tsne_coordinates
+
+
 
 
 # def calculate_explained_varince(S):
@@ -155,33 +204,31 @@ def sim(v,w):
                
 def cost_function_binary(A, Ac, questionnaires):
     """ 
-    This function is used to calculate the cost of cuts for binary questionnaires data set 
+    Calculate the cost of cuts for binary questionnaires dataset.
     
     Parameters:
-    cuts of the dataset
-
+    - A: Indices of questionnaires in one subset.
+    - Ac: Indices of questionnaires in the complementary subset.
+    - questionnaires: The dataset of questionnaires.
+    
     Returns:
-    cost of each cut
+    - The cost of the cut.
     """
-    
     n = questionnaires.shape[0]
-
-    cost = 0
-    norm = 1.0/(len(A)*(n-len(A)))
-
-    # for i in range(len(A)):
-    #     for j in range(len(Ac)):
-        
-    #        cost += sim(questionnaires(A[i]), questionnaires(Ac[j]))
     
-    # cost = cost*norm
-
-
+    # Check to prevent division by zero
+    if len(A) == 0 or len(A) == n:
+        return float('inf')  # Return a high cost to indicate an invalid cut
+    
+    norm = 1.0 / (len(A) * (n - len(A)))
+    cost = 0
+    
     for yes in A:
         for no in Ac:
+            # Assuming `sim` is a function that calculates similarity between two questionnaires
             cost += sim(questionnaires[yes], questionnaires[no])
-
-    cost = cost*norm
+    
+    cost *= norm  # Apply normalization to the cost
 
     return cost
 
