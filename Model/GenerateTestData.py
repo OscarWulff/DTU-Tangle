@@ -200,31 +200,7 @@ class GenerateDataFeatureBased():
         # Display the plot
         plt.show()
 
-    def plot_points_prob(self, probability):
-        """
-        Function to be used if you want to plot the points where the probability 
-        is plotted as the transparency.  
-        """
-
-        clusters = sorted(set(self.ground_truth))
-        colors = plt.cm.viridis(np.linspace(0, 1, len(clusters)))
-        color_map = {cluster: color for cluster, color in zip(clusters, colors)}
-
-        # Plot the points with color
-        for point, truth in zip(self.points, self.ground_truth):
-            plt.scatter(point[0], point[1], color=color_map[truth], alpha=probability[point[2]])
-
-        plt.xlim(self.box_low_x-1, self.box_high_x+1)  # Setting x-axis limits from 0 to 10
-        plt.ylim(self.box_low_y-1, self.box_high_y+1) 
-        # Add labels and title
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.title('Colorized Clusters')
-
-        # Display the plot
-        plt.show()
-
-    
+        
     def nmi_score(self, predicted_tangles):
         """
         Calculates the nmi score of the predicted tangles
@@ -255,8 +231,6 @@ class GenerateDataFeatureBased():
         spectral.fit(points)
 
         return spectral.labels_
-
-            
                 
                 
              

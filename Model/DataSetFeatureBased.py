@@ -1,4 +1,5 @@
 import math
+import sys 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -6,6 +7,7 @@ from scipy.linalg import svd
 from sklearn.decomposition import PCA
 from Model.DataType import DataType
 from Model.Cut import Cut
+from sklearn.manifold import TSNE
 
 class DataSetFeatureBased(DataType):
 
@@ -15,7 +17,7 @@ class DataSetFeatureBased(DataType):
         #self.initialize()
 
     def initialize(self):
-        _, X = dimension_reduction_feature_based("iris.csv")
+        _, X = pca("iris.csv")
         x1 = X[:, 0]
         x2 = X[:, 1]
 
@@ -27,7 +29,7 @@ class DataSetFeatureBased(DataType):
 
 
 
-    def cost_function(self):
+    def min_distance_cost(self):
         """ 
         This function is used to calculate the cost of cuts for feature based data set
         
@@ -37,7 +39,23 @@ class DataSetFeatureBased(DataType):
         Returns:
         cost of each cut
         """
+        for cut in self.cuts:
 
+            sum_cost = 0.0
+            left_oriented = cut.A
+            right_oriented = cut.Ac
+
+            # Calculate the cost
+            for left_or in left_oriented:
+                for right_or in right_oriented:
+                    sum_cost += -1/np.power(self.euclidean_distance(self.points[left_or][0], self.points[right_or][0], self.points[left_or][1], self.points[right_or][1]), 2)
+            
+            cut.cost = sum_cost
+
+    def cost_function(self):
+        pass
+
+    def pairwise_cost(self):
         for cut in self.cuts:
 
             sum_cost = 0.0
@@ -50,7 +68,7 @@ class DataSetFeatureBased(DataType):
                     sum_cost += -(self.euclidean_distance(self.points[left_or][0], self.points[right_or][0], self.points[left_or][1], self.points[right_or][1]))
             
             cut.cost = sum_cost
-            
+
 
     def cut_generator_axis(self):
 
@@ -97,8 +115,6 @@ class DataSetFeatureBased(DataType):
         Returns: 
         An order of the cuts    
         """
-        
-        self.cost_function()
 
         costs = []
         for cut in self.cuts: 
@@ -121,7 +137,7 @@ class DataSetFeatureBased(DataType):
         sorted_combined = sorted(combined, key=lambda x: x[0])
         return zip(*sorted_combined)
 
-def dimension_reduction_feature_based(filename):
+def pca(filename):
         """ 
         This function is used to reduce the dimension of feature based data set 
         
@@ -156,6 +172,18 @@ def dimension_reduction_feature_based(filename):
         X_projected = np.dot(Y, Vh[:2, :].T)
 
         return S, X_projected
+
+def tsne(filename):
+    df = pd.read_csv(filename)
+    X = df.values
+    X = X[:20, :-1]
+    X = X.astype(float)
+
+    perplexity = min(30, len(X) - 1)
+    tsne = TSNE(n_components=2, perplexity=perplexity)
+    data = tsne.fit_transform(X)
+
+    return data
 
     
 
