@@ -23,7 +23,8 @@ class DataSetGraph(DataType):
         G (networkx.Graph): Graph
         """
         # cuts set to amount of nodes divided by two
-        cuts = len(G.nodes)
+        cuts = len(G.nodes) // 2
+        self.cuts = []
         for _ in range(cuts):
             initial_partition = generate_initial_partition(G)
             partition = nx.algorithms.community.kernighan_lin_bisection(G, partition=initial_partition, max_iter=2, weight='weight', seed=None)
@@ -72,16 +73,12 @@ class DataSetGraph(DataType):
         for u in cut.A:
             for v in cut.Ac:
                 # Check if there is an edge between nodes u and v
-                if u in self.G and v in self.G[u]:
+                if self.G.has_edge(u, v):  # More concise way to check for an edge
                     edge_weight_sum += self.G[u][v].get('weight', 0)
 
-        # Calculate the average edge weight
-        avg_edge_weight = edge_weight_sum / (A_size * Ac_size)
+        # Calculate the cost based on the sum of edge weights
+        cut_cost = edge_weight_sum / (A_size * (total_nodes - A_size))
 
-        # Calculate the cost based on the average edge weight
-        cut_cost = avg_edge_weight / (A_size * (total_nodes - A_size))
-
-        print ("Cut cost: ", cut_cost)
         return cut_cost
 
 

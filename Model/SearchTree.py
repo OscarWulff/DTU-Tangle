@@ -266,7 +266,7 @@ def generate_random_color():
     return (r, g, b)
 
 def generate_color_dict(vals):
-    
+    # print(vals)
     set_vals = set(vals)
     color_dict = {}
 
@@ -277,5 +277,4 @@ def generate_color_dict(vals):
 
 
     return color_dict, vals, set_vals
-
 

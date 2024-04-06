@@ -72,6 +72,9 @@ def create_searchtree(data : DataType):
     for index, cut in enumerate(cuts_ordered, start=1):
         print(f"cut.id = {index} - A: {cut.A} - Ac: {cut.Ac} - cost: {cut.cost}")
 
+    for index, cut in enumerate(cuts_ordered, start=1):
+        print(f"cut.id = {index} - A: {cut.A} - Ac: {cut.Ac} - cost: {cut.cost}")
+
     id = 0
     for cutId, cut in enumerate(cuts_ordered, start=1):
         new_leaves = []

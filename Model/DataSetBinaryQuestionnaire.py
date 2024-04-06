@@ -53,23 +53,15 @@ class DataSetBinaryQuestionnaire(DataType):
         """
         
         
-        cut_list = []
-        nd_questionnaires = nd_questionnaires[1:]
+        
+        # nd_questionnaires = nd_questionnaires
         cost = 0
         orientation = "None"
 
         num_of_participants = nd_questionnaires.shape[0]
         num_of_quest = nd_questionnaires.shape[1]
-
-        print(nd_questionnaires)
         
-        # print(num_of_participants)
-        # print(num_of_quest)
-
-        cuts_list = []
-        cuts_y = [set() for _ in range(num_of_quest)]
-        cuts_n = [set() for _ in range(num_of_quest)]
-        
+        self.cuts = []
 
         for i in range(num_of_quest):
             self.cuts.append(Cut(i, cost, orientation, set(), set()))
@@ -127,7 +119,7 @@ from sklearn.manifold import TSNE
 import pandas as pd
 from sklearn.manifold import TSNE
 
-def perform_tsne(matrix, num_components=2, random_state=42, perplexity=None, learning_rate=200, n_iter=3000, early_exaggeration=12):
+def perform_tsne(matrix, num_components=2, random_state=37, perplexity=None, learning_rate=200, n_iter=3000, early_exaggeration=12):
     """
     Perform t-Distributed Stochastic Neighbor Embedding (t-SNE) on a binary matrix.
 
@@ -144,7 +136,10 @@ def perform_tsne(matrix, num_components=2, random_state=42, perplexity=None, lea
     - tsne_coordinates: DataFrame containing the t-SNE coordinates for each individual.
     """
     # Remove potential header or first row if necessary
-    matrix = matrix[1:]
+
+    # print(matrix.shape)
+
+    # matrix = matrix[1:]
     
     # Automatically adjust perplexity if not set
     if perplexity is None:
@@ -166,6 +161,7 @@ def perform_tsne(matrix, num_components=2, random_state=42, perplexity=None, lea
     
     # Create a DataFrame with the t-SNE coordinates
     tsne_coordinates = pd.DataFrame(data=tsne_result, columns=[f'Dim{i+1}' for i in range(num_components)])
+    # print(tsne_coordinates)
 
     return tsne_coordinates
 
@@ -194,43 +190,26 @@ def sim(v,w):
     Returns:
     similarity (float): Similarity between v and w
     """
-    similarity = 0
-    for i in range(len(v)):
-        if v[i] == w[i]:
-            similarity += 1
+    return np.sum(v == w)
 
-    return similarity
+    # similarity = 0
+    # for i in range(len(v)):
+    #     if v[i] == w[i]:
+    #         similarity += 1
 
-               
+    # return similarity
+
+             
 def cost_function_binary(A, Ac, questionnaires):
-    """ 
-    Calculate the cost of cuts for binary questionnaires dataset.
+    similarity_sum = 0
+    # Ensure A and Ac are not empty to avoid division by zero
+    if len(A) == 0 or len(Ac) == 0:
+        return float('inf')  # Or another appropriate value indicating invalid/undefined cost
     
-    Parameters:
-    - A: Indices of questionnaires in one subset.
-    - Ac: Indices of questionnaires in the complementary subset.
-    - questionnaires: The dataset of questionnaires.
-    
-    Returns:
-    - The cost of the cut.
-    """
-    n = questionnaires.shape[0]
-    
-    # Check to prevent division by zero
-    if len(A) == 0 or len(A) == n:
-        return float('inf')  # Return a high cost to indicate an invalid cut
-    
-    norm = 1.0 / (len(A) * (n - len(A)))
-    cost = 0
-    
-    for yes in A:
-        for no in Ac:
-            # Assuming `sim` is a function that calculates similarity between two questionnaires
-            cost += sim(questionnaires[yes], questionnaires[no])
-    
-    cost *= norm  # Apply normalization to the cost
-
-    return cost
+    for u in A:
+        for v in Ac:
+            similarity_sum += sim(questionnaires[u], questionnaires[v])
+    return similarity_sum / (len(A) * len(Ac))
 
 
 

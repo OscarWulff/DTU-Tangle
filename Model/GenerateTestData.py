@@ -1,4 +1,5 @@
 import random
+from matplotlib.pylab import default_rng
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
@@ -192,106 +193,85 @@ class GenerateDataFeatureBased():
         spectral.fit(points)
 
         return spectral.labels_
-                
+
+            
+class BitSet:
+    def __init__(self, size):
+        self.size = size
+        self.bitset = np.zeros(size, dtype=bool)
+
+    def add(self, index):
+        self.bitset[index] = True
+
+    def setValue(self, index, value):
+        self.bitset[index] = value
+
+    def flip(self, index):
+        self.bitset[index] = not self.bitset[index]
+
+    def get(self, index):
+        return self.bitset[index]     
                 
              
 class GenerateDataBinaryQuestionnaire():
 
-    def __init__(self, num_questions, num_clusters, num_samples_per_cluster, deviation_chance=0.1):
-        """
-        Initialize the binary questionnaire data generator.
+    def generate_random_binary_questionnaire_answers(self,numberOfAnswers, numberOfQuestions):
+        result = [None] * numberOfAnswers
+        rng = default_rng()
+        for i in range(numberOfAnswers):
+            result[i] = BitSet(numberOfQuestions)
+            for j in range(numberOfQuestions):
+                if rng.choice([True, False]):
+                    result[i].add(j)
+        return result
 
-        :param num_questions: Number of questions in the questionnaire.
-        :param num_clusters: Number of distinct answering patterns.
-        :param num_samples_per_cluster: Number of samples (respondents) for each pattern.
-        :param deviation_chance: Chance for each question in a sample to deviate from the cluster pattern.
-        """
-        self.num_questions = num_questions
-        self.num_clusters = num_clusters
-        self.num_samples_per_cluster = num_samples_per_cluster
-        self.deviation_chance = deviation_chance
-        self.data = None
-        self.ground_truth = []
+    def generate_biased_binary_questionnaire_answers(self, number_of_answers, number_of_questions, number_of_clusters):
+        result = [BitSet(number_of_questions) for _ in range(number_of_answers)]
+        ground_truth = np.zeros(number_of_answers, dtype=int)
+        index = 0
+        extra = number_of_answers % number_of_clusters
 
-    def generate_binary_data_multiple_clusters(self, num_questions, num_samples, num_clusters):
-        """
-        Generates binary data for multiple clusters by creating centroids and then generating samples
-        around those centroids with a probability of alteration.
-        
-        :param num_questions: Number of questions (features) in the dataset.
-        :param num_samples: Total number of samples to generate.
-        :param num_clusters: Number of clusters to generate.
-        """
-        samples_per_cluster = num_samples // num_clusters
-        data = []
-        
-        for _ in range(num_clusters):
-            centroid = np.random.randint(2, size=(num_questions,))
-            cluster_samples = []
-            
-            for _ in range(samples_per_cluster):
-                altered_answers = np.random.binomial(1, 0.1, (num_questions,))
-                sample = np.where(altered_answers == 1, 1 - centroid, centroid)
-                cluster_samples.append(sample)
-            
-            data.extend(cluster_samples)
-        
-        # If num_samples is not exactly divisible by num_clusters, add remaining samples to last cluster
-        remaining_samples = num_samples % num_clusters
-        if remaining_samples > 0:
-            last_centroid = np.random.randint(2, size=(num_questions,))
-            for _ in range(remaining_samples):
-                altered_answers = np.random.binomial(1, 0.1, (num_questions,))
-                sample = np.where(altered_answers == 1, 1 - last_centroid, last_centroid)
-                data.append(sample)
-        
-        data = np.array(data)
-        np.random.shuffle(data)
-        
-        return data
+        for i in range(number_of_clusters):
+            center = BitSet(number_of_questions)
+            for j in range(number_of_questions):
+                if random.random() < 0.5:  # Simulating a random choice between True and False
+                    center.add(j)
 
-    def generate(self):
-        """
-        Generates the binary questionnaire data with slight deviations within each cluster.
-        """
-        patterns = np.random.randint(2, size=(self.num_clusters, self.num_questions))
-        self.data = np.zeros((self.num_clusters * self.num_samples_per_cluster, self.num_questions), dtype=int)
-        max_flips_per_sample = max(1, int(self.num_questions * self.deviation_chance))  # Ensure at least one flip
+            cluster_size = number_of_answers // number_of_clusters + (1 if i < extra else 0)
+            for _ in range(cluster_size):
+                for k in range(number_of_questions):
+                    value = center.get(k)
+                    result[index].setValue(k, value)
+                    if random.random() >= 0.97:  # Flip the bit with a 10% chance
+                        result[index].flip(k)
+                ground_truth[index] = i
+                index += 1
 
-        for i, pattern in enumerate(patterns):
-            for j in range(self.num_samples_per_cluster):
-                # Introduce slight variations to the pattern for each sample
-                sample = np.copy(pattern)
-                # deviations = np.random.rand(self.num_questions) < self.deviation_chance
-                flip_indices = np.random.choice(self.num_questions, max_flips_per_sample, replace=False)
-                sample[flip_indices] = 1 - sample[flip_indices]  # Flip the bits where deviations occur
-                
-                index = i * self.num_samples_per_cluster + j
-                self.data[index] = sample
+        return result, ground_truth
+    @staticmethod
+    def generateBiased_binary_questionnaire_answers(numberOfAnswers, numberOfQuestions, distributionPercentage=0.5):
+        if distributionPercentage < 0 or distributionPercentage > 1:
+            return None
 
-                # Track ground truth
-                self.ground_truth.append(i)
+        result = [None] * numberOfAnswers
+        groundTruth = [None] * numberOfAnswers
+        rng = default_rng()
+        nPartition = int(numberOfAnswers * distributionPercentage)
 
-        # Optionally shuffle data to simulate randomness in sampling
-        p = np.random.permutation(len(self.data))
-        self.data, self.ground_truth = self.data[p], np.array(self.ground_truth)[p]
+        # Cluster of mainly false answers
+        for i in range(nPartition):
+            result[i] = BitSet(numberOfQuestions)
+            groundTruth[i] = 0
+            for j in range(numberOfQuestions):
+                if rng.integers(0, 100) >= 90:
+                    result[i].add(j)
 
-    def plot_data(self):
-        """
-        Visualize the answering patterns across the first two questions.
-        """
-        if self.num_questions < 2:
-            print("Not enough questions for a 2D plot.")
-            return
+        # Cluster of mainly true answers
+        for i in range(nPartition, numberOfAnswers):
+            result[i] = BitSet(numberOfQuestions)
+            groundTruth[i] = 1
+            for j in range(numberOfQuestions):
+                if rng.integers(0, 100) < 90:
+                    result[i].add(j)
 
-        colors = ['red', 'blue', 'green', 'orange', 'purple', 'brown']
-        plt.figure(figsize=(10, 6))
-        for i in range(min(self.num_clusters, len(colors))):
-            indices = np.where(np.array(self.ground_truth) == i)
-            plt.scatter(self.data[indices, 0], self.data[indices, 1], label=f'Cluster {i}', color=colors[i], alpha=0.6)
-
-        plt.xlabel('Response to Question 1')
-        plt.ylabel('Response to Question 2')
-        plt.title('Binary Responses Visualization')
-        plt.legend()
-        plt.show()
+        return result, groundTruth
