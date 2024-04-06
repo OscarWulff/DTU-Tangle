@@ -11,21 +11,29 @@ from Model.DataSetGraph import DataSetGraph
 from Model.DataType import DataType
 from Model.DataType import DataType
 
-def consistent(chosen_cut, tangles, agreement_parameter):
-    if len(tangles) == 0:
+def consistent(chosen_cut, node, agreement_parameter):
+    if len(node.tangle) == 0:
         return len(chosen_cut) >= agreement_parameter
-    elif len(tangles) == 1: 
-        for a in tangles:
+    elif len(node.tangle) == 1: 
+        for a in node.tangle:
              l = set.intersection(a[0], chosen_cut)
              if len(l) < agreement_parameter:
                  return False
     else:
-        for i in range(len(tangles)): 
-            for j in range(len(tangles)): 
-                if i != j: 
-                    l = set.intersection(set.intersection(tangles[i][0], tangles[j][0]), chosen_cut)
+        unique_tangles = []
+        seen = set()
+        for i in range(len(node.tangle)): 
+            for j in range(len(node.tangle)): 
+                if tuple(node.tangle[i][0]) not in seen:
+                    unique_tangles.append(node.tangle[i])
+                    seen.add(tuple(node.tangle[i][0]))
+                if i != j:
+                    ### muligvis gøre sådan at de samme tangles ikke bliver tilføjet igen
+                    l = set.intersection(set.intersection(node.tangle[i][0], node.tangle[j][0]), chosen_cut)
                     if len(l) < agreement_parameter: 
                         return False
+        node.tangle = unique_tangles
+
     return True
 
 # Skal ændres i forhold til 'data'
@@ -69,12 +77,12 @@ def create_searchtree(data : DataType):
         new_leaves = []
         cut.id = cutId
         for leaf in leaves:
-            if consistent(cut.A, leaf.tangle, data.agreement_param):
+            if consistent(cut.A, leaf, data.agreement_param):
                 id += 1
                 left_child = create_child(leaf, "L", cut, id)
                 new_leaves.append(left_child)
 
-            if consistent(cut.Ac, leaf.tangle, data.agreement_param):
+            if consistent(cut.Ac, leaf, data.agreement_param):
                 id += 1
                 right_child = create_child(leaf, "R", cut, id)
                 new_leaves.append(right_child)
