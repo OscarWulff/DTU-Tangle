@@ -1,4 +1,5 @@
 
+import copy
 from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire
 from Model.DataSet import extract_data
 from Model.SearchTree import *
@@ -17,6 +18,7 @@ def consistent(chosen_cut, node, agreement_parameter):
     elif len(node.tangle) == 1: 
         for a in node.tangle:
              l = set.intersection(a[0], chosen_cut)
+             
              if len(l) < agreement_parameter:
                  return False
     else:
@@ -47,10 +49,12 @@ def create_searchtree(data : DataType):
     Search tree
     """
 
+    
+
     def create_child(node, orientation, cut, id):
         child = Searchtree(node, node.cut_id+1)
         child.cut_orientation = orientation
-        child.tangle += node.tangle
+        child.tangle = copy.deepcopy(node.tangle)
         node.cut = cut
         child.cuts.add(cut)
         child.condensed_oritentations.add(f"{child.cut_id}"+ child.cut_orientation)
