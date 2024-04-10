@@ -168,15 +168,20 @@ class FeatureBasedWindow(QMainWindow):
         self.nmi.hide()
         layout.addWidget(self.nmi)
 
-        self.nmi = QCheckBox("show nmi-score")
-        self.nmi.stateChanged.connect(self.nmi_changed)
-        self.nmi.hide()
-        layout.addWidget(self.nmi)
+        self.show_tangle = QCheckBox("show tangles")
+        self.show_tangle.stateChanged.connect(self.tangle_show_changed)
+        self.show_tangle.hide()
+        layout.addWidget(self.show_tangle)
 
         self.soft_clustering = QCheckBox("soft clustering")
         self.soft_clustering.stateChanged.connect(self.soft_clustering_changed)
         self.soft_clustering.hide()
         layout.addWidget(self.soft_clustering)
+
+        self.plot_tree = QCheckBox("plot tree")
+        self.plot_tree.stateChanged.connect(self.plot_tree_changed)
+        self.plot_tree.hide()
+        layout.addWidget(self.plot_tree)
 
         self.random_centers_button = QPushButton("Clusters with random centers", self)
         self.random_centers_button.clicked.connect(self.random_centers)
@@ -233,6 +238,7 @@ class FeatureBasedWindow(QMainWindow):
         self.nmi.show()
         self.soft_clustering.show()
         self.cuts_button.show()
+        self.plot_tree.show()
 
     def fixed_centers(self):
         self.show_buttons()
@@ -305,9 +311,52 @@ class FeatureBasedWindow(QMainWindow):
 
     def test(self):
         pass
+    
+
+    def plot_tree_changed(self, state):
+        def plot_tree(node, depth=0, pos=(0, 0), x_offset=100, y_offset=100):
+            if node is None:
+                return
+
+            # Draw current node
+            tangle = set()
+            for i, t in enumerate(node.tangle):
+                if i == 0: 
+                    tangle = t[0]
+                else: 
+                    tangle = tangle.intersection(t[0])
+
+            plt.text(pos[0], pos[1], str(tangle), fontsize=6, ha='center', va='center', wrap=True, bbox=dict(facecolor='white', edgecolor='black', boxstyle='circle'))
+
+            # Draw left subtree
+            if node.left_node:
+                left_pos = (pos[0] - x_offset, pos[1] - y_offset)
+                plt.plot([pos[0], left_pos[0]], [pos[1], left_pos[1]], color='black')
+                plot_tree(node.left_node, depth+1, left_pos)
+
+            # Draw right subtree
+            if node.right_node:
+                right_pos = (pos[0] + x_offset, pos[1] - y_offset)
+                plt.plot([pos[0], right_pos[0]], [pos[1], right_pos[1]], color='black')
+                plot_tree(node.right_node, depth+1, right_pos)
+
+        if state == 2: 
+            plt.ion()
+            plt.figure(figsize=(8, 8))
+            plot_tree(self.tangle_root)
+            plt.axis('off')
+            plt.ioff()
+            self.plot_tree.setChecked(False)
+        else: 
+            pass
+
+    def tangle_show_changed(self, state):
+        if state == 2: 
+            pass
+        else:
+            pass
 
     def soft_clustering_changed(self, state):
-
         if state == 2: 
             self.prob_checked = True
         else:
@@ -407,7 +456,6 @@ class FeatureBasedWindow(QMainWindow):
         contracting_search_tree(self.tangle_root)
         print_tree(self.tangle_root)
         soft = soft_clustering(self.tangle_root)
-        print(soft)
         hard = hard_clustering(soft)
 
 
@@ -587,3 +635,5 @@ class FeatureBasedWindow(QMainWindow):
         self.cost_function.show()
 
         self.setup_plots()
+
+    

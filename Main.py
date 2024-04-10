@@ -2,7 +2,6 @@ import sys
 from PyQt5.QtWidgets import QApplication
 from View.MainPage import MainPage
 
-
 def main():
     # Create a QApplication instance
     app = QApplication([])

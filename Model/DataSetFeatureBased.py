@@ -69,6 +69,57 @@ class DataSetFeatureBased(DataType):
             
             cut.cost = sum_cost
 
+    def cut_generator_axis_solveig(self):
+        self.cuts = []
+        n = len(self.points)
+        x_values = []                
+        y_values = []
+
+        for point in self.points:
+            x_values.append(point[0]) 
+            y_values.append(point[1])
+        
+        _, sorted_points_x = self.sort_for_list(x_values, self.points)
+        _, sorted_points_y = self.sort_for_list(y_values, self.points)
+        
+        i = 1
+        cut_x = Cut()
+        cut_x.A = set()
+        cut_x.Ac = set()
+        cut_y = Cut()
+        cut_y.A = set()
+        cut_y.Ac = set()
+        for k in range(0, i):
+            cut_x.A.add(sorted_points_x[k][2])
+            cut_y.A.add(sorted_points_y[k][2])
+            if k == i-1:
+                cut_x.line_placement = (sorted_points_x[k][0], "x")
+                cut_y.line_placement = (sorted_points_y[k][1], "y")
+        for k in range(i, n):
+            cut_x.Ac.add(sorted_points_x[k][2])
+            cut_y.Ac.add(sorted_points_y[k][2])
+        self.cuts.append(cut_x)
+        self.cuts.append(cut_y)
+
+        while( n - i > self.agreement_param - 1):
+            i += self.agreement_param - 1
+            cut_x = Cut()
+            cut_x.A = set()
+            cut_x.Ac = set()
+            cut_y = Cut()
+            cut_y.A = set()
+            cut_y.Ac = set()
+            for k in range(0, i):
+                cut_x.A.add(sorted_points_x[k][2])
+                cut_y.A.add(sorted_points_y[k][2])
+                if k == i-1:
+                    cut_x.line_placement = (sorted_points_x[k][0], "x")
+                    cut_y.line_placement = (sorted_points_y[k][1], "y")
+            for k in range(i, n):
+                cut_x.Ac.add(sorted_points_x[k][2])
+                cut_y.Ac.add(sorted_points_y[k][2])
+            self.cuts.append(cut_x)
+            self.cuts.append(cut_y)
 
     def cut_generator_axis(self):
 
