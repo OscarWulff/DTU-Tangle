@@ -442,19 +442,11 @@ class FeatureBasedWindow(QMainWindow):
         cut = cut_generator_mapping[cut_generator]
         cost = cost_function_mapping[cost_function]
 
-        # print(f"{self.generated_data.points[0][0]},{self.generated_data.points[0][1]}) - id = {self.generated_data.points[0][2]}")
-        # print(f"{self.generated_data.points[5][0]},{self.generated_data.points[5][1]}) - id = {self.generated_data.points[5][2]}")
-        # print(f"{self.generated_data.points[10][0]},{self.generated_data.points[10][1]}) - id = {self.generated_data.points[10][2]}")
-        # print(f"{self.generated_data.points[15][0]},{self.generated_data.points[15][1]}) - id = {self.generated_data.points[15][2]}")
-        # print(f"{self.generated_data.points[20][0]},{self.generated_data.points[20][1]}) - id = {self.generated_data.points[20][2]}")
-        
         cut()
         cost()
         root = create_searchtree(data)
-        print_tree(root)
         self.tangle_root = condense_tree(root)
         contracting_search_tree(self.tangle_root)
-        print_tree(self.tangle_root)
         soft = soft_clustering(self.tangle_root)
         hard = hard_clustering(soft)
 

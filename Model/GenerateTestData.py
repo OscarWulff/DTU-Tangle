@@ -135,8 +135,6 @@ class GenerateDataFeatureBased():
                         self.ground_truth.append(truth)
 
                 self.points = [(x, y, z) for z, (x, y) in enumerate(zip(points_x, points_y))]
-
-                print(tries)
                 break
         
         if tries == 1000: 
@@ -170,7 +168,7 @@ class GenerateDataFeatureBased():
         return nmi_score
 
 
-    def k_means(self, k):
+    def k_means(self, k): 
         """
         Clusters the data with K-means algorithm
         """

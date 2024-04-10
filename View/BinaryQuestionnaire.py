@@ -335,9 +335,6 @@ class BinaryQuestionnaireWindow(QMainWindow):
             self.tree = None
             holder = DataSetBinaryQuestionnaire(self.agree).cut_generator_binary(self.data)
             holder.cuts = holder.order_function()
-            # for cut in holder.cuts:
-            #     print(cut.A, cut.Ac, cut.cost)
-          
             self.tree_holder = create_searchtree(holder)
             self.tree = condense_tree(self.tree_holder)
             contracting_search_tree(self.tree)
@@ -345,9 +342,6 @@ class BinaryQuestionnaireWindow(QMainWindow):
            
             self.hard = hard_clustering(self.soft)
             s = set(self.hard)
-            # print(s)
-            print_tree(self.tree)
-            # print(self.soft)
             
             self.color_dict, self.tangle, set_vals = generate_color_dict(self.hard)
            

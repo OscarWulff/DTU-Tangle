@@ -40,25 +40,25 @@ def h(cost):
 def condense_tree(root: Searchtree):
     nodes = []
     leaves = []
-    prune_length = 1
 
-    def prune_tree(node, max_branch_length):
+    def prune_tree(leaves):
         """ 
         Kan max bruges til at 'max_branch_length' op til 2
         
         """
-        current_node = node
-
-        while max_branch_length > 0:
-            if current_node.parent_node == root:
-                if root.left_node == current_node:
+        new_leaves = []
+        for leaf in leaves: 
+            if leaf.parent_node != root:
+                new_leaves.append(leaf)
+            else:
+                if root.left_node == leaf:
                     root.left_node = None
                 else: 
                     root.right_node = None
-                break
-            max_branch_length -= 1
-            current_node = current_node.parent_node
-    
+
+        return new_leaves
+
+
     def traverse(current_node):
         if current_node is not None:
             if current_node.leaf:
@@ -70,11 +70,7 @@ def condense_tree(root: Searchtree):
 
     traverse(root)
 
-    # for leaf in leaves[:]:
-    #    prune_tree(leaf, prune_length)
-    #    if leaf.parent_node.left_node != leaf or leaf.parent_node.right_node != leaf:
-    #        leaves.remove(leaf)
-
+    leaves = prune_tree(leaves)
 
     def condense_leaf(leaf):
         nonlocal root
@@ -117,7 +113,6 @@ def contracting_search_tree(node : Searchtree):
     contracted Search tree
 
     """
-
     if node != None:
         if node.leaf == False:
             contracting_search_tree(node.left_node)
@@ -126,21 +121,21 @@ def contracting_search_tree(node : Searchtree):
                 for co in node.left_node.condensed_oritentations:
                     if co in node.right_node.condensed_oritentations:
                         node.condensed_oritentations.add(co)
+                        for cut in node.right_node.cuts:
+                            if str(cut.id) == co[:len(co)-1]:
+                                node.cuts.add(cut)
                     else:
-                        cut_nr = co[0]
-                        cut_or = co[1]
+                        cut_nr = co[:len(co)-1]
+                        cut_or = co[len(co)-1]
                         if cut_or == "L":
-                            if cut_nr+"R" in node.right_node.condensed_oritentations:
-                                for cut in node.right_node.cuts:
-                                    if str(cut.id) == cut_nr:
-                                        node.characterizing_cuts.add(cut)
+                            op_orientation = cut_nr+"R"
                         else:
-                            if cut_nr+"L" in node.right_node.condensed_oritentations:
-                                for cut in node.right_node.cuts:
-                                    if str(cut.id) == cut_nr:
-                                        node.characterizing_cuts.add(cut)
-                
-
+                            op_orientation = cut_nr+"L"
+                        if op_orientation in node.right_node.condensed_oritentations:
+                            for cut in node.right_node.cuts:
+                                if str(cut.id) == cut_nr:
+                                    node.characterizing_cuts.add(cut)
+                                    break
 
 def soft_clustering(node):
     """ 
@@ -155,7 +150,6 @@ def soft_clustering(node):
     def calculate_softclustering(node, v, softClustering, accumulated : float = 1.0):
         if node.leaf:
             softClustering[v][node.leaf_id] = accumulated
-            # print(accumulated)
         else:
             pl = p_l(node, v)
             if node.left_node != None: 
@@ -169,9 +163,9 @@ def soft_clustering(node):
         sum_all = 0.0
         for cut in node.characterizing_cuts:
             for orientation in node.left_node.condensed_oritentations:
-                if cut.id == int(orientation[0]):
+                if cut.id == int(orientation[:len(orientation)-1]):
                     sum_all += cut.cost
-                    if orientation[1] == "L":
+                    if orientation[len(orientation)-1] == "L":
                         if v in cut.A: 
                             sum_branch += cut.cost
                     else:
@@ -181,14 +175,10 @@ def soft_clustering(node):
             return 0
         return float (sum_branch/sum_all)
 
-    # Calculating number of points
     numb_points = len(node.cut.A.union(node.cut.Ac))
-
     softClustering = np.zeros((numb_points, node.numb_tangles), dtype=float)
-
     for k in range(numb_points):
         calculate_softclustering(node, k, softClustering)
-
     return softClustering
 
 
@@ -218,7 +208,7 @@ def hard_clustering(softClustering):
 
 def print_tree(node, indent=0, prefix="Root: "):
     if node is not None:
-        print("  " * indent + prefix + f"{node.cut_id} - A = {[cut.A for cut in node.characterizing_cuts]} - Ac = {[cut.Ac for cut in node.characterizing_cuts]} - condensed = {node.condensed_oritentations}")
+        print("  " * indent + prefix + f"{node.cut_id} - tangles = {node.tangle} - left_condensed = {node.left_node.condensed_oritentations if node.left_node != None else None } - characterizing = {[cut.id for cut in node.characterizing_cuts]}")
         if node.left_node is not None or node.right_node is not None:
             print_tree(node.left_node, indent + 1, "L--- ")
             print_tree(node.right_node, indent + 1, "R--- ")
@@ -266,7 +256,6 @@ def generate_random_color():
     return (r, g, b)
 
 def generate_color_dict(vals):
-    # print(vals)
     set_vals = set(vals)
     color_dict = {}
 

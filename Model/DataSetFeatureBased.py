@@ -48,7 +48,8 @@ class DataSetFeatureBased(DataType):
             # Calculate the cost
             for left_or in left_oriented:
                 for right_or in right_oriented:
-                    sum_cost += -1/np.power(self.euclidean_distance(self.points[left_or][0], self.points[right_or][0], self.points[left_or][1], self.points[right_or][1]), 2)
+                    sum_cost += -(
+                    self.euclidean_distance(self.points[left_or][0], self.points[right_or][0], self.points[left_or][1], self.points[right_or][1])/(len(cut.A)*len(cut.Ac))) 
             
             cut.cost = sum_cost
 
@@ -65,7 +66,7 @@ class DataSetFeatureBased(DataType):
             # Calculate the cost
             for left_or in left_oriented:
                 for right_or in right_oriented:
-                    sum_cost += -(self.euclidean_distance(self.points[left_or][0], self.points[right_or][0], self.points[left_or][1], self.points[right_or][1]))
+                    sum_cost += -(self.euclidean_distance(self.points[left_or][0], self.points[right_or][0], self.points[left_or][1], self.points[right_or][1])/(len(cut.A)*len(cut.Ac))) 
             
             cut.cost = sum_cost
 
@@ -237,7 +238,6 @@ def tsne(filename):
     return data
 
     
-
 def calculate_explained_varince(S):
     rho = (S * S) / (S * S).sum()
     return rho
