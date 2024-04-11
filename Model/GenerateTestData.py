@@ -15,6 +15,7 @@ class GenerateRandomGraph:
         self.num_of_clusters = num_of_clusters
         self.average_edges_to_same_cluster = average_edges_to_same_cluster
         self.average_edges_to_other_clusters = average_edges_to_other_clusters
+        self.ground_truth = []
 
     def generate_random_graph(self):
         G = nx.Graph()
@@ -39,9 +40,17 @@ class GenerateRandomGraph:
                         G.add_edge(i, j, weight=self.average_edges_to_other_clusters)
 
         # Assign ground truth labels
-        ground_truth = [G.nodes[i]['cluster'] for i in range(self.num_of_nodes)]
+        self.ground_truth = [G.nodes[i]['cluster'] for i in range(self.num_of_nodes)]
 
-        return G, ground_truth
+        return G, self.ground_truth
+    
+    def nmi_score(self, predicted_tangles):
+        """
+        Calculates the nmi score of the predicted tangles
+        """
+        nmi_score = normalized_mutual_info_score(self.ground_truth, predicted_tangles)
+        return nmi_score
+
 
 
 class GenerateDataFeatureBased():

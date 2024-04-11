@@ -11,13 +11,14 @@ from sklearn.metrics import normalized_mutual_info_score
 from Model.DataSetGraph import DataSetGraph
 from Model.TangleCluster import *
 from Model.GenerateTestData import GenerateRandomGraph
+from sklearn.cluster import SpectralClustering
 
 
 class GraphWindow(QMainWindow):
     def __init__(self, main_page):
         super().__init__()
         self.main_page = main_page
-        self.setWindowTitle("Feature Based Window")
+        self.setWindowTitle("Graph Based Window")
         self.setGeometry(100, 100, 800, 600)
 
         central_widget = QWidget()
@@ -40,6 +41,8 @@ class GraphWindow(QMainWindow):
         self.generated_ground_truth = None
         self.tangles_plot = None
         self.spectral_plot = None
+        self.nmi_score_tangles = None
+        self.nmi_score_spectral = None
 
         # Flag to track if a random graph has been generated
         self.graph_generated_flag = False
@@ -55,7 +58,7 @@ class GraphWindow(QMainWindow):
         self.generate_data_button.clicked.connect(self.generate_data)
         button_layout.addWidget(self.generate_data_button)
 
-        self.generate_random_button = QPushButton("Generate", self)
+        self.generate_random_button = QPushButton("Generate Graph", self)
         self.generate_random_button.clicked.connect(self.generate_random)
         button_layout.addWidget(self.generate_random_button)
         self.generate_random_button.hide()
@@ -65,10 +68,6 @@ class GraphWindow(QMainWindow):
         button_layout.addWidget(self.generate_tangles_button)
         self.generate_tangles_button.hide()
 
-        self.cuts_button = QPushButton("Show Cuts", self)
-        self.cuts_button.clicked.connect(self.show_cuts)
-        button_layout.addWidget(self.cuts_button)
-        self.cuts_button.hide()
 
         self.generate_spectral_button = QPushButton("Apply Spectral", self)
         self.generate_spectral_button.clicked.connect(self.spectral)
@@ -145,11 +144,11 @@ class GraphWindow(QMainWindow):
             avg_edges_to_other_clusters = float(self.average_edges_to_other_clusters.text())
 
             # Create an instance of GenerateRandomGraph
-            random_graph_generator = GenerateRandomGraph(num_of_nodes, num_of_clusters, avg_edges_to_same_cluster,
+            self.random_graph_generator = GenerateRandomGraph(num_of_nodes, num_of_clusters, avg_edges_to_same_cluster,
                                                          avg_edges_to_other_clusters)
 
             # Generate a random graph using the ground truth
-            self.generated_graph, self.generated_ground_truth = random_graph_generator.generate_random_graph()
+            self.generated_graph, self.generated_ground_truth = self.random_graph_generator.generate_random_graph()
 
             self.setup_plots()
 
@@ -163,7 +162,8 @@ class GraphWindow(QMainWindow):
                 print("No generated graph available.")
                 return
 
-            self.numb_plots = 2
+            if self.tangles_plot == None: 
+                self.numb_plots += 1 
             # Perform tangles on the generated graph
             agreement_parameter = int(self.agreement_parameter.text())
             data = DataSetGraph(agreement_param=agreement_parameter)
@@ -178,16 +178,39 @@ class GraphWindow(QMainWindow):
             contracting_search_tree(root_condense)
             soft = soft_clustering(root_condense)
             hard = hard_clustering(soft)
-            print(hard)
 
             self.tangles_plot = hard
-
             # Visualize tangles
+            self.nmi_score_tangles = round(self.random_graph_generator.nmi_score(hard), 2)
+            # Visualize tangles
+            #self.nmi_score_tangles = round(self.random_graph_generator.nmi_score(hard), 2)
             self.setup_plots()
 
         except ValueError:
             print("Invalid input")
 
+    def spectral(self):
+        try:
+            G = self.generated_graph
+            # Get adjacency matrix as numpy array
+            adj_mat = nx.convert_matrix.to_numpy_array(G)
+
+            # Get the number of clusters from the input field
+            k = int(self.k_spectral.text())  # Assuming you have a QLineEdit for input
+            if self.spectral_plot is None: 
+                self.numb_plots += 1
+
+            # Cluster
+            sc = SpectralClustering(k)
+            sc.fit(adj_mat)
+
+            # Plot the spectral clustering result
+            self.spectral_plot = sc.labels_
+            self.nmi_score_spectral = round(self.random_graph_generator.nmi_score(sc.labels_), 2)
+            self.setup_plots()
+
+        except Exception as e:
+            print("Error in spectral clustering:", e)
 
 
     def generate_data(self):
@@ -202,7 +225,6 @@ class GraphWindow(QMainWindow):
         self.average_edges_to_other_clusters.show()
         self.agreement_parameter.show()
         self.k_spectral.show()
-        self.cuts_button.show()
 
 
     def setup_plots(self):
@@ -221,29 +243,24 @@ class GraphWindow(QMainWindow):
 
             if self.tangles_plot is not None:
                 plot = self.figure.add_subplot(122)
-                plot.set_title('Tangles')
+                plot.set_title('Tangles (NMI = {})'.format(self.nmi_score_tangles))
                 self.visualize_graph(self.generated_graph, self.tangles_plot)
             
-            if self.spectral_plot is not None:
-                plot = self.figure.add_subplot(122)
-                plot.set_title('Spectral')
-                self.plot_points(self.spectral_points, self.spectral_plot, plot)
-
         else:
             if self.generated_graph is not None:
-                plot = self.figure.add_subplot(131)
+                plot = self.figure.add_subplot(221)
                 plot.set_title('Ground truth')
                 self.visualize_graph(self.generated_graph, self.generated_ground_truth)
 
             if self.tangles_plot is not None:
-                plot = self.figure.add_subplot(132)
-                plot.set_title('Tangles')
+                plot = self.figure.add_subplot(222)
+                plot.set_title('Tangles (NMI = {})'.format(self.nmi_score_tangles))
                 self.visualize_graph(self.generated_graph, self.tangles_plot)
 
             if self.spectral_plot is not None:
-                plot = self.figure.add_subplot(123)
-                plot.set_title('Spectral')
-                self.plot_points(self.spectral_points, self.spectral_plot, plot)
+                plot = self.figure.add_subplot(223)
+                plot.set_title('Spectral (NMI = {})'.format(self.nmi_score_spectral))
+                self.visualize_graph(self.generated_graph, self.spectral_plot)
 
         self.figure.subplots_adjust(hspace=0.5, wspace=0.5)
         self.canvas.draw()
@@ -262,21 +279,35 @@ class GraphWindow(QMainWindow):
         nx.draw(graph, pos, with_labels=True, node_color=node_colors, node_size=500, edge_color='black',
                 linewidths=1, font_size=10)
 
-        labels = nx.get_edge_attributes(graph, 'weight')
-        nx.draw_networkx_edge_labels(graph, pos, edge_labels=labels)
+        nx.draw_networkx_edges(graph, pos, edge_color='black')
 
 
-    def spectral(self):
-        # The implementation of this method is skipped to fit within the response limit
-        pass
 
     def go_back_to_main_page(self):
-        # The implementation of this method is skipped to fit within the response limit
-        pass
+        if self.upload_data_button.isVisible() or self.generate_data_button.isVisible():
+            # If either of the upload or generate data buttons are visible,
+            # it means the user is on the page where they choose between uploading or generating data.
+            # In this case, we close the current window and return to the main page.
+            self.close()  # Close the current window
+            self.main_page.show()  # Show the main page
+        else:
+            # Otherwise, the user is on some other page (e.g., after choosing upload or generate data)
+            # and we go back to the page where they choose between uploading or generating data.
+            self.generate_data_button.show()  # Show the generate data button
+            self.upload_data_button.show()  # Show the upload data button
+            # Hide other buttons and input fields
+            self.generate_random_button.hide()
+            self.generate_tangles_button.hide()
+            self.generate_spectral_button.hide()
+            self.numb_nodes.hide()
+            self.numb_clusters.hide()
+            self.average_edges_to_same_cluster.hide()
+            self.average_edges_to_other_clusters.hide()
+            self.agreement_parameter.hide()
+            self.k_spectral.hide()
 
-    def show_cuts(self):
-        # The implementation of this method is skipped to fit within the response limit
-        pass
+
+
 
     def upload_data(self):
         # The implementation of this method is skipped to fit within the response limit

@@ -23,15 +23,20 @@ class DataSetGraph(DataType):
         G (networkx.Graph): Graph
         """
         # cuts set to amount of nodes divided by two
-        cuts = len(G.nodes) // 2
+        cuts = len(G.nodes)
         self.cuts = []
+        unique_cuts = set()
         for _ in range(cuts):
-            initial_partition = generate_initial_partition(G)
-            partition = nx.algorithms.community.kernighan_lin_bisection(G, partition=initial_partition, max_iter=2, weight='weight', seed=None)
+            #initial_partition = generate_initial_partition(G)
+            partition = nx.algorithms.community.kernighan_lin_bisection(G, max_iter=1, weight='weight', seed=None)
             cut = Cut()
             cut.A = partition[0]
             cut.Ac = partition[1]
-            self.cuts.append(cut)
+            # check if cut is unique
+            if (tuple(cut.A), tuple(cut.Ac)) not in unique_cuts and (tuple(cut.Ac), tuple(cut.A)) not in unique_cuts:
+                unique_cuts.add((tuple(cut.A), tuple(cut.Ac)))
+                self.cuts.append(cut)
+            
 
     def cost_function_Graph(self):
         """ 
