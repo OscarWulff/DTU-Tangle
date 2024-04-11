@@ -45,7 +45,10 @@ class FeatureBasedWindow(QMainWindow):
         self.nmi_score_spectral = None
         self.nmi_checked = False
         self.prob_checked = False
-
+        self.davies_score_tangles = None
+        self.davies_score_kmeans = None
+        self.davies_score_spectral = None
+        self.davies_checked = False
 
 
         # Add buttons
@@ -109,6 +112,13 @@ class FeatureBasedWindow(QMainWindow):
         self.numb_clusters.hide()
         layout.addWidget(self.numb_clusters)
 
+        self.dimensions = QLineEdit()
+        self.dimensions.setFixedSize(150, 30)  # Set a fixed size for the input field
+        self.dimensions.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.dimensions.setPlaceholderText("number of dimensions")
+        self.dimensions.hide()
+        layout.addWidget(self.dimensions)
+
         self.std = QLineEdit()
         self.std.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.std.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -167,6 +177,11 @@ class FeatureBasedWindow(QMainWindow):
         self.nmi.stateChanged.connect(self.nmi_changed)
         self.nmi.hide()
         layout.addWidget(self.nmi)
+
+        self.davies = QCheckBox("show davies-score")
+        self.davies.stateChanged.connect(self.davies_changed)
+        self.davies.hide()
+        layout.addWidget(self.davies)
 
         self.show_tangle = QCheckBox("show tangles")
         self.show_tangle.stateChanged.connect(self.tangle_show_changed)
@@ -236,6 +251,8 @@ class FeatureBasedWindow(QMainWindow):
         self.cut_generator.show()
         self.cost_function.show()
         self.nmi.show()
+        self.dimensions.show()
+        self.davies.show()
         self.soft_clustering.show()
         self.cuts_button.show()
         self.plot_tree.show()
@@ -304,7 +321,7 @@ class FeatureBasedWindow(QMainWindow):
         if overlap != None: 
             self.generated_data.overlap = overlap
 
-        self.generated_data.random_clusters(cluster_points)
+        self.generated_data.random_clusters(cluster_points, 2)
         
         self.setup_plots()
 
@@ -368,6 +385,13 @@ class FeatureBasedWindow(QMainWindow):
             self.nmi_checked = True
         else: 
             self.nmi_checked = False
+        self.setup_plots()
+
+    def davies_changed(self, state):
+        if state == 2: 
+            self.davies_checked = True
+        else: 
+            self.davies_checked = False
         self.setup_plots()
 
     def show_cuts(self): 
@@ -466,6 +490,8 @@ class FeatureBasedWindow(QMainWindow):
         self.tangles_plot = hard
 
         self.nmi_score_tangles = round(self.generated_data.nmi_score(hard), 2)
+        self.davies_score_tangles = round(self.generated_data.davies_bouldin_score(self.tangles_points, self.tangles_plot), 2)
+
         self.setup_plots()
         
 
@@ -486,6 +512,7 @@ class FeatureBasedWindow(QMainWindow):
 
         self.spectral_plot = generated_data.spectral_clustering(k)
         self.nmi_score_spectral = round(self.generated_data.nmi_score(self.spectral_plot.tolist()), 2)
+        self.davies_score_spectral = round(self.generated_data.davies_bouldin_score(self.spectral_points, self.spectral_plot.tolist()), 2)
         self.setup_plots()
 
 
@@ -504,6 +531,7 @@ class FeatureBasedWindow(QMainWindow):
             self.numb_plots += 1
         self.kmeans_plot = generated_data.k_means(k)
         self.nmi_score_kmeans = round(self.generated_data.nmi_score(self.kmeans_plot.tolist()), 2)
+        self.davies_score_kmeans = round(self.generated_data.davies_bouldin_score(self.kmeans_points, self.kmeans_plot.tolist()), 2)
         self.setup_plots()
 
     
@@ -572,6 +600,17 @@ class FeatureBasedWindow(QMainWindow):
             if (plot.get_title() == "K-means"):
                 plot.text(0.95, 0.95, f'nmi = {self.nmi_score_kmeans}', verticalalignment='top', horizontalalignment='right', transform=plot.transAxes, fontsize=10)
 
+        if self.davies_checked:
+            if (plot.get_title() == "Tangles"):
+                plot.text(0.95, 0.85, f'davies = {self.davies_score_tangles}', verticalalignment='top', horizontalalignment='right', transform=plot.transAxes, fontsize=9)
+            if (plot.get_title() == "Spectral"):
+                plot.text(0.95, 0.85, f'davies = {self.davies_score_spectral}', verticalalignment='top', horizontalalignment='right', transform=plot.transAxes, fontsize=9)
+            if (plot.get_title() == "K-means"):
+                plot.text(0.95, 0.85, f'davies = {self.davies_score_kmeans}', verticalalignment='top', horizontalalignment='right', transform=plot.transAxes, fontsize=9)
+        
+
+
+
         # Plot the points with color
         for point, truth in zip(points, labels):
             plot.scatter(point[0], point[1], color=color_map[truth])
@@ -607,7 +646,7 @@ class FeatureBasedWindow(QMainWindow):
         self.generate_data_button.hide()
         self.generated_data = GenerateDataFeatureBased(0, 0)
 
-        self.generated_data.points = [inner + [index] for index, inner in enumerate(self.data.tolist())]
+        self.generated_data.points = self.data.tolist()
         self.generated_data.ground_truth = [1] * len(self.generated_data.points)
 
         # var = calculate_explained_varince(self.eigenvalues)

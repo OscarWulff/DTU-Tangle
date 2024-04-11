@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics.cluster import normalized_mutual_info_score
 from sklearn.cluster import KMeans, SpectralClustering
-from sklearn.metrics.cluster import normalized_mutual_info_score
+from sklearn.metrics import davies_bouldin_score
 
 
 
@@ -67,26 +67,26 @@ class GenerateDataFeatureBased():
         self.box_low_y = 0
         self.box_high_y = 20
 
-    def fixed_clusters(self, cluster_points, centroids):
+    def fixed_clusters(self, cluster_points, centroids, dimensions = 2):
         """
-        Creating two clusters in 2 dimension for two fixed centroids.
-        The points is created from Gaussian Distribution. 
+        Creating clusters for fixed centroids in arbitrary dimensions.
+        The points are created from Gaussian Distribution.
         """
-        points_x = []
-        points_y = []
+        points = [[] for _ in range(dimensions)]  # List to store points for each dimension
 
-        for truth, (center_x, center_y) in enumerate(centroids):
-            # Generate points using Gaussian distribution
-            points_x.extend(np.random.normal(loc=center_x, scale=self.std_deviation, size=cluster_points))
-            points_y.extend(np.random.normal(loc=center_y, scale=self.std_deviation, size=cluster_points))
-            
+        for truth, center in enumerate(centroids):
+            # Generate points using Gaussian distribution for each dimension
+            for dim in range(dimensions):
+                points[dim].extend(np.random.normal(loc=center[dim], scale=self.std_deviation, size=cluster_points))
+
             for _ in range(cluster_points):
                 self.ground_truth.append(truth)
 
-        self.points = [(x, y, z) for z, (x, y) in enumerate(zip(points_x, points_y))]
+        # Combine points from all dimensions into a single list of tuples
+        self.points = list(zip(*points))
            
 
-    def random_clusters(self, cluster_points):
+    def random_clusters(self, cluster_points, dimensions):
         """
         Create a choosen number of clusters from Gaussian Distribution. 
         Standard deviation and centroids are choosen random. 
@@ -168,7 +168,11 @@ class GenerateDataFeatureBased():
         # Display the plot
         plt.show()
 
-        
+    
+    def davies_bouldin_score(self, points, labels):
+        score = davies_bouldin_score(points, labels)
+        return score
+
     def nmi_score(self, predicted_tangles):
         """
         Calculates the nmi score of the predicted tangles
@@ -183,9 +187,7 @@ class GenerateDataFeatureBased():
         """
         kmeans = KMeans(n_clusters=k)
 
-        points = [[x, y] for x, y, _ in self.points]
-
-        kmeans.fit(points)
+        kmeans.fit(self.points)
 
         return kmeans.labels_
     
@@ -194,10 +196,7 @@ class GenerateDataFeatureBased():
         Clusters the data with spectral algorithm
         """
         spectral = SpectralClustering(n_clusters=k)
-
-        points = [[x, y] for x, y, _ in self.points]
-
-        spectral.fit(points)
+        spectral.fit(self.points)
 
         return spectral.labels_
 
