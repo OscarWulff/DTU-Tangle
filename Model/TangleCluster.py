@@ -49,8 +49,6 @@ def create_searchtree(data : DataType):
     Search tree
     """
 
-    
-
     def create_child(node, orientation, cut, id):
         child = Searchtree(node, node.cut_id+1)
         child.cut_orientation = orientation
