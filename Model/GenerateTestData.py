@@ -7,6 +7,8 @@ from sklearn.metrics.cluster import normalized_mutual_info_score
 from sklearn.cluster import KMeans, SpectralClustering
 from sklearn.metrics import davies_bouldin_score
 
+from Model.DataSetBinaryQuestionnaire import perform_tsne
+
 
 
 class GenerateRandomGraph:
@@ -220,6 +222,16 @@ class BitSet:
                 
              
 class GenerateDataBinaryQuestionnaire():
+    def __init__(self, numb_of_participants, numb_of_questions, numb_of_clusters):
+        self.numb_of_participants = numb_of_participants
+        self.numb_of_questions = numb_of_questions
+        self.numb_of_clusters = numb_of_clusters
+        self.result = []
+        self.points = []
+        self.ground_truth = []
+        self.questionaire = []
+
+       
 
     def generate_random_binary_questionnaire_answers(self,numberOfAnswers, numberOfQuestions):
         result = [None] * numberOfAnswers
@@ -231,29 +243,29 @@ class GenerateDataBinaryQuestionnaire():
                     result[i].add(j)
         return result
 
-    def generate_biased_binary_questionnaire_answers(self, number_of_answers, number_of_questions, number_of_clusters):
-        result = [BitSet(number_of_questions) for _ in range(number_of_answers)]
-        ground_truth = np.zeros(number_of_answers, dtype=int)
+    def generate_biased_binary_questionnaire_answers(self):
+        self.result = [BitSet(self.numb_of_questions) for _ in range(self.numb_of_participants)]
+        self.ground_truth = np.zeros(self.numb_of_participants, dtype=int)
         index = 0
-        extra = number_of_answers % number_of_clusters
+        extra = self.numb_of_participants % self.numb_of_clusters
 
-        for i in range(number_of_clusters):
-            center = BitSet(number_of_questions)
-            for j in range(number_of_questions):
+        for i in range(self.numb_of_clusters):
+            center = BitSet(self.numb_of_questions)
+            for j in range(self.numb_of_questions):
                 if random.random() < 0.5:  # Simulating a random choice between True and False
                     center.add(j)
 
-            cluster_size = number_of_answers // number_of_clusters + (1 if i < extra else 0)
+            cluster_size = self.numb_of_participants // self.numb_of_clusters + (1 if i < extra else 0)
             for _ in range(cluster_size):
-                for k in range(number_of_questions):
+                for k in range(self.numb_of_questions):
                     value = center.get(k)
-                    result[index].setValue(k, value)
+                    self.result[index].setValue(k, value)
                     if random.random() >= 0.97:  # Flip the bit with a 10% chance
-                        result[index].flip(k)
-                ground_truth[index] = i
+                        self.result[index].flip(k)
+                self.ground_truth[index] = i
                 index += 1
 
-        return result, ground_truth
+        return self.result, self.ground_truth
     @staticmethod
     def generateBiased_binary_questionnaire_answers(numberOfAnswers, numberOfQuestions, distributionPercentage=0.5):
         if distributionPercentage < 0 or distributionPercentage > 1:
@@ -281,3 +293,17 @@ class GenerateDataBinaryQuestionnaire():
                     result[i].add(j)
 
         return result, groundTruth
+    
+    def res_to_points(self):
+        self.questionaire = np.array([bitset.bitset for bitset in self.result])
+        tsne_coordinates = perform_tsne(self.questionaire, 2)
+        points_x = tsne_coordinates['Dim1'].values
+        points_y = tsne_coordinates['Dim2'].values
+        self.points = [(x, y, z) for z, (x, y) in enumerate(zip(points_x, points_y))]
+
+    def nmi_score(self, predicted_tangles):
+        """
+        Calculates the nmi score of the predicted tangles
+        """
+        nmi_score = normalized_mutual_info_score(self.ground_truth, predicted_tangles)
+        return nmi_score
