@@ -27,8 +27,8 @@ class DataSetBinaryQuestionnaire(DataType):
         ordered_cuts (list): List of cuts ordered by cost
         costs (list): List of costs corresponding to each cut
         """
-
         return sorted(self.cuts, key=lambda x: x.cost)
+        
 
     
     def cut_generator_binary(self,nd_questionnaires):
@@ -174,7 +174,11 @@ def perform_tsne(matrix, num_components=2, random_state=37, perplexity=None, lea
 
 
 
-
+def cosine_sim(v, w):
+    dot_product = np.dot(v, w)
+    norm_v = np.linalg.norm(v)
+    norm_w = np.linalg.norm(w)
+    return dot_product / (norm_v * norm_w) if norm_v != 0 and norm_w != 0 else 0
 
 
 
@@ -208,7 +212,7 @@ def cost_function_binary(A, Ac, questionnaires):
     
     for u in A:
         for v in Ac:
-            similarity_sum += sim(questionnaires[u], questionnaires[v])
+            similarity_sum += cosine_sim(questionnaires[u], questionnaires[v])
     return similarity_sum / (len(A) * len(Ac))
 
 

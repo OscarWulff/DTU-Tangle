@@ -4,7 +4,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics.cluster import normalized_mutual_info_score
-from sklearn.cluster import KMeans, SpectralClustering
+from sklearn.cluster import KMeans, SpectralClustering, DBSCAN
 from sklearn.metrics import davies_bouldin_score
 
 from Model.DataSetBinaryQuestionnaire import perform_tsne
@@ -260,7 +260,7 @@ class GenerateDataBinaryQuestionnaire():
                 for k in range(self.numb_of_questions):
                     value = center.get(k)
                     self.result[index].setValue(k, value)
-                    if random.random() >= 0.97:  # Flip the bit with a 10% chance
+                    if random.random() >= 0.90:  # Flip the bit with a 10% chance
                         self.result[index].flip(k)
                 self.ground_truth[index] = i
                 index += 1
@@ -307,3 +307,26 @@ class GenerateDataBinaryQuestionnaire():
         """
         nmi_score = normalized_mutual_info_score(self.ground_truth, predicted_tangles)
         return nmi_score
+    
+    def DBscan(self, min_s, e): 
+        """
+        Clusters the data with DBSCAN algorithm
+        """
+        scan = DBSCAN( eps=e, min_samples=min_s,)
+
+        clusters = scan.fit(self.points)
+        print(clusters.labels_)
+
+
+        return clusters.labels_
+    
+    def k_means(self, k): 
+        """
+        Clusters the data with K-means algorithm
+        """
+        kmeans = KMeans(n_clusters=k)
+
+        kmeans.fit(self.points)
+        print(kmeans.labels_)
+
+        return kmeans.labels_

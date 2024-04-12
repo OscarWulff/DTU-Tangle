@@ -17,7 +17,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
     def __init__(self, main_page):
         super().__init__()
         self.main_page = main_page
-        self.setWindowTitle("Feature Based Window")
+        self.setWindowTitle("Binary questionnaire Window")
         self.setGeometry(100, 100, 800, 600)
 
         central_widget = QWidget()
@@ -38,13 +38,13 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.numb_plots = 1
         self.tangles_plot = None
         self.tangles_points = None
-        self.spectral_plot = None
-        self.spectral_points = None
+        self.dbscan_plot = None
+        self.dbscan_points = None
         self.kmeans_plot = None
         self.kmeans_points = None
         self.nmi_score_tangles = None
         self.nmi_score_kmeans = None
-        self.nmi_score_spectral = None
+        self.nmi_score_dbscan = None
         self.nmi_checked = False
         self.prob_checked = False
 
@@ -72,10 +72,10 @@ class BinaryQuestionnaireWindow(QMainWindow):
         button_layout.addWidget(self.generate_tangles_button)
         self.generate_tangles_button.hide()
         
-        self.generate_spectral_button = QPushButton("apply spectral", self)
-        self.generate_spectral_button.clicked.connect(self.spectral)
-        button_layout.addWidget(self.generate_spectral_button)
-        self.generate_spectral_button.hide()
+        self.generate_DBSCAN_button = QPushButton("Apply DBSCAN", self)
+        self.generate_DBSCAN_button.clicked.connect(self.dbscan)
+        button_layout.addWidget(self.generate_DBSCAN_button)
+        self.generate_DBSCAN_button.hide()
 
         self.generate_Kmeans_button = QPushButton("apply k-means", self)
         self.generate_Kmeans_button.clicked.connect(self.kmeans)
@@ -103,6 +103,13 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.numb_participants.hide()
         layout.addWidget(self.numb_participants)
 
+        self.epsilon = QLineEdit()
+        self.epsilon.setFixedSize(150, 30)  # Set a fixed size for the input field
+        self.epsilon.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.epsilon.setPlaceholderText("Epsilon")
+        self.epsilon.hide()
+        layout.addWidget(self.epsilon)
+
         self.overlap = QLineEdit()
         self.overlap.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.overlap.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -120,21 +127,21 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.k_spectral = QLineEdit()
         self.k_spectral.setFixedSize(300, 30)  # Set a fixed size for the input field
         self.k_spectral.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.k_spectral.setPlaceholderText("k for spectral")
+        self.k_spectral.setPlaceholderText("K for spectral")
         self.k_spectral.hide()
         layout.addWidget(self.k_spectral)
 
         self.k_kmeans = QLineEdit()
-        self.k_kmeans.setFixedSize(300, 30)  # Set a fixed size for the input field
+        self.k_kmeans.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.k_kmeans.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.k_kmeans.setPlaceholderText("k for kmeans")
+        self.k_kmeans.setPlaceholderText("K for kmeans")
         self.k_kmeans.hide()
         layout.addWidget(self.k_kmeans)
 
         self.agreement_parameter = QLineEdit()
         self.agreement_parameter.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.agreement_parameter.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.agreement_parameter.setPlaceholderText("agreement parameter")
+        self.agreement_parameter.setPlaceholderText("Agreement parameter")
         self.agreement_parameter.hide()
         layout.addWidget(self.agreement_parameter)
 
@@ -215,7 +222,10 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.numb_participants.show()
         self.numb_questions.show()
         self.agreement_parameter.show()
+        self.epsilon.show()
+        self.k_kmeans.show()
         self.generate_random_button.show()
+
         
         # self.random_centers_button.hide()
         # self.fixed_centers_button.hide()
@@ -223,6 +233,8 @@ class BinaryQuestionnaireWindow(QMainWindow):
         # self.generate_Kmeans_button.show()
         # self.generate_spectral_button.show()
         self.generate_tangles_button.show()
+        self.generate_Kmeans_button.show()
+        self.generate_DBSCAN_button.show()
         # self.cluster_points.show()
         # self.std.show()
         # self.k_spectral.show()
@@ -420,9 +432,9 @@ class BinaryQuestionnaireWindow(QMainWindow):
         
         self.tangle_root = condense_tree(root)
         contracting_search_tree(self.tangle_root)
-        time.sleep(2)
+        # time.sleep(2)
         soft = soft_clustering(self.tangle_root)
-        print(soft)
+        # print(soft)
         
         hard = hard_clustering(soft)
 
@@ -442,27 +454,31 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.tangles_plot = hard
         self.tangles_points = self.generated_data.points
 
-        # self.nmi_score_tangles = round(self.generated_data.nmi_score(hard), 2)
+        self.nmi_score_tangles = round(self.generated_data.nmi_score(hard), 2)
         self.setup_plots()
         
 
-    def spectral(self):
-        k = self.k_spectral.text()
+    def dbscan(self):
+        min_s = self.agreement_parameter.text()
+        eps = self.epsilon.text()
+        print("min s :", min_s)
+        print("eps :", eps)
 
         try:       
-            k = int(k)
+            min_s = int(min_s)
+            eps = float(eps)
         except ValueError: 
             print("Invalid input")
 
-        generated_data = GenerateDataFeatureBased(0, 0)
+        generated_data = GenerateDataBinaryQuestionnaire(0, 0, 0)
         generated_data.points = self.generated_data.points
-        self.spectral_points = self.generated_data.points
+        self.dbscan_points = self.generated_data.points
 
-        if self.spectral_plot is None: 
+        if self.dbscan_plot is None: 
             self.numb_plots += 1
 
-        self.spectral_plot = generated_data.spectral_clustering(k)
-        self.nmi_score_spectral = round(self.generated_data.nmi_score(self.spectral_plot.tolist()), 2)
+        self.dbscan_plot = generated_data.DBscan(min_s, eps)
+        self.nmi_score_dbscan = round(self.generated_data.nmi_score(self.dbscan_plot.tolist()), 2)
         self.setup_plots()
 
 
@@ -474,7 +490,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
         except ValueError: 
             print("Invalid input")
 
-        generated_data = GenerateDataFeatureBased(0, 0)
+        generated_data = GenerateDataBinaryQuestionnaire(0, 0, 0)
         generated_data.points = self.generated_data.points
         self.kmeans_points = self.generated_data.points
         if self.kmeans_plot is None: 
@@ -498,18 +514,18 @@ class BinaryQuestionnaireWindow(QMainWindow):
                 self.plot_points(self.generated_data.points, self.generated_data.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(122)
-                plot.set_title('Tangles')
+                plot.set_title(f'Tangles - NMI Score: {self.nmi_score_tangles}')
                 if self.prob_checked:
                     self.plot_points_prob(self.tangles_points, self.tangles_plot, plot)
                 else:
                     self.plot_points(self.tangles_points, self.tangles_plot, plot)
-            if self.spectral_plot is not None: 
+            if self.dbscan_plot is not None: 
                 plot = self.figure.add_subplot(122)
-                plot.set_title('Spectral')
-                self.plot_points(self.spectral_points, self.spectral_plot, plot)
+                plot.set_title(f'DBSCAN - NMI Score: {self.nmi_score_dbscan}')
+                self.plot_points(self.dbscan_points, self.dbscan_plot, plot)
             if self.kmeans_plot is not None: 
                 plot = self.figure.add_subplot(122)
-                plot.set_title('K-means')
+                plot.set_title(f'K-means - NMI Score: {self.nmi_score_kmeans}')
                 self.plot_points(self.kmeans_points, self.kmeans_plot, plot)
         else:
             if self.generated_data != None: 
@@ -518,18 +534,18 @@ class BinaryQuestionnaireWindow(QMainWindow):
                 self.plot_points(self.generated_data.points, self.generated_data.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(222)
-                plot.set_title('Tangles')
+                plot.set_title(f'Tangles - NMI Score: {self.nmi_score_tangles}')
                 if self.prob_checked:
                     self.plot_points_prob(self.tangles_points, self.tangles_plot, plot)
                 else:
                     self.plot_points(self.tangles_points, self.tangles_plot, plot)
-            if self.spectral_plot is not None: 
+            if self.dbscan_plot is not None: 
                 plot = self.figure.add_subplot(223)
-                plot.set_title('Spectral')
-                self.plot_points(self.spectral_points, self.spectral_plot, plot)
+                plot.set_title(f'DBSCAN - NMI Score: {self.nmi_score_dbscan}')
+                self.plot_points(self.dbscan_points, self.dbscan_plot, plot)
             if self.kmeans_plot is not None: 
                 plot = self.figure.add_subplot(224)
-                plot.set_title('K-means')
+                plot.set_title(f'K-means - NMI Score: {self.nmi_score_kmeans}')
                 self.plot_points(self.kmeans_points, self.kmeans_plot, plot)
 
         self.figure.subplots_adjust(hspace=0.5, wspace=0.5)
@@ -545,7 +561,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
             if (plot.get_title() == "Tangles"):
                 plot.text(0.95, 0.95, f'nmi = {self.nmi_score_tangles}', verticalalignment='top', horizontalalignment='right', transform=plot.transAxes, fontsize=10)
             if (plot.get_title() == "Spectral"):
-                plot.text(0.95, 0.95, f'nmi = {self.nmi_score_spectral}', verticalalignment='top', horizontalalignment='right', transform=plot.transAxes, fontsize=10)
+                plot.text(0.95, 0.95, f'nmi = {self.nmi_score_dbscan}', verticalalignment='top', horizontalalignment='right', transform=plot.transAxes, fontsize=10)
             if (plot.get_title() == "K-means"):
                 plot.text(0.95, 0.95, f'nmi = {self.nmi_score_kmeans}', verticalalignment='top', horizontalalignment='right', transform=plot.transAxes, fontsize=10)
 
@@ -594,7 +610,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.canvas.draw()
         self.test_button.hide()
         self.generate_Kmeans_button.show()
-        self.generate_spectral_button.show()
+        self.generate_DBSCAN_button.show()
         self.generate_tangles_button.show()
         self.k_spectral.show()
         self.k_kmeans.show()
