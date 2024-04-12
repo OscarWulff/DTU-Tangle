@@ -151,6 +151,60 @@ class GenerateDataFeatureBased():
         if tries == 1000: 
             print("to many tries")
 
+    def random_clusters(self, cluster_points, dimensions):
+        """
+        Create a chosen number of clusters from Gaussian Distribution.
+        Standard deviation and centroids are chosen randomly.
+        """
+        # Parameter that controls how much overlap is allowed
+        overlap = 0.3
+
+        std_low = 0.1
+        std_high = 0.5
+
+        tries = 0
+        while tries < 1000:
+            tries += 1
+            start_over = False
+            centroids = []
+            std_deviations = []
+            for i in range(self.numb_clusters):
+                std_deviation = np.random.uniform(std_low, std_high, size=dimensions)
+                center = np.random.uniform(self.box_low, self.box_high, size=dimensions)
+
+                for j in range(len(centroids)):
+                    dist = np.abs(center - centroids[j])
+                    std_sum = std_deviation + std_deviations[j]
+
+                    # Check if it is not too close to another cluster
+                    if np.any(dist < std_sum * overlap):
+                        start_over = True
+                        break
+
+                if start_over:
+                    break
+
+                centroids.append(center)
+                std_deviations.append(std_deviation)
+
+            if not start_over:
+                points = [[] for _ in range(dimensions)]  # List to store points for each dimension
+
+                for truth, center in enumerate(centroids):
+                    # Generate points using Gaussian distribution for each dimension
+                    for dim in range(dimensions):
+                        points[dim].extend(np.random.normal(loc=center[dim], scale=std_deviations[truth][dim], size=cluster_points))
+
+                    for _ in range(cluster_points):
+                        self.ground_truth.append(truth)
+
+                # Combine points from all dimensions into a single list of tuples
+                self.points = list(zip(*points))
+                break
+
+    if tries == 1000:
+        print("Too many tries")
+
     def plot_points(self):
         clusters = sorted(set(self.ground_truth))
         colors = plt.cm.viridis(np.linspace(0, 1, len(clusters)))

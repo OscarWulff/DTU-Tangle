@@ -172,9 +172,7 @@ class GraphWindow(QMainWindow):
             data.cost_function_Graph()
             
             root = create_searchtree(data)
-            print_tree(root)
             root_condense = condense_tree(root)
-            print_tree(root_condense)
             contracting_search_tree(root_condense)
             soft = soft_clustering(root_condense)
             hard = hard_clustering(soft)
