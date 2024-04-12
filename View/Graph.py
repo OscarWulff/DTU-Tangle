@@ -137,8 +137,17 @@ class GraphWindow(QMainWindow):
 
     def generate_random(self):
         try:
+            if not (self.numb_nodes.text() and self.numb_clusters.text() and 
+                self.average_edges_to_same_cluster.text() and self.average_edges_to_other_clusters.text()):
+                print("Please fill in all fields.")
+            num_of_nodes_before = self.numb_nodes.text()
+            
             # Get the values from the input fields
             num_of_nodes = int(self.numb_nodes.text())
+            
+            if num_of_nodes_before != num_of_nodes:
+                self.numb_plots += 1
+
             num_of_clusters = int(self.numb_clusters.text())
             avg_edges_to_same_cluster = float(self.average_edges_to_same_cluster.text())
             avg_edges_to_other_clusters = float(self.average_edges_to_other_clusters.text())
@@ -146,10 +155,8 @@ class GraphWindow(QMainWindow):
             # Create an instance of GenerateRandomGraph
             self.random_graph_generator = GenerateRandomGraph(num_of_nodes, num_of_clusters, avg_edges_to_same_cluster,
                                                          avg_edges_to_other_clusters)
-
             # Generate a random graph using the ground truth
             self.generated_graph, self.generated_ground_truth = self.random_graph_generator.generate_random_graph()
-
             self.setup_plots()
 
         except ValueError:
@@ -165,6 +172,7 @@ class GraphWindow(QMainWindow):
             if self.tangles_plot == None: 
                 self.numb_plots += 1 
             # Perform tangles on the generated graph
+            
             agreement_parameter = int(self.agreement_parameter.text())
             data = DataSetGraph(agreement_param=agreement_parameter)
             data.G = self.generated_graph
@@ -199,7 +207,7 @@ class GraphWindow(QMainWindow):
                 self.numb_plots += 1
 
             # Cluster
-            sc = SpectralClustering(k)
+            sc = SpectralClustering(n_clusters=k, affinity='precomputed')
             sc.fit(adj_mat)
 
             # Plot the spectral clustering result
@@ -228,56 +236,74 @@ class GraphWindow(QMainWindow):
     def setup_plots(self):
         self.figure.clear()
 
-        if self.numb_plots == 1:
-            plot = self.figure.add_subplot(111)
-            plot.set_title('Ground truth')
-            self.visualize_graph(self.generated_graph, self.generated_ground_truth)
+        try:
+            if self.numb_plots == 1:
+                if self.generated_graph is not None:
+                    plot = self.figure.add_subplot(111)
+                    plot.set_title('Ground truth')
+                    self.visualize_graph(self.generated_graph, self.generated_ground_truth)
+                else:
+                    print("No graph available for plotting.")
 
-        elif self.numb_plots == 2:
-            if self.generated_graph is not None:
-                plot = self.figure.add_subplot(121)
-                plot.set_title('Ground truth')
-                self.visualize_graph(self.generated_graph, self.generated_ground_truth)
+            elif self.numb_plots == 2:
+                if self.generated_graph is not None:
+                    plot = self.figure.add_subplot(121)
+                    plot.set_title('Ground truth')
+                    self.visualize_graph(self.generated_graph, self.generated_ground_truth)
 
-            if self.tangles_plot is not None:
-                plot = self.figure.add_subplot(122)
-                plot.set_title('Tangles (NMI = {})'.format(self.nmi_score_tangles))
-                self.visualize_graph(self.generated_graph, self.tangles_plot)
-            
-        else:
-            if self.generated_graph is not None:
-                plot = self.figure.add_subplot(221)
-                plot.set_title('Ground truth')
-                self.visualize_graph(self.generated_graph, self.generated_ground_truth)
+                if self.tangles_plot is not None:
+                    plot = self.figure.add_subplot(122)
+                    plot.set_title(f'Tangles (NMI = {self.nmi_score_tangles})')
+                    self.visualize_graph(self.generated_graph, self.tangles_plot)
+                else:
+                    print("No tangles plot available.")
 
-            if self.tangles_plot is not None:
-                plot = self.figure.add_subplot(222)
-                plot.set_title('Tangles (NMI = {})'.format(self.nmi_score_tangles))
-                self.visualize_graph(self.generated_graph, self.tangles_plot)
+            else:
+                if self.generated_graph is not None:
+                    plot = self.figure.add_subplot(221)
+                    plot.set_title('Ground truth')
+                    self.visualize_graph(self.generated_graph, self.generated_ground_truth)
 
-            if self.spectral_plot is not None:
-                plot = self.figure.add_subplot(223)
-                plot.set_title('Spectral (NMI = {})'.format(self.nmi_score_spectral))
-                self.visualize_graph(self.generated_graph, self.spectral_plot)
+                if self.tangles_plot is not None:
+                    plot = self.figure.add_subplot(222)
+                    plot.set_title(f'Tangles (NMI = {self.nmi_score_tangles})')
+                    self.visualize_graph(self.generated_graph, self.tangles_plot)
 
-        self.figure.subplots_adjust(hspace=0.5, wspace=0.5)
-        self.canvas.draw()
+                if self.spectral_plot is not None:
+                    plot = self.figure.add_subplot(223)
+                    plot.set_title(f'Spectral (NMI = {self.nmi_score_spectral})')
+                    self.visualize_graph(self.generated_graph, self.spectral_plot)
+                else:
+                    print("No spectral plot available.")
+
+            self.figure.subplots_adjust(hspace=0.5, wspace=0.5)
+            self.canvas.draw()
+
+        except Exception as e:
+            print(f"Error setting up plots: {e}")
+
 
 
 
     def visualize_graph(self, graph, plot):
         pos = nx.spring_layout(graph)
-
+        
+        # Determine unique clusters and assign colors
         clusters = sorted(set(plot))
         colors = plt.cm.viridis(np.linspace(0, 1, len(clusters)))
         color_map = {cluster: color for cluster, color in zip(clusters, colors)}
+        
+        # Assign colors to nodes based on the clustering result
         node_colors = [color_map[cluster] for cluster in plot]
 
-
+        # Draw the graph
         nx.draw(graph, pos, with_labels=True, node_color=node_colors, node_size=500, edge_color='black',
                 linewidths=1, font_size=10)
 
-        nx.draw_networkx_edges(graph, pos, edge_color='black')
+        # Update node colors in the existing plot
+        self.canvas.draw()
+
+
 
 
 

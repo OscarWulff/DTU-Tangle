@@ -2,6 +2,7 @@ import random
 import networkx as nx
 from Model.Cut import Cut
 from Model.DataType import DataType
+import numpy as np
 
 class DataSetGraph(DataType):
     def __init__(self, agreement_param, cuts=[], search_tree=None):
@@ -22,20 +23,44 @@ class DataSetGraph(DataType):
         Parameters:
         G (networkx.Graph): Graph
         """
-        # cuts set to amount of nodes divided by two
-        cuts = len(G.nodes)
+        cuts = (len(G.nodes) // (self.agreement_param-1))
         self.cuts = []
-        unique_cuts = set()
-        for _ in range(cuts):
-            #initial_partition = generate_initial_partition(G)
-            partition = nx.algorithms.community.kernighan_lin_bisection(G, max_iter=1, weight='weight', seed=None)
+        unique_cuts = set()  # Store unique cuts
+        i = 0
+        while len(unique_cuts) < cuts:
+            if (i <= cuts//2):
+                fraction = 0.5
+            else:
+                fraction = random.uniform(0.5, 1)
+            initial_partition = self.initial_partition(G.nodes(), fraction=fraction)  # Adjusting fraction if needed
+            partition = nx.algorithms.community.kernighan_lin_bisection(G, max_iter=2, partition=initial_partition, weight='weight', seed=None)
             cut = Cut()
             cut.A = partition[0]
             cut.Ac = partition[1]
-            # check if cut is unique
-            if (tuple(cut.A), tuple(cut.Ac)) not in unique_cuts and (tuple(cut.Ac), tuple(cut.A)) not in unique_cuts:
-                unique_cuts.add((tuple(cut.A), tuple(cut.Ac)))
+            # Check if the cut is unique before adding it
+            cut_tuple = (tuple(cut.A), tuple(cut.Ac))
+            if cut_tuple not in unique_cuts and (tuple(cut.Ac), tuple(cut.A)) not in unique_cuts:
+                unique_cuts.add(cut_tuple)
                 self.cuts.append(cut)
+            i += 1
+
+
+    def initial_partition(self, nodes, fraction=0.5):
+        """Generate an initial partition of nodes based on a fraction."""
+        nb_vertices = len(nodes)
+        partition = int(round(fraction * nb_vertices))
+        A = np.zeros(nb_vertices, dtype=bool)
+        A[np.random.choice(np.arange(nb_vertices), partition, replace=False)] = True
+        B = np.logical_not(A)
+
+        # Convert boolean arrays to sets of nodes
+        node_list = list(nodes)
+        setA = {node_list[i] for i, val in enumerate(A) if val}
+
+        setB = {node_list[i] for i, val in enumerate(B) if val}
+
+        return (setA, setB)
+
             
 
     def cost_function_Graph(self):
@@ -91,11 +116,3 @@ class DataSetGraph(DataType):
     def order_function(self):
         """Return cuts in list of ascending order of the cost."""
         return sorted(self.cuts, key=lambda x: x.cost)
-
-
-def generate_initial_partition(G):
-        """Generate initial partition randomly."""
-        partition = ([], [])
-        for node in G.nodes:
-            partition[random.randint(0, 1)].append(node)
-        return partition
