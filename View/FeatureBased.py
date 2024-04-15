@@ -6,7 +6,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from Model.GenerateTestData import GenerateDataFeatureBased
 import ast
 from PyQt5.QtCore import Qt
-from Model.DataSetFeatureBased import pca, calculate_explained_varince, DataSetFeatureBased, tsne
+from Model.DataSetFeatureBased import pca, calculate_explained_varince, DataSetFeatureBased, tsne, read_file
 from Model.TangleCluster import create_searchtree
 from Model.SearchTree import *
 
@@ -251,7 +251,6 @@ class FeatureBasedWindow(QMainWindow):
         self.cut_generator.show()
         self.cost_function.show()
         self.nmi.show()
-        self.dimensions.show()
         self.davies.show()
         self.soft_clustering.show()
         self.cuts_button.show()
@@ -264,6 +263,7 @@ class FeatureBasedWindow(QMainWindow):
 
     def random_centers(self):
         self.show_buttons()
+        self.dimensions.show()
         self.generate_random_button.show()
         self.numb_clusters.show()
         self.overlap.show()
@@ -295,6 +295,11 @@ class FeatureBasedWindow(QMainWindow):
         
         self.generated_data.fixed_clusters(cluster_points, centroids)
         
+        if len(centroids[0]) > 2: 
+            self.plotting_points = tsne(np.array(self.generated_data.points))
+        else: 
+            self.plotting_points = self.generated_data.points
+
         self.setup_plots()
 
 
@@ -303,11 +308,12 @@ class FeatureBasedWindow(QMainWindow):
         numb_clusters = self.numb_clusters.text()
         std = self.std.text()
         overlap = self.overlap.text()
-
+        dimension = self.dimensions.text()
         try: 
             cluster_points = int(cluster_points)
             std = float(std) 
             numb_clusters = int(numb_clusters)  
+            dimension = int(dimension)
         except ValueError: 
             print("Invalid input")
 
@@ -321,8 +327,13 @@ class FeatureBasedWindow(QMainWindow):
         if overlap != None: 
             self.generated_data.overlap = overlap
 
-        self.generated_data.random_clusters(cluster_points, 2)
+        self.generated_data.random_clusters(cluster_points, dimension)
         
+        if dimension > 2: 
+            self.plotting_points = tsne(np.array(self.generated_data.points))
+        else: 
+            self.plotting_points = self.generated_data.points
+
         self.setup_plots()
 
 
@@ -434,7 +445,7 @@ class FeatureBasedWindow(QMainWindow):
 
         if self.tangles_plot != None: 
             plot.set_title('Tangles')
-            self.plot_points(self.tangles_points, self.tangles_plot, plot)
+            self.plot_points(self.plotting_points, self.tangles_plot, plot)
     
         self.canvas.draw()
 
@@ -451,11 +462,12 @@ class FeatureBasedWindow(QMainWindow):
     
         # Creating the tangles
         data = DataSetFeatureBased(a)
-        self.tangles_points = self.generated_data.points
+
         data.points = self.generated_data.points
+        self.tangles_points = self.plotting_points
 
         cut_generator_mapping = {
-            "axis cuts": data.cut_generator_axis
+            "axis cuts": data.cut_generator_axis_dimensions
         }
 
         cost_function_mapping = {
@@ -474,7 +486,6 @@ class FeatureBasedWindow(QMainWindow):
         soft = soft_clustering(self.tangle_root)
         hard = hard_clustering(soft)
 
-
         if self.tangles_plot == None: 
             self.numb_plots += 1    
         
@@ -486,11 +497,14 @@ class FeatureBasedWindow(QMainWindow):
                 if soft[i][j] > prob:
                     prob = soft[i][j]
             self.prob.append(prob)
-
+        
+        
         self.tangles_plot = hard
 
+        print(self.generated_data.points)
+        print(self.tangles_plot)
         self.nmi_score_tangles = round(self.generated_data.nmi_score(hard), 2)
-        self.davies_score_tangles = round(self.generated_data.davies_bouldin_score(self.tangles_points, self.tangles_plot), 2)
+        self.davies_score_tangles = round(self.generated_data.davies_bouldin_score(self.generated_data.points, self.tangles_plot), 2)
 
         self.setup_plots()
         
@@ -505,14 +519,14 @@ class FeatureBasedWindow(QMainWindow):
 
         generated_data = GenerateDataFeatureBased(0, 0)
         generated_data.points = self.generated_data.points
-        self.spectral_points = self.generated_data.points
+        self.spectral_points = self.plotting_points
 
         if self.spectral_plot is None: 
             self.numb_plots += 1
 
         self.spectral_plot = generated_data.spectral_clustering(k)
         self.nmi_score_spectral = round(self.generated_data.nmi_score(self.spectral_plot.tolist()), 2)
-        self.davies_score_spectral = round(self.generated_data.davies_bouldin_score(self.spectral_points, self.spectral_plot.tolist()), 2)
+        self.davies_score_spectral = round(self.generated_data.davies_bouldin_score(self.generated_data.points, self.spectral_plot.tolist()), 2)
         self.setup_plots()
 
 
@@ -526,12 +540,15 @@ class FeatureBasedWindow(QMainWindow):
 
         generated_data = GenerateDataFeatureBased(0, 0)
         generated_data.points = self.generated_data.points
-        self.kmeans_points = self.generated_data.points
+        self.kmeans_points = self.plotting_points
+
+
         if self.kmeans_plot is None: 
             self.numb_plots += 1
+
         self.kmeans_plot = generated_data.k_means(k)
         self.nmi_score_kmeans = round(self.generated_data.nmi_score(self.kmeans_plot.tolist()), 2)
-        self.davies_score_kmeans = round(self.generated_data.davies_bouldin_score(self.kmeans_points, self.kmeans_plot.tolist()), 2)
+        self.davies_score_kmeans = round(self.generated_data.davies_bouldin_score(self.generated_data.points, self.kmeans_plot.tolist()), 2)
         self.setup_plots()
 
     
@@ -541,12 +558,12 @@ class FeatureBasedWindow(QMainWindow):
         if self.numb_plots == 1:
             plot = self.figure.add_subplot(111)
             plot.set_title('Ground thruth')
-            self.plot_points(self.generated_data.points, self.generated_data.ground_truth, plot)
+            self.plot_points(self.plotting_points, self.generated_data.ground_truth, plot)
         elif self.numb_plots == 2:
             if self.generated_data != None: 
                 plot = self.figure.add_subplot(121)
                 plot.set_title('Ground truth')
-                self.plot_points(self.generated_data.points, self.generated_data.ground_truth, plot)
+                self.plot_points(self.plotting_points, self.generated_data.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(122)
                 plot.set_title('Tangles')
@@ -566,7 +583,7 @@ class FeatureBasedWindow(QMainWindow):
             if self.generated_data != None: 
                 plot = self.figure.add_subplot(221)
                 plot.set_title('Ground truth')
-                self.plot_points(self.generated_data.points, self.generated_data.ground_truth, plot)
+                self.plot_points(self.plotting_points, self.generated_data.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(222)
                 plot.set_title('Tangles')
@@ -607,10 +624,7 @@ class FeatureBasedWindow(QMainWindow):
                 plot.text(0.95, 0.85, f'davies = {self.davies_score_spectral}', verticalalignment='top', horizontalalignment='right', transform=plot.transAxes, fontsize=9)
             if (plot.get_title() == "K-means"):
                 plot.text(0.95, 0.85, f'davies = {self.davies_score_kmeans}', verticalalignment='top', horizontalalignment='right', transform=plot.transAxes, fontsize=9)
-        
-
-
-
+    
         # Plot the points with color
         for point, truth in zip(points, labels):
             plot.scatter(point[0], point[1], color=color_map[truth])
@@ -632,8 +646,6 @@ class FeatureBasedWindow(QMainWindow):
         for point, truth in zip(points, labels):
             plot.scatter(point[0], point[1], color=color_map[truth], alpha=self.prob[point[2]])
 
-        # Add labels and title
-        # Add labels and title
         plot.set_xlabel('X')
         plot.set_ylabel('Y')
 
@@ -641,12 +653,18 @@ class FeatureBasedWindow(QMainWindow):
         file_dialog = QFileDialog()
         if file_dialog.exec_():
             selected_file = file_dialog.selectedFiles()[0]  # Get the path of the selected file
-            self.data = tsne(selected_file)
+            X = read_file(selected_file)
+            self.data = tsne(X)
+
         self.upload_data_button.hide()
         self.generate_data_button.hide()
+        
         self.generated_data = GenerateDataFeatureBased(0, 0)
 
         self.generated_data.points = self.data.tolist()
+
+        self.plotting_points = self.data.tolist()
+
         self.generated_data.ground_truth = [1] * len(self.generated_data.points)
 
         # var = calculate_explained_varince(self.eigenvalues)
