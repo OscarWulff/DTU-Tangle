@@ -10,6 +10,7 @@ from Model.Cut import Cut
 from sklearn.manifold import TSNE
 from sklearn.metrics.cluster import normalized_mutual_info_score
 from sklearn.metrics import davies_bouldin_score
+from sklearn.neighbors import KernelDensity
 
 
 class DataSetFeatureBased(DataType):
@@ -30,9 +31,53 @@ class DataSetFeatureBased(DataType):
         self.cut_generator_axis_dimensions()
         self.cost_function()
 
-    def density_cost(self):
+    def density_cost(self, radius):
+    
+        # Create KDE of the all the points before the cut
+        # Afterwards create KDE of the all the points of each side of the cut
 
-        pass
+        # Take every point and calculate the diffrence in density from the KDE before and after the cut
+        # Sum the diffrences and set it as the cost of the cut
+        def calculate_density(points, radius):
+            # Convert points to numpy array
+            points = np.array(points)
+
+            # Fit Kernel Density Estimation (KDE) model
+            kde = KernelDensity(bandwidth=radius, kernel='gaussian')
+            kde.fit(points)
+
+            # Estimate density at each point
+            density = np.exp(kde.score_samples(points))
+
+            # Return density values
+            return density
+
+        density_all = calculate_density(self.points, radius)
+
+        for cut in self.cuts: 
+            sum_cost = 0.0
+            left_oriented = cut.A
+            right_oriented = cut.Ac
+
+            left_points = []
+            right_points = []
+
+            for left_or in left_oriented:
+                left_points.append(self.points[left_or][:-1])
+
+            for right_or in right_oriented:
+                right_points.append(self.points[right_or][:-1])
+
+            density_left = calculate_density(left_points, radius)
+            density_right = calculate_density(right_points, radius)
+
+            for i in range(len(density_left)):
+                sum_cost += abs(density_all[i] - density_left[i])
+
+            for i in range(len(density_right)):
+                sum_cost += abs(density_all[i] - density_right[i])
+
+            cut.cost = sum_cost
 
 
     def pairwise_cost(self):

@@ -20,7 +20,6 @@ class FeatureBasedController:
         self.view.generate_spectral_button.clicked.connect(self.spectral)
         self.view.generate_Kmeans_button.clicked.connect(self.kmeans)
         self.view.cuts_button.clicked.connect(self.show_cuts)
-        self.view.plot_tree.stateChanged.connect(self.plot_tree_changed)
         self.view.show_tangle.stateChanged.connect(self.tangle_show_changed)
         self.view.soft_clustering.stateChanged.connect(self.soft_clustering_changed)
         self.view.nmi.stateChanged.connect(self.nmi_changed)
@@ -136,11 +135,13 @@ class FeatureBasedController:
 
     def tangles(self):
         a = self.view.agreement_parameter.text()
+        std = self.view.std.text()
         cut_generator = self.view.cut_generator.currentText()
         cost_function = self.view.cost_function.currentText()
 
         try:      
             a = int(a)
+            std = int(std)
         except ValueError: 
             print("Invalid input")
     
@@ -156,7 +157,8 @@ class FeatureBasedController:
 
         cost_function_mapping = {
             "pairwise cost": generated_data.pairwise_cost,
-            "mean cost": generated_data.mean_cost 
+            "mean cost": generated_data.mean_cost, 
+            "density cost": lambda: generated_data.density_cost(std)
         }
 
         cut = cut_generator_mapping[cut_generator]
@@ -164,11 +166,18 @@ class FeatureBasedController:
         start_time = time.time()
         cut()
         cost()
+
+
         root = create_searchtree(generated_data)
         self.tangle_root = condense_tree(root)
         contracting_search_tree(self.tangle_root)
         end_time = time.time()
         print(f"Time to create tangles: {end_time - start_time} seconds")
+
+        if self.tangle_root.left_node is None and self.tangle_root.right_node is None:
+            print("No tangles found")
+
+
         soft = soft_clustering(self.tangle_root)
         hard = hard_clustering(soft)
 
@@ -184,8 +193,8 @@ class FeatureBasedController:
                 if soft[i][j] > prob:
                     prob = soft[i][j]
             self.prob.append(prob)
+
         self.view.nmi_score_tangles = round(generated_data.nmi_score(self.view.ground_truth, self.view.tangles_plot), 2)
-        
         self.view.davies_score_tangles = round(generated_data.davies_bouldin_score(self.view.original_points, self.view.tangles_plot), 2)
 
         self.view.setup_plots()
@@ -243,42 +252,6 @@ class FeatureBasedController:
         # Logic to show cuts
         pass
 
-    def plot_tree_changed(self, state):
-        def plot_tree(node, depth=0, pos=(0, 0), x_offset=100, y_offset=100):
-            if node is None:
-                return
-
-            # Draw current node
-            tangle = set()
-            for i, t in enumerate(node.tangle):
-                if i == 0: 
-                    tangle = t[0]
-                else: 
-                    tangle = tangle.intersection(t[0])
-
-            plt.text(pos[0], pos[1], str(tangle), fontsize=6, ha='center', va='center', wrap=True, bbox=dict(facecolor='white', edgecolor='black', boxstyle='circle'))
-
-            # Draw left subtree
-            if node.left_node:
-                left_pos = (pos[0] - x_offset, pos[1] - y_offset)
-                plt.plot([pos[0], left_pos[0]], [pos[1], left_pos[1]], color='black')
-                plot_tree(node.left_node, depth+1, left_pos)
-
-            # Draw right subtree
-            if node.right_node:
-                right_pos = (pos[0] + x_offset, pos[1] - y_offset)
-                plt.plot([pos[0], right_pos[0]], [pos[1], right_pos[1]], color='black')
-                plot_tree(node.right_node, depth+1, right_pos)
-
-        if state == 2: 
-            plt.ion()
-            plt.figure(figsize=(8, 8))
-            plot_tree(self.tangle_root)
-            plt.axis('off')
-            plt.ioff()
-            self.plot_tree.setChecked(False)
-        else: 
-            pass
 
     def tangle_show_changed(self, state):
         # Logic for changing tangle display state

@@ -8,10 +8,6 @@ from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QHBo
     QLabel, QLineEdit, QApplication, QSizePolicy
 from PyQt5 import QtCore
 from sklearn.metrics import normalized_mutual_info_score
-from Model.DataSetGraph import DataSetGraph
-from Model.TangleCluster import *
-from Model.GenerateTestData import GenerateRandomGraph
-from sklearn.cluster import SpectralClustering
 
 
 class GraphWindow(QMainWindow):
@@ -59,18 +55,15 @@ class GraphWindow(QMainWindow):
         button_layout.addWidget(self.generate_data_button)
 
         self.generate_random_button = QPushButton("Generate Graph", self)
-        self.generate_random_button.clicked.connect(self.generate_random)
         button_layout.addWidget(self.generate_random_button)
         self.generate_random_button.hide()
 
         self.generate_tangles_button = QPushButton("Apply Tangles", self)
-        self.generate_tangles_button.clicked.connect(self.tangles)
         button_layout.addWidget(self.generate_tangles_button)
         self.generate_tangles_button.hide()
 
 
         self.generate_spectral_button = QPushButton("Apply Spectral", self)
-        self.generate_spectral_button.clicked.connect(self.spectral)
         button_layout.addWidget(self.generate_spectral_button)
         self.generate_spectral_button.hide()
 
@@ -132,84 +125,6 @@ class GraphWindow(QMainWindow):
         layout.addWidget(self.back_button)
 
         central_widget.setLayout(layout)
-
-
-
-    def generate_random(self):
-        try:
-            # Get the values from the input fields
-            num_of_nodes = int(self.numb_nodes.text())
-            num_of_clusters = int(self.numb_clusters.text())
-            avg_edges_to_same_cluster = float(self.average_edges_to_same_cluster.text())
-            avg_edges_to_other_clusters = float(self.average_edges_to_other_clusters.text())
-
-            # Create an instance of GenerateRandomGraph
-            self.random_graph_generator = GenerateRandomGraph(num_of_nodes, num_of_clusters, avg_edges_to_same_cluster,
-                                                         avg_edges_to_other_clusters)
-
-            # Generate a random graph using the ground truth
-            self.generated_graph, self.generated_ground_truth = self.random_graph_generator.generate_random_graph()
-
-            self.setup_plots()
-
-        except ValueError:
-            print("Invalid input")
-
-    def tangles(self):
-        try:
-            # Check if the generated graph exists
-            if self.generated_graph is None:
-                print("No generated graph available.")
-                return
-
-            if self.tangles_plot == None: 
-                self.numb_plots += 1 
-            # Perform tangles on the generated graph
-            agreement_parameter = int(self.agreement_parameter.text())
-            data = DataSetGraph(agreement_param=agreement_parameter)
-            data.G = self.generated_graph
-            data.generate_multiple_cuts(self.generated_graph)
-            data.cost_function_Graph()
-            
-            root = create_searchtree(data)
-            root_condense = condense_tree(root)
-            contracting_search_tree(root_condense)
-            soft = soft_clustering(root_condense)
-            hard = hard_clustering(soft)
-
-            self.tangles_plot = hard
-            # Visualize tangles
-            self.nmi_score_tangles = round(self.random_graph_generator.nmi_score(hard), 2)
-            # Visualize tangles
-            #self.nmi_score_tangles = round(self.random_graph_generator.nmi_score(hard), 2)
-            self.setup_plots()
-
-        except ValueError:
-            print("Invalid input")
-
-    def spectral(self):
-        try:
-            G = self.generated_graph
-            # Get adjacency matrix as numpy array
-            adj_mat = nx.convert_matrix.to_numpy_array(G)
-
-            # Get the number of clusters from the input field
-            k = int(self.k_spectral.text())  # Assuming you have a QLineEdit for input
-            if self.spectral_plot is None: 
-                self.numb_plots += 1
-
-            # Cluster
-            sc = SpectralClustering(k)
-            sc.fit(adj_mat)
-
-            # Plot the spectral clustering result
-            self.spectral_plot = sc.labels_
-            self.nmi_score_spectral = round(self.random_graph_generator.nmi_score(sc.labels_), 2)
-            self.setup_plots()
-
-        except Exception as e:
-            print("Error in spectral clustering:", e)
-
 
     def generate_data(self):
         self.upload_data_button.hide()
@@ -303,8 +218,6 @@ class GraphWindow(QMainWindow):
             self.average_edges_to_other_clusters.hide()
             self.agreement_parameter.hide()
             self.k_spectral.hide()
-
-
 
 
     def upload_data(self):
