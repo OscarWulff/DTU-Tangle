@@ -158,15 +158,15 @@ class GenerateDataFeatureBased():
         plt.show()
 
     
-    def davies_bouldin_score(self, points, labels):
-        score = davies_bouldin_score(points, labels)
+    def davies_bouldin_score(self, ground_truth, labels):
+        score = davies_bouldin_score(ground_truth, labels)
         return score
 
-    def nmi_score(self, predicted_tangles):
+    def nmi_score(self, ground_truth, labels):
         """
         Calculates the nmi score of the predicted tangles
         """
-        nmi_score = normalized_mutual_info_score(self.ground_truth, predicted_tangles)
+        nmi_score = normalized_mutual_info_score(ground_truth, labels)
         return nmi_score
 
     def k_means(self, k): 

@@ -8,6 +8,9 @@ from sklearn.decomposition import PCA
 from Model.DataType import DataType
 from Model.Cut import Cut
 from sklearn.manifold import TSNE
+from sklearn.metrics.cluster import normalized_mutual_info_score
+from sklearn.metrics import davies_bouldin_score
+
 
 class DataSetFeatureBased(DataType):
 
@@ -71,54 +74,36 @@ class DataSetFeatureBased(DataType):
     def cut_generator_axis_solveig(self):
         self.cuts = []
         n = len(self.points)
-        x_values = []                
-        y_values = []
 
+        dimensions = len(self.points[0])
+        # Add index to keep track of original order
+        if type(self.points[0]) == tuple:
+            self.points = [point + (z, ) for z, point in enumerate(self.points)]
+        else: 
+            self.points = [point + [z] for z, point in enumerate(self.points)]
+
+        values = [[] for _ in range(dimensions)]  # 
+
+        # Extract values for each dimension
         for point in self.points:
-            x_values.append(point[0]) 
-            y_values.append(point[1])
-        
-        _, sorted_points_x = self.sort_for_list(x_values, self.points)
-        _, sorted_points_y = self.sort_for_list(y_values, self.points)
-        
-        i = 1
-        cut_x = Cut()
-        cut_x.A = set()
-        cut_x.Ac = set()
-        cut_y = Cut()
-        cut_y.A = set()
-        cut_y.Ac = set()
-        for k in range(0, i):
-            cut_x.A.add(sorted_points_x[k][2])
-            cut_y.A.add(sorted_points_y[k][2])
-            if k == i-1:
-                cut_x.line_placement = (sorted_points_x[k][0], "x")
-                cut_y.line_placement = (sorted_points_y[k][1], "y")
-        for k in range(i, n):
-            cut_x.Ac.add(sorted_points_x[k][2])
-            cut_y.Ac.add(sorted_points_y[k][2])
-        self.cuts.append(cut_x)
-        self.cuts.append(cut_y)
+            for dim in range(dimensions):
+                values[dim].append(point[dim])
 
-        while( n - i > self.agreement_param - 1):
-            i += self.agreement_param - 1
-            cut_x = Cut()
-            cut_x.A = set()
-            cut_x.Ac = set()
-            cut_y = Cut()
-            cut_y.A = set()
-            cut_y.Ac = set()
-            for k in range(0, i):
-                cut_x.A.add(sorted_points_x[k][2])
-                cut_y.A.add(sorted_points_y[k][2])
-                if k == i-1:
-                    cut_x.line_placement = (sorted_points_x[k][0], "x")
-                    cut_y.line_placement = (sorted_points_y[k][1], "y")
-            for k in range(i, n):
-                cut_x.Ac.add(sorted_points_x[k][2])
-                cut_y.Ac.add(sorted_points_y[k][2])
-            self.cuts.append(cut_x)
-            self.cuts.append(cut_y)
+        sorted_points = [self.sort_for_list(values[dim], self.points) for dim in range(dimensions)]
+
+        i = self.agreement_param
+        while n >= i + self.agreement_param:
+            cuts = [Cut() for _ in range(dimensions)]  # Create cuts for each dimension
+            for dim in range(dimensions):
+                cuts[dim].init()
+                for k in range(0, i):
+                    cuts[dim].A.add(sorted_points[dim][k][dimensions])
+                    if k == i - 1:
+                        cuts[dim].line_placement = (sorted_points[dim][k][0], dim)
+                for k in range(i, n):
+                    cuts[dim].Ac.add(sorted_points[dim][k][dimensions])
+                self.cuts.append(cuts[dim])
+            i += self.agreement_param
 
 
     def cut_generator_axis_dimensions(self):
@@ -131,7 +116,7 @@ class DataSetFeatureBased(DataType):
             self.points = [point + (z, ) for z, point in enumerate(self.points)]
         else: 
             self.points = [point + [z] for z, point in enumerate(self.points)]
-            
+
         values = [[] for _ in range(dimensions)]  # 
 
         # Extract values for each dimension
@@ -189,6 +174,17 @@ class DataSetFeatureBased(DataType):
         sorted_combined = sorted(combined, key=lambda x: x[0])
         sorted_combined = [e[1] for e in sorted_combined]
         return sorted_combined
+    
+    def davies_bouldin_score(self, ground_truth, labels):
+        score = davies_bouldin_score(ground_truth, labels)
+        return score
+
+    def nmi_score(self, ground_truth, labels):
+        """
+        Calculates the nmi score of the predicted tangles
+        """
+        nmi_score = normalized_mutual_info_score(ground_truth, labels)
+        return nmi_score
 
 def pca(X):
     """ 
@@ -238,9 +234,6 @@ def calculate_explained_varince(S):
     rho = (S * S) / (S * S).sum()
     return rho
 
-def order_projections(rho, V):
-    indices = np.argsort(rho)
-    indices = indices[::-1]
 
 
 

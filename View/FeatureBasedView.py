@@ -10,8 +10,8 @@ from Model.DataSetFeatureBased import pca, calculate_explained_varince, DataSetF
 from Model.TangleCluster import create_searchtree
 from Model.SearchTree import *
 
-import time 
-class FeatureBasedWindow(QMainWindow):
+
+class FeatureBasedView(QMainWindow):
     def __init__(self, main_page):
         super().__init__()
         self.main_page = main_page
@@ -49,13 +49,14 @@ class FeatureBasedWindow(QMainWindow):
         self.davies_score_kmeans = None
         self.davies_score_spectral = None
         self.davies_checked = False
+        self.ground_truth = None
+        self.original_points = None
 
 
         # Add buttons
         button_layout = QHBoxLayout()
         
         self.upload_data_button = QPushButton("Upload Data as .csv", self)
-        self.upload_data_button.clicked.connect(self.upload_data)
         button_layout.addWidget(self.upload_data_button)
         
         self.generate_data_button = QPushButton("Generate Data", self)
@@ -63,37 +64,30 @@ class FeatureBasedWindow(QMainWindow):
         button_layout.addWidget(self.generate_data_button)
 
         self.test_button = QPushButton("Create test", self)
-        self.test_button.clicked.connect(self.test)
         button_layout.addWidget(self.test_button)
     
         self.generate_fixed_button = QPushButton("generate", self)
-        self.generate_fixed_button.clicked.connect(self.generate_fixed)
         button_layout.addWidget(self.generate_fixed_button)
         self.generate_fixed_button.hide()
 
         self.generate_random_button = QPushButton("generate", self)
-        self.generate_random_button.clicked.connect(self.generate_random)
         button_layout.addWidget(self.generate_random_button)
         self.generate_random_button.hide()
 
         self.generate_tangles_button = QPushButton("apply tangles", self)
-        self.generate_tangles_button.clicked.connect(self.tangles)
         button_layout.addWidget(self.generate_tangles_button)
         self.generate_tangles_button.hide()
 
         self.cuts_button = QPushButton("show cuts", self)
-        self.cuts_button.clicked.connect(self.show_cuts)
         button_layout.addWidget(self.cuts_button)
         self.cuts_button.hide()
         
         self.generate_spectral_button = QPushButton("apply spectral", self)
-        self.generate_spectral_button.clicked.connect(self.spectral)
         button_layout.addWidget(self.generate_spectral_button)
         self.generate_spectral_button.hide()
 
         
         self.generate_Kmeans_button = QPushButton("apply k-means", self)
-        self.generate_Kmeans_button.clicked.connect(self.kmeans)
         button_layout.addWidget(self.generate_Kmeans_button)
         self.generate_Kmeans_button.hide()
 
@@ -160,7 +154,6 @@ class FeatureBasedWindow(QMainWindow):
         self.agreement_parameter.hide()
         layout.addWidget(self.agreement_parameter)
 
-    
         self.cut_generator = QComboBox()
         self.cut_generator.addItem("axis cuts")
         self.cut_generator.hide()
@@ -173,27 +166,22 @@ class FeatureBasedWindow(QMainWindow):
         layout.addWidget(self.cost_function)
 
         self.nmi = QCheckBox("show nmi-score")
-        self.nmi.stateChanged.connect(self.nmi_changed)
         self.nmi.hide()
         layout.addWidget(self.nmi)
 
         self.davies = QCheckBox("show davies-score")
-        self.davies.stateChanged.connect(self.davies_changed)
         self.davies.hide()
         layout.addWidget(self.davies)
 
         self.show_tangle = QCheckBox("show tangles")
-        self.show_tangle.stateChanged.connect(self.tangle_show_changed)
         self.show_tangle.hide()
         layout.addWidget(self.show_tangle)
 
         self.soft_clustering = QCheckBox("soft clustering")
-        self.soft_clustering.stateChanged.connect(self.soft_clustering_changed)
         self.soft_clustering.hide()
         layout.addWidget(self.soft_clustering)
 
         self.plot_tree = QCheckBox("plot tree")
-        self.plot_tree.stateChanged.connect(self.plot_tree_changed)
         self.plot_tree.hide()
         layout.addWidget(self.plot_tree)
 
@@ -234,6 +222,7 @@ class FeatureBasedWindow(QMainWindow):
         self.generate_data_button.hide()
         self.random_centers_button.show()
         self.fixed_centers_button.show()
+        self.test_button.hide()
 
     def show_buttons(self):
         self.random_centers_button.hide()
@@ -267,293 +256,21 @@ class FeatureBasedWindow(QMainWindow):
         self.numb_clusters.show()
         self.overlap.show()
 
-
-    def generate_fixed(self): 
-        cluster_points = self.cluster_points.text()
-        std = self.std.text()
-        overlap = self.overlap.text()
-        centroids = self.centroids.text()
-
-        try: 
-            cluster_points = int(cluster_points)
-            std = float(std)        
-            centroids = ast.literal_eval(centroids)
-
-        except ValueError: 
-            print("Invalid input")
-
-        try: 
-            overlap = int(overlap)
-        except ValueError:
-            overlap = None
-
-        self.generated_data = GenerateDataFeatureBased(cluster_points, std)
-
-        if overlap != None: 
-            self.generated_data.overlap = overlap
-        
-        self.generated_data.fixed_clusters(cluster_points, centroids)
-        
-        if len(centroids[0]) > 2: 
-            self.plotting_points = tsne(np.array(self.generated_data.points))
-        else: 
-            self.plotting_points = self.generated_data.points
-
-        self.setup_plots()
-
-
-    def generate_random(self):
-        cluster_points = self.cluster_points.text()
-        numb_clusters = self.numb_clusters.text()
-        std = self.std.text()
-        overlap = self.overlap.text()
-        dimension = self.dimensions.text()
-        try: 
-            cluster_points = int(cluster_points)
-            std = float(std) 
-            numb_clusters = int(numb_clusters)  
-            dimension = int(dimension)
-        except ValueError: 
-            print("Invalid input")
-
-        try: 
-            overlap = int(overlap)
-        except ValueError:
-            overlap = None
-
-        self.generated_data = GenerateDataFeatureBased(numb_clusters, std)
-
-        if overlap != None: 
-            self.generated_data.overlap = overlap
-
-        self.generated_data.random_clusters(cluster_points, dimension)
-        
-        if dimension > 2: 
-            self.plotting_points = tsne(np.array(self.generated_data.points))
-        else: 
-            self.plotting_points = self.generated_data.points
-
-        self.setup_plots()
-
-
-    def test(self):
-        pass
-    
-
-    def plot_tree_changed(self, state):
-        def plot_tree(node, depth=0, pos=(0, 0), x_offset=100, y_offset=100):
-            if node is None:
-                return
-
-            # Draw current node
-            tangle = set()
-            for i, t in enumerate(node.tangle):
-                if i == 0: 
-                    tangle = t[0]
-                else: 
-                    tangle = tangle.intersection(t[0])
-
-            plt.text(pos[0], pos[1], str(tangle), fontsize=6, ha='center', va='center', wrap=True, bbox=dict(facecolor='white', edgecolor='black', boxstyle='circle'))
-
-            # Draw left subtree
-            if node.left_node:
-                left_pos = (pos[0] - x_offset, pos[1] - y_offset)
-                plt.plot([pos[0], left_pos[0]], [pos[1], left_pos[1]], color='black')
-                plot_tree(node.left_node, depth+1, left_pos)
-
-            # Draw right subtree
-            if node.right_node:
-                right_pos = (pos[0] + x_offset, pos[1] - y_offset)
-                plt.plot([pos[0], right_pos[0]], [pos[1], right_pos[1]], color='black')
-                plot_tree(node.right_node, depth+1, right_pos)
-
-        if state == 2: 
-            plt.ion()
-            plt.figure(figsize=(8, 8))
-            plot_tree(self.tangle_root)
-            plt.axis('off')
-            plt.ioff()
-            self.plot_tree.setChecked(False)
-        else: 
-            pass
-
-    def tangle_show_changed(self, state):
-        if state == 2: 
-            pass
-        else:
-            pass
-
-    def soft_clustering_changed(self, state):
-        if state == 2: 
-            self.prob_checked = True
-        else:
-            self.prob_checked = False
-        self.setup_plots()
-
-    def nmi_changed(self, state):
-        if state == 2: 
-            self.nmi_checked = True
-        else: 
-            self.nmi_checked = False
-        self.setup_plots()
-
-    def davies_changed(self, state):
-        if state == 2: 
-            self.davies_checked = True
-        else: 
-            self.davies_checked = False
-        self.setup_plots()
-
-    def show_cuts(self): 
-        splitting_nodes = []
-
-        # Recursive function to traverse the tree
-        def traverse(node):
-            if node is None:
-                return
-            if node.left_node is not None and node.right_node is not None:
-                splitting_nodes.append(node)
-            traverse(node.left_node)
-            traverse(node.right_node)
-
-        # Start traversal from the root node
-        traverse(self.tangle_root)
-
-        x = []
-        y = []
- 
-
-        for node in splitting_nodes:
-            if node.cut.line_placement[1] == "x":
-                x.append(node.cut.line_placement[0]) 
-            else: 
-                y.append(node.cut.line_placement[0])
-
-        plot = None
-        self.figure.delaxes(self.figure.axes[1]) 
-        
-        if self.numb_plots == 2:
-            plot = self.figure.add_subplot(122)
-        else: 
-            plot = self.figure.add_subplot(222)
-
-        for x_value in x:
-                plot.axvline(x=x_value, color='r', linestyle='--')
-        for y_value in y: 
-            plot.axhline(y=y_value, color='r', linestyle='--')
-
-        if self.tangles_plot != None: 
-            plot.set_title('Tangles')
-            self.plot_points(self.plotting_points, self.tangles_plot, plot)
-    
+    def upload_datas(self):
         self.canvas.draw()
+        self.test_button.hide()
+        self.generate_Kmeans_button.show()
+        self.generate_spectral_button.show()
+        self.generate_tangles_button.show()
+        self.k_spectral.show()
+        self.k_kmeans.show()
+        self.agreement_parameter.show()
+        self.cuts_button.show()
+        self.cut_generator.show()
+        self.cost_function.show()
+        self.upload_data_button.hide()
+        self.generate_data_button.hide()
 
-
-    def tangles(self):
-        a = self.agreement_parameter.text()
-        cut_generator = self.cut_generator.currentText()
-        cost_function = self.cost_function.currentText()
-
-        try:      
-            a = int(a)
-        except ValueError: 
-            print("Invalid input")
-    
-        # Creating the tangles
-        data = DataSetFeatureBased(a)
-
-        data.points = self.generated_data.points
-        self.tangles_points = self.plotting_points
-
-        cut_generator_mapping = {
-            "axis cuts": data.cut_generator_axis_dimensions
-        }
-
-        cost_function_mapping = {
-            "pairwise cost": data.pairwise_cost,
-            "min distance cost": data.min_distance_cost 
-        }
-
-        cut = cut_generator_mapping[cut_generator]
-        cost = cost_function_mapping[cost_function]
-        start_time = time.time()
-        cut()
-        cost()
-        root = create_searchtree(data)
-        self.tangle_root = condense_tree(root)
-        contracting_search_tree(self.tangle_root)
-        end_time = time.time()
-        print(f"Time to create tangles: {end_time - start_time} seconds")
-        soft = soft_clustering(self.tangle_root)
-        hard = hard_clustering(soft)
-
-        if self.tangles_plot == None: 
-            self.numb_plots += 1    
-        
-        self.prob = []
-
-        for i in range(len(soft)):
-            prob = 0
-            for j in range(len(soft[0])):
-                if soft[i][j] > prob:
-                    prob = soft[i][j]
-            self.prob.append(prob)
-        
-        
-        self.tangles_plot = hard
-
-        print(self.generated_data.points)
-        print(self.tangles_plot)
-        self.nmi_score_tangles = round(self.generated_data.nmi_score(hard), 2)
-        self.davies_score_tangles = round(self.generated_data.davies_bouldin_score(self.generated_data.points, self.tangles_plot), 2)
-
-        self.setup_plots()
-        
-
-    def spectral(self):
-        k = self.k_spectral.text()
-
-        try:       
-            k = int(k)
-        except ValueError: 
-            print("Invalid input")
-
-        generated_data = GenerateDataFeatureBased(0, 0)
-        generated_data.points = self.generated_data.points
-        self.spectral_points = self.plotting_points
-
-        if self.spectral_plot is None: 
-            self.numb_plots += 1
-        start_time = time.time()
-        self.spectral_plot = generated_data.spectral_clustering(k)
-        end_time = time.time()
-        print(f"Time to create spectral: {end_time - start_time} seconds")
-        
-        self.nmi_score_spectral = round(self.generated_data.nmi_score(self.spectral_plot.tolist()), 2)
-        self.davies_score_spectral = round(self.generated_data.davies_bouldin_score(self.generated_data.points, self.spectral_plot.tolist()), 2)
-        self.setup_plots()
-
-
-    def kmeans(self):
-        k = self.k_kmeans.text()
-
-        try:      
-            k = int(k)
-        except ValueError: 
-            print("Invalid input")
-
-        generated_data = GenerateDataFeatureBased(0, 0)
-        generated_data.points = self.generated_data.points
-        self.kmeans_points = self.plotting_points
-
-
-        if self.kmeans_plot is None: 
-            self.numb_plots += 1
-
-        self.kmeans_plot = generated_data.k_means(k)
-        self.nmi_score_kmeans = round(self.generated_data.nmi_score(self.kmeans_plot.tolist()), 2)
-        self.davies_score_kmeans = round(self.generated_data.davies_bouldin_score(self.generated_data.points, self.kmeans_plot.tolist()), 2)
-        self.setup_plots()
 
     
     def setup_plots(self):
@@ -562,12 +279,11 @@ class FeatureBasedWindow(QMainWindow):
         if self.numb_plots == 1:
             plot = self.figure.add_subplot(111)
             plot.set_title('Ground thruth')
-            self.plot_points(self.plotting_points, self.generated_data.ground_truth, plot)
+            self.plot_points(self.plotting_points, self.ground_truth, plot)
         elif self.numb_plots == 2:
-            if self.generated_data != None: 
-                plot = self.figure.add_subplot(121)
-                plot.set_title('Ground truth')
-                self.plot_points(self.plotting_points, self.generated_data.ground_truth, plot)
+            plot = self.figure.add_subplot(121)
+            plot.set_title('Ground truth')
+            self.plot_points(self.plotting_points, self.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(122)
                 plot.set_title('Tangles')
@@ -584,10 +300,9 @@ class FeatureBasedWindow(QMainWindow):
                 plot.set_title('K-means')
                 self.plot_points(self.kmeans_points, self.kmeans_plot, plot)
         else:
-            if self.generated_data != None: 
-                plot = self.figure.add_subplot(221)
-                plot.set_title('Ground truth')
-                self.plot_points(self.plotting_points, self.generated_data.ground_truth, plot)
+            plot = self.figure.add_subplot(221)
+            plot.set_title('Ground truth')
+            self.plot_points(self.plotting_points, self.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(222)
                 plot.set_title('Tangles')
@@ -652,41 +367,5 @@ class FeatureBasedWindow(QMainWindow):
 
         plot.set_xlabel('X')
         plot.set_ylabel('Y')
-
-    def upload_data(self):
-        file_dialog = QFileDialog()
-        if file_dialog.exec_():
-            selected_file = file_dialog.selectedFiles()[0]  # Get the path of the selected file
-            X = read_file(selected_file)
-            self.data = tsne(X)
-
-        self.upload_data_button.hide()
-        self.generate_data_button.hide()
-        
-        self.generated_data = GenerateDataFeatureBased(0, 0)
-
-        self.generated_data.points = self.data.tolist()
-
-        self.plotting_points = self.data.tolist()
-
-        self.generated_data.ground_truth = [1] * len(self.generated_data.points)
-
-        # var = calculate_explained_varince(self.eigenvalues)
-        # self.variance.setText(f"Explained variance = {round((var[0]+var[1]) * 100)}%")
-        # self.variance.show()
-        # Display the plot
-        self.canvas.draw()
-        self.test_button.hide()
-        self.generate_Kmeans_button.show()
-        self.generate_spectral_button.show()
-        self.generate_tangles_button.show()
-        self.k_spectral.show()
-        self.k_kmeans.show()
-        self.agreement_parameter.show()
-        self.cuts_button.show()
-        self.cut_generator.show()
-        self.cost_function.show()
-
-        self.setup_plots()
 
     
