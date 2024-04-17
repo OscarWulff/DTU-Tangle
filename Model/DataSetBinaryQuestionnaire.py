@@ -212,7 +212,7 @@ def cost_function_binary(A, Ac, questionnaires):
     
     for u in A:
         for v in Ac:
-            similarity_sum += cosine_sim(questionnaires[u], questionnaires[v])
+            similarity_sum += sim(questionnaires[u], questionnaires[v])
     return similarity_sum / (len(A) * len(Ac))
 
 
