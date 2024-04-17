@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QLineEdit, QComboBox, QSizePolicy, QCheckBox
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire
+from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire, perform_tsne
 from Model.GenerateTestData import GenerateDataBinaryQuestionnaire, GenerateDataFeatureBased
 import ast
 from PyQt5.QtCore import Qt
@@ -54,7 +54,6 @@ class BinaryQuestionnaireWindow(QMainWindow):
         button_layout = QHBoxLayout()
         
         self.upload_data_button = QPushButton("Upload Data as .csv", self)
-        self.upload_data_button.clicked.connect(self.upload_data)
         button_layout.addWidget(self.upload_data_button)
         
         self.generate_data_button = QPushButton("Generate Data", self)
@@ -62,23 +61,19 @@ class BinaryQuestionnaireWindow(QMainWindow):
         button_layout.addWidget(self.generate_data_button)
 
         self.generate_random_button = QPushButton("generate", self)
-        self.generate_random_button.clicked.connect(self.generate_random)
         button_layout.addWidget(self.generate_random_button)
         self.generate_random_button.hide()
 
 
         self.generate_tangles_button = QPushButton("apply tangles", self)
-        self.generate_tangles_button.clicked.connect(self.tangles)
         button_layout.addWidget(self.generate_tangles_button)
         self.generate_tangles_button.hide()
         
         self.generate_DBSCAN_button = QPushButton("Apply DBSCAN", self)
-        self.generate_DBSCAN_button.clicked.connect(self.dbscan)
         button_layout.addWidget(self.generate_DBSCAN_button)
         self.generate_DBSCAN_button.hide()
 
         self.generate_Kmeans_button = QPushButton("apply k-means", self)
-        self.generate_Kmeans_button.clicked.connect(self.kmeans)
         button_layout.addWidget(self.generate_Kmeans_button)
         self.generate_Kmeans_button.hide()
 
@@ -209,11 +204,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
         # Show the main page again
         self.main_page.show()
 
-    # def generate_data(self):
-    #     self.upload_data_button.hide()
-    #     self.generate_data_button.hide()
-    #     self.random_centers_button.show()
-    #     self.fixed_centers_button.show()
+    
 
     def show_buttons(self):
         self.upload_data_button.hide()
@@ -227,23 +218,11 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.generate_random_button.show()
 
         
-        # self.random_centers_button.hide()
-        # self.fixed_centers_button.hide()
-        # self.test_button.hide()
-        # self.generate_Kmeans_button.show()
-        # self.generate_spectral_button.show()
+       
         self.generate_tangles_button.show()
         self.generate_Kmeans_button.show()
         self.generate_DBSCAN_button.show()
-        # self.cluster_points.show()
-        # self.std.show()
-        # self.k_spectral.show()
-        # self.k_kmeans.show()
-        # self.cut_generator.show()
-        # self.cost_function.show()
-        # self.nmi.show()
-        # self.soft_clustering.show()
-        # self.cuts_button.show()
+        
         self.plot_tree.show()
 
     def fixed_centers(self):
@@ -257,38 +236,6 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.numb_clusters.show()
         self.overlap.show()
 
-
-
-
-
-    def generate_random(self):
-        number_of_clusters = self.numb_clusters.text()
-        number_of_questions = self.numb_questions.text()
-        number_of_participants = self.numb_participants.text()
-        agreement_parameter = self.agreement_parameter.text()
-
-
-        try: 
-            number_of_clusters = int(number_of_clusters)
-            number_of_questions = int(number_of_questions)
-            number_of_participants = int(number_of_participants)
-            agreement_parameter = int(agreement_parameter)
-
-        except ValueError: 
-            print("Invalid input")
-
-    
-        self.generated_data = GenerateDataBinaryQuestionnaire(number_of_participants, number_of_questions, number_of_clusters)
-
-        self.generated_data.generate_biased_binary_questionnaire_answers()
-        self.generated_data.res_to_points()
-
-        
-
-        
-        self.generated_data.result
-        
-        self.setup_plots()
 
 
 
@@ -398,107 +345,6 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.canvas.draw()
 
 
-    def tangles(self):
-        a = self.agreement_parameter.text()
-        cut_generator = self.cut_generator.currentText()
-        cost_function = self.cost_function.currentText()
-
-        try:      
-            a = int(a)
-        except ValueError: 
-            print("Invalid input")
-    
-        # Creating the tangles
-        data = DataSetBinaryQuestionnaire(a).cut_generator_binary(self.generated_data.questionaire)
-        
-        # self.tangles_points = self.generated_data.points
-        # data.points = self.generated_data.points
-
-        # cut_generator_mapping = {
-        #     "axis cuts": data.cut_generator_axis
-        # }
-
-        # cost_function_mapping = {
-        #     "pairwise cost": data.pairwise_cost,
-        #     "min distance cost": data.min_distance_cost 
-        # }
-
-        # cut = cut_generator_mapping[cut_generator]
-        # cost = cost_function_mapping[cost_function]
-
-        # cut()
-        # cost()
-        root = create_searchtree(data)
-        
-        self.tangle_root = condense_tree(root)
-        contracting_search_tree(self.tangle_root)
-        # time.sleep(2)
-        soft = soft_clustering(self.tangle_root)
-        # print(soft)
-        
-        hard = hard_clustering(soft)
-
-
-        if self.tangles_plot == None: 
-            self.numb_plots += 1    
-        
-        self.prob = []
-
-        # for i in range(len(soft)):
-        #     prob = 0
-        #     for j in range(len(soft[0])):
-        #         if soft[i][j] > prob:
-        #             prob = soft[i][j]
-        #     self.prob.append(prob)
-
-        self.tangles_plot = hard
-        self.tangles_points = self.generated_data.points
-
-        self.nmi_score_tangles = round(self.generated_data.nmi_score(hard), 2)
-        self.setup_plots()
-        
-
-    def dbscan(self):
-        min_s = self.agreement_parameter.text()
-        eps = self.epsilon.text()
-        print("min s :", min_s)
-        print("eps :", eps)
-
-        try:       
-            min_s = int(min_s)
-            eps = float(eps)
-        except ValueError: 
-            print("Invalid input")
-
-        generated_data = GenerateDataBinaryQuestionnaire(0, 0, 0)
-        generated_data.points = self.generated_data.points
-        self.dbscan_points = self.generated_data.points
-
-        if self.dbscan_plot is None: 
-            self.numb_plots += 1
-
-        self.dbscan_plot = generated_data.DBscan(min_s, eps)
-        self.nmi_score_dbscan = round(self.generated_data.nmi_score(self.dbscan_plot.tolist()), 2)
-        self.setup_plots()
-
-
-    def kmeans(self):
-        k = self.k_kmeans.text()
-
-        try:      
-            k = int(k)
-        except ValueError: 
-            print("Invalid input")
-
-        generated_data = GenerateDataBinaryQuestionnaire(0, 0, 0)
-        generated_data.points = self.generated_data.points
-        self.kmeans_points = self.generated_data.points
-        if self.kmeans_plot is None: 
-            self.numb_plots += 1
-        self.kmeans_plot = generated_data.k_means(k)
-        self.nmi_score_kmeans = round(self.generated_data.nmi_score(self.kmeans_plot.tolist()), 2)
-        self.setup_plots()
-
     
     def setup_plots(self):
         self.figure.clear()
@@ -590,35 +436,44 @@ class BinaryQuestionnaireWindow(QMainWindow):
         # Add labels and title
         plot.set_xlabel('X')
         plot.set_ylabel('Y')
-
-    def upload_data(self):
-        file_dialog = QFileDialog()
-        if file_dialog.exec_():
-            selected_file = file_dialog.selectedFiles()[0]  # Get the path of the selected file
-            self.data = tsne(selected_file)
-        self.upload_data_button.hide()
-        self.generate_data_button.hide()
-        self.generated_data = GenerateDataFeatureBased(0, 0)
-
-        self.generated_data.points = [inner + [index] for index, inner in enumerate(self.data.tolist())]
-        self.generated_data.ground_truth = [1] * len(self.generated_data.points)
-
-        # var = calculate_explained_varince(self.eigenvalues)
-        # self.variance.setText(f"Explained variance = {round((var[0]+var[1]) * 100)}%")
-        # self.variance.show()
-        # Display the plot
+    def upload_data_show(self):
         self.canvas.draw()
-        self.test_button.hide()
+       
         self.generate_Kmeans_button.show()
         self.generate_DBSCAN_button.show()
         self.generate_tangles_button.show()
-        self.k_spectral.show()
         self.k_kmeans.show()
         self.agreement_parameter.show()
-        self.cuts_button.show()
-        self.cut_generator.show()
-        self.cost_function.show()
+        
 
-        self.setup_plots()
+    # def upload_data(self):
+    #     file_dialog = QFileDialog()
+    #     if file_dialog.exec_():
+    #         selected_file = file_dialog.selectedFiles()[0]  # Get the path of the selected file
+    #         self.data = perform_tsne(selected_file)
+    #     self.upload_data_button.hide()
+    #     self.generate_data_button.hide()
+    #     self.generated_data = GenerateDataBinaryQuestionnaire(0, 0,0)
+
+    #     self.generated_data.points = [inner + [index] for index, inner in enumerate(self.data.tolist())]
+    #     self.generated_data.ground_truth = [1] * len(self.generated_data.points)
+
+    #     # var = calculate_explained_varince(self.eigenvalues)
+    #     # self.variance.setText(f"Explained variance = {round((var[0]+var[1]) * 100)}%")
+    #     # self.variance.show()
+    #     # Display the plot
+    #     self.canvas.draw()
+    #     # self.test_button.hide()
+    #     self.generate_Kmeans_button.show()
+    #     self.generate_DBSCAN_button.show()
+    #     self.generate_tangles_button.show()
+    #     # self.k_spectral.show()
+    #     self.k_kmeans.show()
+    #     self.agreement_parameter.show()
+    #     # self.cuts_button.show()
+    #     # self.cut_generator.show()
+    #     # self.cost_function.show()
+
+    #     self.setup_plots()
 
     
