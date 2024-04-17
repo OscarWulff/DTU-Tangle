@@ -49,8 +49,6 @@ def create_searchtree(data : DataType):
     Search tree
     """
 
-    
-
     def create_child(node, orientation, cut, id):
         child = Searchtree(node, node.cut_id+1)
         child.cut_orientation = orientation
@@ -72,8 +70,6 @@ def create_searchtree(data : DataType):
 
     leaves = [root]
     cuts_ordered = data.order_function()
-    # for index, cut in enumerate(cuts_ordered, start=1):
-    #     print(f"cut.id = {index} - A: {cut.A} - Ac: {cut.Ac} - cost: {cut.cost}")
 
     id = 0
     for cutId, cut in enumerate(cuts_ordered, start=1):

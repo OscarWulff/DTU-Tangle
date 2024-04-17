@@ -6,7 +6,10 @@ class Cut:
         self.A = A
         self.Ac = Ac
         self.line_placement = None
-        
+
+    def init(self):
+        self.A = set()
+        self.Ac = set() 
 
     def is_in(self, v):
         return v in self.A
