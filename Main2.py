@@ -4,7 +4,7 @@ from Controller.FeatureBasedController import FeatureBasedController
 from View.FeatureBasedView import FeatureBasedView
 
 def main():
-    # Creating the application instance
+    # Creating the application instanceg
     app = QApplication(sys.argv)
 
     # Creating the view instance

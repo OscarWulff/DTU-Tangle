@@ -30,9 +30,12 @@ class DataSetFeatureBased(DataType):
         self.cut_generator_axis_dimensions()
         self.cost_function()
 
+    def density_cost(self):
+
+        pass
 
 
-    def min_distance_cost(self):
+    def pairwise_cost(self):
         """ 
         This function is used to calculate the cost of cuts for feature based data set
         
@@ -55,20 +58,33 @@ class DataSetFeatureBased(DataType):
                     sum_cost += -np.linalg.norm(point1 - point2)
             cut.cost = sum_cost
 
-    def pairwise_cost(self):
+    def mean_cost(self):
         for cut in self.cuts:
 
             sum_cost = 0.0
             left_oriented = cut.A
             right_oriented = cut.Ac
 
+            A_points = []
+            Ac_points = []
+
+            # Calculate the mean 
+            for left_or in left_oriented:
+                A_points.append(self.points[left_or])
+                
+            for right_or in right_oriented:
+                Ac_points.append(self.points[right_or])
+            
+            mean_A = np.mean(np.array(A_points)[:, :-1], axis=0)
+            mean_Ac = np.mean(np.array(A_points)[:, :-1], axis=0)
+
             # Calculate the cost
             for left_or in left_oriented:
-                for right_or in right_oriented:
-                    np.linalg.norm(self.points[left_or] - self.points[right_or])
+                sum_cost += -np.linalg.norm(self.points[left_or][:-1] - mean_A)
+                
+            for right_or in right_oriented:
+                sum_cost += -np.linalg.norm(self.points[right_or][:-1] - mean_Ac)
 
-                    sum_cost += -(self.euclidean_distance(self.points[left_or][0], self.points[right_or][0], self.points[left_or][1], self.points[right_or][1])/(len(cut.A)*len(cut.Ac))) 
-            
             cut.cost = sum_cost
 
     def cut_generator_axis_solveig(self):
@@ -77,10 +93,7 @@ class DataSetFeatureBased(DataType):
 
         dimensions = len(self.points[0])
         # Add index to keep track of original order
-        if type(self.points[0]) == tuple:
-            self.points = [point + (z, ) for z, point in enumerate(self.points)]
-        else: 
-            self.points = [point + [z] for z, point in enumerate(self.points)]
+        self.points = [point + [z] for z, point in enumerate(self.points)]
 
         values = [[] for _ in range(dimensions)]  # 
 
@@ -226,7 +239,6 @@ def tsne(X):
 def read_file(filename):
     df = pd.read_csv(filename)
     X = df.values
-    X = X[:20, :-1]
     X = X.astype(float)
     return X
 

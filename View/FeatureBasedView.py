@@ -161,7 +161,7 @@ class FeatureBasedView(QMainWindow):
 
         self.cost_function = QComboBox()
         self.cost_function.addItem("pairwise cost")
-        self.cost_function.addItem("min distance cost")
+        self.cost_function.addItem("mean cost")
         self.cost_function.hide()
         layout.addWidget(self.cost_function)
 
@@ -286,18 +286,18 @@ class FeatureBasedView(QMainWindow):
             self.plot_points(self.plotting_points, self.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(122)
-                plot.set_title('Tangles')
+                plot.set_title('Tangles (NMI = {})'.format(self.nmi_score_tangles))
                 if self.prob_checked:
                     self.plot_points_prob(self.tangles_points, self.tangles_plot, plot)
                 else:
                     self.plot_points(self.tangles_points, self.tangles_plot, plot)
             if self.spectral_plot is not None: 
                 plot = self.figure.add_subplot(122)
-                plot.set_title('Spectral')
+                plot.set_title('Spectral (NMI = {})'.format(self.nmi_score_spectral))
                 self.plot_points(self.spectral_points, self.spectral_plot, plot)
             if self.kmeans_plot is not None: 
                 plot = self.figure.add_subplot(122)
-                plot.set_title('K-means')
+                plot.set_title('K-means (NMI = {})'.format(self.nmi_score_kmeans))
                 self.plot_points(self.kmeans_points, self.kmeans_plot, plot)
         else:
             plot = self.figure.add_subplot(221)
@@ -305,18 +305,18 @@ class FeatureBasedView(QMainWindow):
             self.plot_points(self.plotting_points, self.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(222)
-                plot.set_title('Tangles')
+                plot.set_title('Tangles (NMI = {})'.format(self.nmi_score_tangles))
                 if self.prob_checked:
                     self.plot_points_prob(self.tangles_points, self.tangles_plot, plot)
                 else:
                     self.plot_points(self.tangles_points, self.tangles_plot, plot)
             if self.spectral_plot is not None: 
                 plot = self.figure.add_subplot(223)
-                plot.set_title('Spectral')
+                plot.set_title('Spectral (NMI = {})'.format(self.nmi_score_spectral))
                 self.plot_points(self.spectral_points, self.spectral_plot, plot)
             if self.kmeans_plot is not None: 
                 plot = self.figure.add_subplot(224)
-                plot.set_title('K-means')
+                plot.set_title('K-means (NMI = {})'.format(self.nmi_score_kmeans))
                 self.plot_points(self.kmeans_points, self.kmeans_plot, plot)
 
         self.figure.subplots_adjust(hspace=0.5, wspace=0.5)

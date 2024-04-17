@@ -110,7 +110,7 @@ class FeatureBasedController:
         self.view.plotting_points = data.tolist()
 
         self.view.ground_truth = [1] * len(data)
-        
+
         self.view.upload_datas()
         self.view.setup_plots()
 
@@ -151,12 +151,12 @@ class FeatureBasedController:
         self.view.tangles_points = self.view.plotting_points
 
         cut_generator_mapping = {
-            "axis cuts": generated_data.cut_generator_axis_dimensions
+            "axis cuts": generated_data.cut_generator_axis_solveig
         }
 
         cost_function_mapping = {
             "pairwise cost": generated_data.pairwise_cost,
-            "min distance cost": generated_data.min_distance_cost 
+            "mean cost": generated_data.mean_cost 
         }
 
         cut = cut_generator_mapping[cut_generator]
