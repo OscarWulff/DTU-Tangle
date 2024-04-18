@@ -3,7 +3,7 @@ import time
 import numpy as np
 from PyQt5.QtWidgets import QFileDialog, QCheckBox, QComboBox, QLineEdit, QPushButton, QMainWindow
 from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire, perform_tsne
-from Model.DataSetFeatureBased import tsne
+from Model.DataSetFeatureBased import read_file, tsne
 from Model.GenerateTestData import GenerateDataBinaryQuestionnaire, GenerateDataFeatureBased
 from Model.TangleCluster import create_searchtree
 from Model.SearchTree import condense_tree, soft_clustering, hard_clustering, contracting_search_tree
@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 class BinaryQuestionnaireController:
     def __init__(self, view):
         self.view = view
+        self.view.upload_data_button.clicked.connect(self.upload_data)
         self.view.generate_random_button.clicked.connect(self.generate_random)
         self.view.generate_tangles_button.clicked.connect(self.tangles)
         self.view.generate_DBSCAN_button.clicked.connect(self.dbscan)
@@ -133,18 +134,21 @@ class BinaryQuestionnaireController:
     def upload_data(self):
         file_dialog = QFileDialog()
         if file_dialog.exec_():
-            selected_file = file_dialog.selectedFiles()[0]  # Get the path of the selected file
-            self.data = tsne(selected_file)
+            selected_file = file_dialog.selectedFiles()[0]
+            
+            X = read_file(selected_file)  # Get the path of the selected file
+            print(X)
+            self.data = tsne(X)
         self.view.upload_data_button.hide()
         self.view.generate_data_button.hide()
         self.view.generated_data = GenerateDataBinaryQuestionnaire(0, 0,0)
 
         self.view.generated_data.points = [inner + [index] for index, inner in enumerate(self.data.tolist())]
-        self.view.generated_data.ground_truth = [1] * len(self.generated_data.points)
+        self.view.generated_data.ground_truth = [1] * len(self.view.generated_data.points)
 
         self.view.upload_data_show()
         
 
-        self.setup_plots()
+        self.view.setup_plots()
 
     
