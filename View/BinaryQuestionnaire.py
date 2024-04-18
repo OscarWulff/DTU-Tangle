@@ -446,34 +446,5 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.agreement_parameter.show()
         
 
-    # def upload_data(self):
-    #     file_dialog = QFileDialog()
-    #     if file_dialog.exec_():
-    #         selected_file = file_dialog.selectedFiles()[0]  # Get the path of the selected file
-    #         self.data = perform_tsne(selected_file)
-    #     self.upload_data_button.hide()
-    #     self.generate_data_button.hide()
-    #     self.generated_data = GenerateDataBinaryQuestionnaire(0, 0,0)
-
-    #     self.generated_data.points = [inner + [index] for index, inner in enumerate(self.data.tolist())]
-    #     self.generated_data.ground_truth = [1] * len(self.generated_data.points)
-
-    #     # var = calculate_explained_varince(self.eigenvalues)
-    #     # self.variance.setText(f"Explained variance = {round((var[0]+var[1]) * 100)}%")
-    #     # self.variance.show()
-    #     # Display the plot
-    #     self.canvas.draw()
-    #     # self.test_button.hide()
-    #     self.generate_Kmeans_button.show()
-    #     self.generate_DBSCAN_button.show()
-    #     self.generate_tangles_button.show()
-    #     # self.k_spectral.show()
-    #     self.k_kmeans.show()
-    #     self.agreement_parameter.show()
-    #     # self.cuts_button.show()
-    #     # self.cut_generator.show()
-    #     # self.cost_function.show()
-
-    #     self.setup_plots()
 
     

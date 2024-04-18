@@ -292,6 +292,7 @@ def tsne(X):
 def read_file(filename):
     df = pd.read_csv(filename)
     X = df.values
+    X = X[:1000, :]
     X = X.astype(float)
     return X
 
