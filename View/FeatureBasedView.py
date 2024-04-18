@@ -156,6 +156,7 @@ class FeatureBasedWindow(QMainWindow):
 
         self.cut_generator = QComboBox()
         self.cut_generator.addItem("axis cuts")
+        self.cut_generator.addItem("solveig cuts")
         self.cut_generator.hide()
         layout.addWidget(self.cut_generator)
 
@@ -364,8 +365,8 @@ class FeatureBasedWindow(QMainWindow):
         color_map = {cluster: color for cluster, color in zip(clusters, colors)}
 
         # Plot the points with color
-        for point, truth in zip(points, labels):
-            plot.scatter(point[0], point[1], color=color_map[truth], alpha=self.prob[point[2]])
+        for i, (point, truth) in enumerate(zip(points, labels)):
+            plot.scatter(point[0], point[1], color=color_map[truth], alpha=self.prob[i])
 
         plot.set_xlabel('X')
         plot.set_ylabel('Y')

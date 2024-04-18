@@ -152,7 +152,8 @@ class FeatureBasedController:
         self.view.tangles_points = self.view.plotting_points
 
         cut_generator_mapping = {
-            "axis cuts": generated_data.cut_generator_axis_solveig
+            "axis cuts": generated_data.cut_generator_axis_dimensions,
+            "solveig cuts": generated_data.cut_generator_axis_solveig
         }
 
         cost_function_mapping = {
@@ -166,8 +167,6 @@ class FeatureBasedController:
         start_time = time.time()
         cut()
         cost()
-
-
         root = create_searchtree(generated_data)
         self.tangle_root = condense_tree(root)
         contracting_search_tree(self.tangle_root)
@@ -185,14 +184,14 @@ class FeatureBasedController:
             self.view.numb_plots += 1   
 
         self.view.tangles_plot = hard
-        self.prob = []
+        self.view.prob = []
 
         for i in range(len(soft)):
             prob = 0
             for j in range(len(soft[0])):
                 if soft[i][j] > prob:
                     prob = soft[i][j]
-            self.prob.append(prob)
+            self.view.prob.append(prob)
 
         self.view.nmi_score_tangles = round(generated_data.nmi_score(self.view.ground_truth, self.view.tangles_plot), 2)
         self.view.davies_score_tangles = round(generated_data.davies_bouldin_score(self.view.original_points, self.view.tangles_plot), 2)

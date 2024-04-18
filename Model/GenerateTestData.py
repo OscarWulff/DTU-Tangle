@@ -97,9 +97,6 @@ class GenerateDataFeatureBased():
         """
         # Parameter that controls how much overlap is allowed
 
-        std_low = 0.1
-        std_high = 0.5
-
         tries = 0
         while tries < 1000:
             tries += 1
@@ -107,7 +104,7 @@ class GenerateDataFeatureBased():
             centroids = []
             std_deviations = []
             for i in range(self.numb_clusters):
-                std_deviation_cluster = np.random.uniform(std_low, std_high, size=dimensions)
+                std_deviation_cluster = np.random.uniform(0, self.std_deviation, size=dimensions)
                 center_cluster = np.random.uniform(self.box_low_x, self.box_high_x, size=dimensions)
                 
                 for centroid, std_deviation in zip(centroids, std_deviations):

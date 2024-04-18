@@ -135,12 +135,13 @@ class DataSetFeatureBased(DataType):
     def cut_generator_axis_solveig(self):
         self.cuts = []
         n = len(self.points)
-
         dimensions = len(self.points[0])
+
+
         # Add index to keep track of original order
         self.points = [point + [z] for z, point in enumerate(self.points)]
 
-        values = [[] for _ in range(dimensions)]  # 
+        values = [[] for _ in range(dimensions)]  
 
         # Extract values for each dimension
         for point in self.points:
@@ -149,8 +150,18 @@ class DataSetFeatureBased(DataType):
 
         sorted_points = [self.sort_for_list(values[dim], self.points) for dim in range(dimensions)]
 
-        i = self.agreement_param
-        while n >= i + self.agreement_param:
+        # Extract the first point for each dimension
+        i = 1
+        for dim in range(dimensions):
+            cut = Cut()
+            cut.init()
+            cut.A.add(sorted_points[dim][0][dimensions])
+            for k in range(i, n):
+                cut.Ac.add(sorted_points[dim][k][dimensions])
+            self.cuts.append(cut)
+
+        i += self.agreement_param
+        while n > i + self.agreement_param:
             cuts = [Cut() for _ in range(dimensions)]  # Create cuts for each dimension
             for dim in range(dimensions):
                 cuts[dim].init()
@@ -170,10 +181,7 @@ class DataSetFeatureBased(DataType):
 
         dimensions = len(self.points[0])
         # Add index to keep track of original order
-        if type(self.points[0]) == tuple:
-            self.points = [point + (z, ) for z, point in enumerate(self.points)]
-        else: 
-            self.points = [point + [z] for z, point in enumerate(self.points)]
+        self.points = [point + [z] for z, point in enumerate(self.points)]
 
         values = [[] for _ in range(dimensions)]  # 
 
