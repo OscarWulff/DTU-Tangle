@@ -70,7 +70,7 @@ def condense_tree(root: Searchtree):
 
     traverse(root)
 
-    leaves = prune_tree(leaves)
+    #leaves = prune_tree(leaves)
 
     def condense_leaf(leaf):
         nonlocal root

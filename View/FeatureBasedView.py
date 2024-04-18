@@ -11,7 +11,7 @@ from Model.TangleCluster import create_searchtree
 from Model.SearchTree import *
 
 
-class FeatureBasedView(QMainWindow):
+class FeatureBasedWindow(QMainWindow):
     def __init__(self, main_page):
         super().__init__()
         self.main_page = main_page
@@ -161,7 +161,8 @@ class FeatureBasedView(QMainWindow):
 
         self.cost_function = QComboBox()
         self.cost_function.addItem("pairwise cost")
-        self.cost_function.addItem("min distance cost")
+        self.cost_function.addItem("mean cost")
+        self.cost_function.addItem("density cost")
         self.cost_function.hide()
         layout.addWidget(self.cost_function)
 
@@ -182,6 +183,7 @@ class FeatureBasedView(QMainWindow):
         layout.addWidget(self.soft_clustering)
 
         self.plot_tree = QCheckBox("plot tree")
+        self.plot_tree.stateChanged.connect(self.plot_tree_changed)
         self.plot_tree.hide()
         layout.addWidget(self.plot_tree)
 
@@ -286,18 +288,18 @@ class FeatureBasedView(QMainWindow):
             self.plot_points(self.plotting_points, self.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(122)
-                plot.set_title('Tangles')
+                plot.set_title('Tangles (NMI = {})'.format(self.nmi_score_tangles))
                 if self.prob_checked:
                     self.plot_points_prob(self.tangles_points, self.tangles_plot, plot)
                 else:
                     self.plot_points(self.tangles_points, self.tangles_plot, plot)
             if self.spectral_plot is not None: 
                 plot = self.figure.add_subplot(122)
-                plot.set_title('Spectral')
+                plot.set_title('Spectral (NMI = {})'.format(self.nmi_score_spectral))
                 self.plot_points(self.spectral_points, self.spectral_plot, plot)
             if self.kmeans_plot is not None: 
                 plot = self.figure.add_subplot(122)
-                plot.set_title('K-means')
+                plot.set_title('K-means (NMI = {})'.format(self.nmi_score_kmeans))
                 self.plot_points(self.kmeans_points, self.kmeans_plot, plot)
         else:
             plot = self.figure.add_subplot(221)
@@ -305,18 +307,18 @@ class FeatureBasedView(QMainWindow):
             self.plot_points(self.plotting_points, self.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(222)
-                plot.set_title('Tangles')
+                plot.set_title('Tangles (NMI = {})'.format(self.nmi_score_tangles))
                 if self.prob_checked:
                     self.plot_points_prob(self.tangles_points, self.tangles_plot, plot)
                 else:
                     self.plot_points(self.tangles_points, self.tangles_plot, plot)
             if self.spectral_plot is not None: 
                 plot = self.figure.add_subplot(223)
-                plot.set_title('Spectral')
+                plot.set_title('Spectral (NMI = {})'.format(self.nmi_score_spectral))
                 self.plot_points(self.spectral_points, self.spectral_plot, plot)
             if self.kmeans_plot is not None: 
                 plot = self.figure.add_subplot(224)
-                plot.set_title('K-means')
+                plot.set_title('K-means (NMI = {})'.format(self.nmi_score_kmeans))
                 self.plot_points(self.kmeans_points, self.kmeans_plot, plot)
 
         self.figure.subplots_adjust(hspace=0.5, wspace=0.5)
@@ -368,4 +370,40 @@ class FeatureBasedView(QMainWindow):
         plot.set_xlabel('X')
         plot.set_ylabel('Y')
 
+    def plot_tree_changed(self, state):
+        def plot_tree(node, depth=0, pos=(0, 0), x_offset=100, y_offset=100):
+            if node is None:
+                return
+
+            # Draw current node
+            tangle = set()
+            for i, t in enumerate(node.tangle):
+                if i == 0: 
+                    tangle = t[0]
+                else: 
+                    tangle = tangle.intersection(t[0])
+
+            plt.text(pos[0], pos[1], str(tangle), fontsize=6, ha='center', va='center', wrap=True, bbox=dict(facecolor='white', edgecolor='black', boxstyle='circle'))
+
+            # Draw left subtree
+            if node.left_node:
+                left_pos = (pos[0] - x_offset, pos[1] - y_offset)
+                plt.plot([pos[0], left_pos[0]], [pos[1], left_pos[1]], color='black')
+                plot_tree(node.left_node, depth+1, left_pos)
+
+            # Draw right subtree
+            if node.right_node:
+                right_pos = (pos[0] + x_offset, pos[1] - y_offset)
+                plt.plot([pos[0], right_pos[0]], [pos[1], right_pos[1]], color='black')
+                plot_tree(node.right_node, depth+1, right_pos)
+
+        if state == 2: 
+            plt.ion()
+            plt.figure(figsize=(8, 8))
+            plot_tree(self.tangle_root)
+            plt.axis('off')
+            plt.ioff()
+            self.plot_tree.setChecked(False)
+        else: 
+            pass
     

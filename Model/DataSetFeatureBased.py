@@ -10,6 +10,7 @@ from Model.Cut import Cut
 from sklearn.manifold import TSNE
 from sklearn.metrics.cluster import normalized_mutual_info_score
 from sklearn.metrics import davies_bouldin_score
+from sklearn.neighbors import KernelDensity
 
 
 class DataSetFeatureBased(DataType):
@@ -30,9 +31,56 @@ class DataSetFeatureBased(DataType):
         self.cut_generator_axis_dimensions()
         self.cost_function()
 
+    def density_cost(self, radius):
+    
+        # Create KDE of the all the points before the cut
+        # Afterwards create KDE of the all the points of each side of the cut
+
+        # Take every point and calculate the diffrence in density from the KDE before and after the cut
+        # Sum the diffrences and set it as the cost of the cut
+        def calculate_density(points, radius):
+            # Convert points to numpy array
+            points = np.array(points)
+
+            # Fit Kernel Density Estimation (KDE) model
+            kde = KernelDensity(bandwidth=radius, kernel='gaussian')
+            kde.fit(points)
+
+            # Estimate density at each point
+            density = np.exp(kde.score_samples(points))
+
+            # Return density values
+            return density
+
+        density_all = calculate_density(self.points, radius)
+
+        for cut in self.cuts: 
+            sum_cost = 0.0
+            left_oriented = cut.A
+            right_oriented = cut.Ac
+
+            left_points = []
+            right_points = []
+
+            for left_or in left_oriented:
+                left_points.append(self.points[left_or][:-1])
+
+            for right_or in right_oriented:
+                right_points.append(self.points[right_or][:-1])
+
+            density_left = calculate_density(left_points, radius)
+            density_right = calculate_density(right_points, radius)
+
+            for i in range(len(density_left)):
+                sum_cost += abs(density_all[i] - density_left[i])
+
+            for i in range(len(density_right)):
+                sum_cost += abs(density_all[i] - density_right[i])
+
+            cut.cost = sum_cost
 
 
-    def min_distance_cost(self):
+    def pairwise_cost(self):
         """ 
         This function is used to calculate the cost of cuts for feature based data set
         
@@ -55,20 +103,33 @@ class DataSetFeatureBased(DataType):
                     sum_cost += -np.linalg.norm(point1 - point2)
             cut.cost = sum_cost
 
-    def pairwise_cost(self):
+    def mean_cost(self):
         for cut in self.cuts:
 
             sum_cost = 0.0
             left_oriented = cut.A
             right_oriented = cut.Ac
 
+            A_points = []
+            Ac_points = []
+
+            # Calculate the mean 
+            for left_or in left_oriented:
+                A_points.append(self.points[left_or])
+                
+            for right_or in right_oriented:
+                Ac_points.append(self.points[right_or])
+            
+            mean_A = np.mean(np.array(A_points)[:, :-1], axis=0)
+            mean_Ac = np.mean(np.array(A_points)[:, :-1], axis=0)
+
             # Calculate the cost
             for left_or in left_oriented:
-                for right_or in right_oriented:
-                    np.linalg.norm(self.points[left_or] - self.points[right_or])
+                sum_cost += -np.linalg.norm(self.points[left_or][:-1] - mean_A)
+                
+            for right_or in right_oriented:
+                sum_cost += -np.linalg.norm(self.points[right_or][:-1] - mean_Ac)
 
-                    sum_cost += -(self.euclidean_distance(self.points[left_or][0], self.points[right_or][0], self.points[left_or][1], self.points[right_or][1])/(len(cut.A)*len(cut.Ac))) 
-            
             cut.cost = sum_cost
 
     def cut_generator_axis_solveig(self):
@@ -77,10 +138,7 @@ class DataSetFeatureBased(DataType):
 
         dimensions = len(self.points[0])
         # Add index to keep track of original order
-        if type(self.points[0]) == tuple:
-            self.points = [point + (z, ) for z, point in enumerate(self.points)]
-        else: 
-            self.points = [point + [z] for z, point in enumerate(self.points)]
+        self.points = [point + [z] for z, point in enumerate(self.points)]
 
         values = [[] for _ in range(dimensions)]  # 
 

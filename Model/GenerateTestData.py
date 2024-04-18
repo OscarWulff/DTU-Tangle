@@ -87,7 +87,7 @@ class GenerateDataFeatureBased():
                 self.ground_truth.append(truth)
 
         # Combine points from all dimensions into a single list of tuples
-        self.points = list(zip(*points))
+        self.points = [list(x) for x in zip(*points)]
            
 
     def random_clusters(self, cluster_points, dimensions, overlap=0.3):
@@ -134,7 +134,7 @@ class GenerateDataFeatureBased():
                         self.ground_truth.append(truth)
 
                 # Combine points from all dimensions into a single list of tuples
-                self.points = list(zip(*points))
+                self.points = [list(x) for x in zip(*points)]
                 break
 
         if tries == 1000:

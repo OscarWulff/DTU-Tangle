@@ -2,10 +2,10 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget
 from Controller.BinaryQuestionnaireController import BinaryQuestionnaireController
 from Controller.FeatureBasedController import FeatureBasedController
-from View.BinaryQuestionnaire import BinaryQuestionnaireWindow
-from View.FeatureBased import FeatureBasedWindow
+from Controller.GraphController import GraphController
 
-from View.FeatureBasedView import FeatureBasedView
+from View.BinaryQuestionnaire import BinaryQuestionnaireWindow
+from View.FeatureBasedView import FeatureBasedWindow
 from View.Graph import GraphWindow
 
 
@@ -17,6 +17,7 @@ class MainPage(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
         self.BinController = None
         self.FeatController = None
+        self.GraphController = None
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -57,7 +58,7 @@ class MainPage(QMainWindow):
         self.close()
 
         # Open the FeatureBasedWindow
-        self.feature_based_window = FeatureBasedView(self)
+        self.feature_based_window = FeatureBasedWindow(self)
         self.FeatController = FeatureBasedController(self.feature_based_window)
         self.feature_based_window.show()
 
@@ -67,6 +68,7 @@ class MainPage(QMainWindow):
 
         # Open the GraphWindow and pass a reference to MainPage
         self.graph_window = GraphWindow(self)
+        self.GraphController = GraphController(self.graph_window)
         self.graph_window.show()
 
 
