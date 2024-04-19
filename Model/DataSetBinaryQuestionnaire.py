@@ -180,6 +180,23 @@ def cosine_sim(v, w):
     norm_w = np.linalg.norm(w)
     return dot_product / (norm_v * norm_w) if norm_v != 0 and norm_w != 0 else 0
 
+def euclidean_sim(v, w):
+    return 1 / (1 + np.linalg.norm(v-w))
+
+def manhattan_sim(v, w):
+    return 1 / (1 + np.sum(np.abs(v-w)))
+
+def pearson_sim(v, w):
+    return np.corrcoef(v, w)[0, 1]
+
+def jaccard_sim(v, w):
+    intersection = np.double(np.bitwise_and(v, w).sum())
+    union = np.double(np.bitwise_or(v, w).sum())
+    return intersection / union
+
+def hamming_sim(v, w):
+    return np.sum(v == w) / len(v)
+
 
 
 def sim(v,w):

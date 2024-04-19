@@ -152,6 +152,17 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.dim_red.hide()
         layout.addWidget(self.dim_red)
 
+        self.sim_fun = QComboBox()
+        self.sim_fun.addItem("Element by element")  # This might represent a simple element-by-element comparison
+        self.sim_fun.addItem("Cosine Similarity")
+        self.sim_fun.addItem("Euclidean Distance")
+        self.sim_fun.addItem("Manhattan Distance")
+        self.sim_fun.addItem("Pearson Correlation")
+        self.sim_fun.addItem("Jaccard Similarity")
+        self.sim_fun.addItem("Hamming Distance")
+        self.sim_fun.hide()
+        layout.addWidget(self.sim_fun)
+
 
         self.cost_function = QComboBox()
         self.cost_function.addItem("pairwise cost")
@@ -223,6 +234,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.epsilon.show()
         self.k_kmeans.show()
         self.dim_red.show()
+        self.sim_fun.show()
         self.generate_random_button.show()
 
         
