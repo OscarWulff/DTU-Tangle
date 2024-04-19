@@ -196,12 +196,7 @@ def sim(v,w):
     """
     return np.sum(v == w)
 
-    # similarity = 0
-    # for i in range(len(v)):
-    #     if v[i] == w[i]:
-    #         similarity += 1
-
-    # return similarity
+   
 
              
 def cost_function_binary(A, Ac, questionnaires):

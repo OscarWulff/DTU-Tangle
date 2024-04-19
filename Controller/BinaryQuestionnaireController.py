@@ -27,6 +27,7 @@ class BinaryQuestionnaireController:
         number_of_questions = self.view.numb_questions.text()
         number_of_participants = self.view.numb_participants.text()
         agreement_parameter = self.view.agreement_parameter.text()
+        dim_choice = self.view.dim_red.currentText()
 
 
         try: 
@@ -42,7 +43,7 @@ class BinaryQuestionnaireController:
         self.view.generated_data = GenerateDataBinaryQuestionnaire(number_of_participants, number_of_questions, number_of_clusters)
 
         self.view.generated_data.generate_biased_binary_questionnaire_answers()
-        self.view.generated_data.res_to_points()
+        self.view.generated_data.res_to_points(dim_choice)
 
         
 

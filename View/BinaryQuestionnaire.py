@@ -146,6 +146,13 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.cut_generator.hide()
         layout.addWidget(self.cut_generator)
 
+        self.dim_red = QComboBox()
+        self.dim_red.addItem("PCA")
+        self.dim_red.addItem("t-SNE")
+        self.dim_red.hide()
+        layout.addWidget(self.dim_red)
+
+
         self.cost_function = QComboBox()
         self.cost_function.addItem("pairwise cost")
         self.cost_function.addItem("min distance cost")
@@ -215,6 +222,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.agreement_parameter.show()
         self.epsilon.show()
         self.k_kmeans.show()
+        self.dim_red.show()
         self.generate_random_button.show()
 
         
