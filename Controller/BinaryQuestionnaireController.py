@@ -63,7 +63,7 @@ class BinaryQuestionnaireController:
             print("Invalid input")
     
         # Creating the tangles
-        data = DataSetBinaryQuestionnaire(a).cut_generator_binary(self.view.generated_data.questionaire)
+        data = DataSetBinaryQuestionnaire(a).cut_generator_binary(self.view.generated_data.questionaire, self.view.sim_fun.currentText())
         
        
         root = create_searchtree(data)
