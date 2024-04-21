@@ -92,7 +92,7 @@ class BinaryQuestionnaireController:
 
 
     def dbscan(self):
-        min_s = self.view.agreement_parameter.text()
+        min_s = self.view.min_samples.text()
         eps = self.view.epsilon.text()
         print("min s :", min_s)
         print("eps :", eps)

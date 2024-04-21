@@ -57,6 +57,7 @@ class DataSetBinaryQuestionnaire(DataType):
         # nd_questionnaires = nd_questionnaires
         cost = 0
         orientation = "None"
+        sim_fun = sim(method)
 
         num_of_participants = nd_questionnaires.shape[0]
         num_of_quest = nd_questionnaires.shape[1]
@@ -74,7 +75,7 @@ class DataSetBinaryQuestionnaire(DataType):
                     self.cuts[i].Ac.add(j)
 
             
-            cost = cost_function_binary(self.cuts[i].A, self.cuts[i].Ac, nd_questionnaires, method)
+            cost = cost_function_binary(self.cuts[i].A, self.cuts[i].Ac, nd_questionnaires, sim_fun)
             self.cuts[i].cost = cost
             # cuts_list.append(Cuts(i, cost, orientation, cuts_y[i], cuts_n[i]))
 
@@ -201,6 +202,9 @@ def jaccard_sim(v, w):
 def hamming_sim(v, w):
     return np.sum(v == w) / len(v)
 
+def Element_by_element(v, w):
+    return np.sum(v == w)
+
 similarity_functions = {
     "Cosine Similarity": cosine_sim,
     "Euclidean Distance": euclidean_sim,
@@ -208,10 +212,11 @@ similarity_functions = {
     "Pearson Correlation": pearson_sim,
     "Jaccard Similarity": jaccard_sim,
     "Hamming Distance": hamming_sim,
-    "Element by element": lambda v, w: np.sum(v == w)  # Direct comparison
+    "Element by element": Element_by_element  # Direct comparison
 }
 
-def sim(v, w, method="Element by element"):
+
+def sim(method):
     """
     This function dynamically selects and calculates similarity between two vectors v and w
     using a specified method, defaulting to element by element comparison.
@@ -225,22 +230,22 @@ def sim(v, w, method="Element by element"):
     float: Similarity between v and w using the specified method
     """
     # Get the function from the dictionary based on the selected method
-    sim_function = similarity_functions.get(method, lambda v, w: np.sum(v == w))  # Default to element by element if not found
-    return sim_function(v, w)
+    sim_function = similarity_functions.get(method)  # Default to element by element if not found
+    return sim_function
 
 
    
 
              
-def cost_function_binary(A, Ac, questionnaires, method="Element by element"):
+def cost_function_binary(A, Ac, questionnaires, sim_fun):
     similarity_sum = 0
     # Ensure A and Ac are not empty to avoid division by zero
     if len(A) == 0 or len(Ac) == 0:
         return float('inf')  # Or another appropriate value indicating invalid/undefined cost
-    
+    # sim_fun = sim(method)
     for u in A:
         for v in Ac:
-            similarity_sum += sim(questionnaires[u], questionnaires[v], method)
+            similarity_sum += sim_fun(questionnaires[u], questionnaires[v])
     return similarity_sum / (len(A) * len(Ac))
 
 

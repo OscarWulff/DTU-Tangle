@@ -133,6 +133,13 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.k_kmeans.hide()
         layout.addWidget(self.k_kmeans)
 
+        self.min_samples = QLineEdit()
+        self.min_samples.setFixedSize(150, 30)  # Set a fixed size for the input field
+        self.min_samples.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.min_samples.setPlaceholderText("Min samples for DBSCAN")
+        self.min_samples.hide()
+        layout.addWidget(self.min_samples)
+
         self.agreement_parameter = QLineEdit()
         self.agreement_parameter.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.agreement_parameter.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -232,6 +239,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.numb_questions.show()
         self.agreement_parameter.show()
         self.epsilon.show()
+        self.min_samples.show()
         self.k_kmeans.show()
         self.dim_red.show()
         self.sim_fun.show()
