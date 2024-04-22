@@ -27,6 +27,7 @@ class BinaryQuestionnaireController:
         number_of_questions = self.view.numb_questions.text()
         number_of_participants = self.view.numb_participants.text()
         agreement_parameter = self.view.agreement_parameter.text()
+        dim_choice = self.view.dim_red.currentText()
 
 
         try: 
@@ -42,7 +43,7 @@ class BinaryQuestionnaireController:
         self.view.generated_data = GenerateDataBinaryQuestionnaire(number_of_participants, number_of_questions, number_of_clusters)
 
         self.view.generated_data.generate_biased_binary_questionnaire_answers()
-        self.view.generated_data.res_to_points()
+        self.view.generated_data.res_to_points(dim_choice)
 
         
 
@@ -62,7 +63,7 @@ class BinaryQuestionnaireController:
             print("Invalid input")
     
         # Creating the tangles
-        data = DataSetBinaryQuestionnaire(a).cut_generator_binary(self.view.generated_data.questionaire)
+        data = DataSetBinaryQuestionnaire(a).cut_generator_binary(self.view.generated_data.questionaire, self.view.sim_fun.currentText())
         
        
         root = create_searchtree(data)
@@ -91,7 +92,7 @@ class BinaryQuestionnaireController:
 
 
     def dbscan(self):
-        min_s = self.view.agreement_parameter.text()
+        min_s = self.view.min_samples.text()
         eps = self.view.epsilon.text()
         print("min s :", min_s)
         print("eps :", eps)

@@ -7,7 +7,7 @@ from sklearn.metrics.cluster import normalized_mutual_info_score
 from sklearn.cluster import KMeans, SpectralClustering, DBSCAN
 from sklearn.metrics import davies_bouldin_score
 
-from Model.DataSetBinaryQuestionnaire import perform_tsne
+from Model.DataSetBinaryQuestionnaire import perform_pca, perform_tsne
 
 
 
@@ -274,11 +274,19 @@ class GenerateDataBinaryQuestionnaire():
 
         return result, groundTruth
     
-    def res_to_points(self):
+    def res_to_points(self, dim_choice):
         self.questionaire = np.array([bitset.bitset for bitset in self.result])
-        tsne_coordinates = perform_tsne(self.questionaire, 2)
-        points_x = tsne_coordinates['Dim1'].values
-        points_y = tsne_coordinates['Dim2'].values
+
+        if dim_choice == "t-SNE":
+            tsne_coordinates = perform_tsne(self.questionaire, 2)
+            points_x = tsne_coordinates['Dim1'].values
+            points_y = tsne_coordinates['Dim2'].values
+        if dim_choice == "PCA":
+            pca_coordinates = perform_pca(self.questionaire, 2)
+            points_x = pca_coordinates['PC1'].values
+            points_y = pca_coordinates['PC2'].values
+
+
         self.points = [(x, y, z) for z, (x, y) in enumerate(zip(points_x, points_y))]
 
     def nmi_score(self, predicted_tangles):

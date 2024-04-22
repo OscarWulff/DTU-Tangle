@@ -1,0 +1,4 @@
+Model/__pycache__/
+Controller/__pycache__/
+View/__pycache__/
+*.pyc

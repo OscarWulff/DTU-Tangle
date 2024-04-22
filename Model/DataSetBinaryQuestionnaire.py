@@ -31,7 +31,7 @@ class DataSetBinaryQuestionnaire(DataType):
         
 
     
-    def cut_generator_binary(self,nd_questionnaires):
+    def cut_generator_binary(self,nd_questionnaires, method):
         
         """ 
         This function is used to generate the cuts for binary questionnaires data set
@@ -57,6 +57,7 @@ class DataSetBinaryQuestionnaire(DataType):
         # nd_questionnaires = nd_questionnaires
         cost = 0
         orientation = "None"
+        sim_fun = sim(method)
 
         num_of_participants = nd_questionnaires.shape[0]
         num_of_quest = nd_questionnaires.shape[1]
@@ -74,7 +75,7 @@ class DataSetBinaryQuestionnaire(DataType):
                     self.cuts[i].Ac.add(j)
 
             
-            cost = cost_function_binary(self.cuts[i].A, self.cuts[i].Ac, nd_questionnaires)
+            cost = cost_function_binary(self.cuts[i].A, self.cuts[i].Ac, nd_questionnaires, sim_fun)
             self.cuts[i].cost = cost
             # cuts_list.append(Cuts(i, cost, orientation, cuts_y[i], cuts_n[i]))
 
@@ -180,39 +181,71 @@ def cosine_sim(v, w):
     norm_w = np.linalg.norm(w)
     return dot_product / (norm_v * norm_w) if norm_v != 0 and norm_w != 0 else 0
 
+def euclidean_sim(v, w):
+    # Calculate the Euclidean distance for boolean arrays
+    differences = np.logical_xor(v, w)  # XOR to find differences
+    return 1 / (1 + np.linalg.norm(differences.astype(int)))
+
+def manhattan_sim(v, w):
+    # Calculate the Manhattan distance for boolean arrays
+    differences = np.logical_xor(v, w)  # XOR will return True where v and w differ
+    return 1 / (1 + np.sum(differences))
+
+def pearson_sim(v, w):
+    return np.corrcoef(v, w)[0, 1]
+
+def jaccard_sim(v, w):
+    intersection = np.double(np.bitwise_and(v, w).sum())
+    union = np.double(np.bitwise_or(v, w).sum())
+    return intersection / union
+
+def hamming_sim(v, w):
+    return np.sum(v == w) / len(v)
+
+def Element_by_element(v, w):
+    return np.sum(v == w)
+
+similarity_functions = {
+    "Cosine Similarity": cosine_sim,
+    "Euclidean Distance": euclidean_sim,
+    "Manhattan Distance": manhattan_sim,
+    "Pearson Correlation": pearson_sim,
+    "Jaccard Similarity": jaccard_sim,
+    "Hamming Distance": hamming_sim,
+    "Element by element": Element_by_element  # Direct comparison
+}
 
 
-def sim(v,w):
-
+def sim(method):
     """
-    This function calculates the similarity between two vectors v and w.
+    This function dynamically selects and calculates similarity between two vectors v and w
+    using a specified method, defaulting to element by element comparison.
     
     Parameters:
     v (numpy.ndarray): First vector
     w (numpy.ndarray): Second vector
+    method (str): Method to use for similarity calculation (default is "Element by element")
     
     Returns:
-    similarity (float): Similarity between v and w
+    float: Similarity between v and w using the specified method
     """
-    return np.sum(v == w)
+    # Get the function from the dictionary based on the selected method
+    sim_function = similarity_functions.get(method)  # Default to element by element if not found
+    return sim_function
 
-    # similarity = 0
-    # for i in range(len(v)):
-    #     if v[i] == w[i]:
-    #         similarity += 1
 
-    # return similarity
+   
 
              
-def cost_function_binary(A, Ac, questionnaires):
+def cost_function_binary(A, Ac, questionnaires, sim_fun):
     similarity_sum = 0
     # Ensure A and Ac are not empty to avoid division by zero
     if len(A) == 0 or len(Ac) == 0:
         return float('inf')  # Or another appropriate value indicating invalid/undefined cost
-    
+    # sim_fun = sim(method)
     for u in A:
         for v in Ac:
-            similarity_sum += sim(questionnaires[u], questionnaires[v])
+            similarity_sum += sim_fun(questionnaires[u], questionnaires[v])
     return similarity_sum / (len(A) * len(Ac))
 
 

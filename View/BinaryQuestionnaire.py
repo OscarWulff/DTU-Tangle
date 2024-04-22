@@ -133,6 +133,13 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.k_kmeans.hide()
         layout.addWidget(self.k_kmeans)
 
+        self.min_samples = QLineEdit()
+        self.min_samples.setFixedSize(150, 30)  # Set a fixed size for the input field
+        self.min_samples.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.min_samples.setPlaceholderText("Min samples for DBSCAN")
+        self.min_samples.hide()
+        layout.addWidget(self.min_samples)
+
         self.agreement_parameter = QLineEdit()
         self.agreement_parameter.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.agreement_parameter.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -145,6 +152,24 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.cut_generator.addItem("axis cuts")
         self.cut_generator.hide()
         layout.addWidget(self.cut_generator)
+
+        self.dim_red = QComboBox()
+        self.dim_red.addItem("PCA")
+        self.dim_red.addItem("t-SNE")
+        self.dim_red.hide()
+        layout.addWidget(self.dim_red)
+
+        self.sim_fun = QComboBox()
+        self.sim_fun.addItem("Element by element")  # This might represent a simple element-by-element comparison
+        self.sim_fun.addItem("Cosine Similarity")
+        self.sim_fun.addItem("Euclidean Distance")
+        self.sim_fun.addItem("Manhattan Distance")
+        self.sim_fun.addItem("Pearson Correlation")
+        self.sim_fun.addItem("Jaccard Similarity")
+        self.sim_fun.addItem("Hamming Distance")
+        self.sim_fun.hide()
+        layout.addWidget(self.sim_fun)
+
 
         self.cost_function = QComboBox()
         self.cost_function.addItem("pairwise cost")
@@ -214,7 +239,10 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.numb_questions.show()
         self.agreement_parameter.show()
         self.epsilon.show()
+        self.min_samples.show()
         self.k_kmeans.show()
+        self.dim_red.show()
+        self.sim_fun.show()
         self.generate_random_button.show()
 
         
