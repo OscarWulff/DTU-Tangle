@@ -153,7 +153,8 @@ class FeatureBasedController:
 
         cut_generator_mapping = {
             "axis cuts": generated_data.cut_generator_axis_dimensions,
-            "solveig cuts": generated_data.cut_generator_axis_solveig
+            "solveig cuts": generated_data.cut_generator_axis_solveig,
+            "random cuts": generated_data.random_cuts,
         }
 
         cost_function_mapping = {

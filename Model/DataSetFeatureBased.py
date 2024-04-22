@@ -11,6 +11,7 @@ from sklearn.manifold import TSNE
 from sklearn.metrics.cluster import normalized_mutual_info_score
 from sklearn.metrics import davies_bouldin_score
 from sklearn.neighbors import KernelDensity
+import random 
 
 
 class DataSetFeatureBased(DataType):
@@ -105,7 +106,6 @@ class DataSetFeatureBased(DataType):
 
     def mean_cost(self):
         for cut in self.cuts:
-
             sum_cost = 0.0
             left_oriented = cut.A
             right_oriented = cut.Ac
@@ -131,6 +131,53 @@ class DataSetFeatureBased(DataType):
                 sum_cost += -np.linalg.norm(self.points[right_or][:-1] - mean_Ac)
 
             cut.cost = sum_cost
+
+
+    def random_cuts(self):
+        """ 
+        This function is used to generate random cuts for feature based data set
+        
+        Parameters:
+        cuts of the dataset
+
+        Returns:
+        random cuts
+        """
+        self.cuts = []
+        n = len(self.points)
+        dimensions = len(self.points[0])
+
+
+        # Add index to keep track of original order
+        self.points = [point + [z] for z, point in enumerate(self.points)]
+
+        values = [[] for _ in range(dimensions)]  
+
+        # Extract values for each dimension
+        for point in self.points:
+            for dim in range(dimensions):
+                values[dim].append(point[dim])
+
+        sorted_points = [self.sort_for_list(values[dim], self.points) for dim in range(dimensions)]
+
+
+        for dim in range(dimensions):
+            for _ in range(int(2*(n/self.agreement_param))):
+                cut = Cut()
+                cut.init()
+                i = random.uniform(1, n)
+                for k in range(0, n):
+                    if k < i:
+                        cut.A.add(sorted_points[dim][k][dimensions])
+                    else:
+                        cut.Ac.add(sorted_points[dim][k][dimensions])
+                self.cuts.append(cut)
+
+
+        # If we could make some test that shows that generally how bad random cuts are.
+        # But we could also make a test that shows that random cuts are better than the other cuts.
+        # This would be a good test to show how the tangles is limited by its cuts.
+    
 
     def cut_generator_axis_solveig(self):
         self.cuts = []

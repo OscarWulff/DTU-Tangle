@@ -157,6 +157,7 @@ class FeatureBasedWindow(QMainWindow):
         self.cut_generator = QComboBox()
         self.cut_generator.addItem("axis cuts")
         self.cut_generator.addItem("solveig cuts")
+        self.cut_generator.addItem("random cuts")
         self.cut_generator.hide()
         layout.addWidget(self.cut_generator)
 
