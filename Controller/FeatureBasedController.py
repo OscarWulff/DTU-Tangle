@@ -155,12 +155,14 @@ class FeatureBasedController:
             "axis cuts": generated_data.cut_generator_axis_dimensions,
             "solveig cuts": generated_data.cut_generator_axis_solveig,
             "random cuts": generated_data.random_cuts,
+            "spectral cuts": generated_data.cut_spectral,
         }
 
         cost_function_mapping = {
             "pairwise cost": generated_data.pairwise_cost,
             "mean cost": generated_data.mean_cost, 
-            "density cost": lambda: generated_data.density_cost(std)
+            "density cost": lambda: generated_data.density_cost(std),
+            "cure cost": generated_data.CURE_cost,
         }
 
         cut = cut_generator_mapping[cut_generator]
@@ -173,10 +175,6 @@ class FeatureBasedController:
         contracting_search_tree(self.tangle_root)
         end_time = time.time()
         print(f"Time to create tangles: {end_time - start_time} seconds")
-
-        if self.tangle_root.left_node is None and self.tangle_root.right_node is None:
-            print("No tangles found")
-
 
         soft = soft_clustering(self.tangle_root)
         hard = hard_clustering(soft)

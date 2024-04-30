@@ -93,11 +93,11 @@ def condense_tree(root: Searchtree):
             elif leaf.parent_node.left_node != None and leaf.parent_node.right_node != None:
                 condense_leaf(leaf.parent_node)
     
-    root.numb_tangles = len(leaves) 
     for id, leaf in enumerate(leaves): 
         leaf.leaf_id = id
         condense_leaf(leaf)
-    
+
+    root.numb_tangles = len(leaves) 
     return root
 
 
@@ -208,7 +208,7 @@ def hard_clustering(softClustering):
 
 def print_tree(node, indent=0, prefix="Root: "):
     if node is not None:
-        print("  " * indent + prefix + f"{node.cut_id} - tangles = {node.tangle} - left_condensed = {node.left_node.condensed_oritentations if node.left_node != None else None } - characterizing = {[cut.id for cut in node.characterizing_cuts]}")
+        print("  " * indent + prefix + f"{node.cut_id}")
         if node.left_node is not None or node.right_node is not None:
             print_tree(node.left_node, indent + 1, "L--- ")
             print_tree(node.right_node, indent + 1, "R--- ")

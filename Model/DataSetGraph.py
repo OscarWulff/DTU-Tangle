@@ -22,11 +22,11 @@ class DataSetGraph(DataType):
         Parameters:
         G (networkx.Graph): Graph
         """
-        # cuts set to amount of nodes divided by two
-        cuts = len(G.nodes)
+        # only generate a few initial cuts based on the size of the graph
+        cuts = min(10, len(G.nodes))
         self.cuts = []
         unique_cuts = set()
-        for _ in range(cuts):
+        while len(self.cuts) < cuts:
             #initial_partition = generate_initial_partition(G)
             partition = nx.algorithms.community.kernighan_lin_bisection(G, max_iter=1, weight='weight', seed=None)
             cut = Cut()
@@ -36,6 +36,7 @@ class DataSetGraph(DataType):
             if (tuple(cut.A), tuple(cut.Ac)) not in unique_cuts and (tuple(cut.Ac), tuple(cut.A)) not in unique_cuts:
                 unique_cuts.add((tuple(cut.A), tuple(cut.Ac)))
                 self.cuts.append(cut)
+
             
 
     def cost_function_Graph(self):
@@ -79,10 +80,11 @@ class DataSetGraph(DataType):
             for v in cut.Ac:
                 # Check if there is an edge between nodes u and v
                 if self.G.has_edge(u, v):  # More concise way to check for an edge
-                    edge_weight_sum += self.G[u][v].get('weight', 0)
+                    edge_weight_sum += self.G[u][v].get('weight', 1)
 
         # Calculate the cost based on the sum of edge weights
-        cut_cost = edge_weight_sum / (A_size * (total_nodes - A_size))
+        if total_nodes - A_size != 0:
+            cut_cost = edge_weight_sum / (A_size * (total_nodes - A_size))
 
         return cut_cost
 

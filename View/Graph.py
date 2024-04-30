@@ -9,7 +9,6 @@ from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QHBo
 from PyQt5 import QtCore
 from sklearn.metrics import normalized_mutual_info_score
 
-
 class GraphWindow(QMainWindow):
     def __init__(self, main_page):
         super().__init__()
@@ -47,7 +46,6 @@ class GraphWindow(QMainWindow):
         button_layout = QHBoxLayout()
 
         self.upload_data_button = QPushButton("Upload Data as .csv", self)
-        self.upload_data_button.clicked.connect(self.upload_data)
         button_layout.addWidget(self.upload_data_button)
 
         self.generate_data_button = QPushButton("Generate Data", self)
@@ -139,6 +137,14 @@ class GraphWindow(QMainWindow):
         self.agreement_parameter.show()
         self.k_spectral.show()
 
+    def show_input_fields(self):
+        self.numb_nodes.show()
+        self.numb_clusters.show()
+        self.average_edges_to_same_cluster.show()
+        self.average_edges_to_other_clusters.show()
+        self.agreement_parameter.show()
+        self.k_spectral.show()
+
 
     def setup_plots(self):
         self.figure.clear()
@@ -220,6 +226,16 @@ class GraphWindow(QMainWindow):
             self.k_spectral.hide()
 
 
-    def upload_data(self):
-        # The implementation of this method is skipped to fit within the response limit
-        pass
+    def upload_data_show(self):
+        self.upload_data_button.hide()
+        self.generate_data_button.hide()
+        self.generate_random_button.hide()
+        self.generate_spectral_button.show()
+        self.generate_tangles_button.show()
+        self.numb_nodes.hide()
+        self.numb_clusters.hide()
+        self.average_edges_to_same_cluster.hide()
+        self.average_edges_to_other_clusters.hide()
+        self.agreement_parameter.show()
+        self.k_spectral.show()
+        

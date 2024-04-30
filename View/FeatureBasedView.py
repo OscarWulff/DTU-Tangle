@@ -158,6 +158,7 @@ class FeatureBasedWindow(QMainWindow):
         self.cut_generator.addItem("axis cuts")
         self.cut_generator.addItem("solveig cuts")
         self.cut_generator.addItem("random cuts")
+        self.cut_generator.addItem("spectral cuts")
         self.cut_generator.hide()
         layout.addWidget(self.cut_generator)
 
@@ -165,6 +166,7 @@ class FeatureBasedWindow(QMainWindow):
         self.cost_function.addItem("pairwise cost")
         self.cost_function.addItem("mean cost")
         self.cost_function.addItem("density cost")
+        self.cost_function.addItem("cure cost")
         self.cost_function.hide()
         layout.addWidget(self.cost_function)
 

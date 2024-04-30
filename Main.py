@@ -1,8 +1,12 @@
 import sys
 from PyQt5.QtWidgets import QApplication
 from View.MainPage import MainPage
+import warnings
 
 def main(): 
+    warnings.filterwarnings("ignore", message="Graph is not fully connected")
+
+    
     # Create a QApplication instance
     app = QApplication([])
 
