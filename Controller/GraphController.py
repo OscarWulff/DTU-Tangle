@@ -1,3 +1,4 @@
+from sklearn.metrics import normalized_mutual_info_score
 from Model.GenerateTestData import GenerateRandomGraph
 from Model.DataSetGraph import DataSetGraph
 from sklearn.cluster import SpectralClustering
@@ -48,6 +49,7 @@ class GraphController:
 
             if self.view.tangles_plot is None: 
                 self.view.numb_plots += 1 
+
             # Perform tangles on the generated graph
             agreement_parameter = int(self.view.agreement_parameter.text())
             start_time = time.time()
@@ -63,21 +65,21 @@ class GraphController:
             soft = soft_clustering(root_condense)
             hard = hard_clustering(soft)
 
-
             self.view.tangles_plot = hard
             end_time = time.time()
 
             total_time = end_time - start_time
             print("Total time for tangles:", total_time)
-            # Visualize tangles
-            # if data is uploaded nmi score should not be calculated
-            if self.random_graph_generator is not None:
-                self.view.nmi_score_tangles = round(self.random_graph_generator.nmi_score(hard), 2)
 
+            # Calculate NMI score directly using ground truth and predicted tangles
+            ground_truth = self.view.generated_ground_truth
+            nmi_score = self.nmi_score(ground_truth, hard)  # Assuming hard contains the predicted tangles
+
+            self.view.nmi_score_tangles = round(nmi_score, 2)
             self.view.setup_plots()
 
-        except ValueError as e:
-            print("Invalid input", e)
+        except Exception as e:
+            print("Error:", e)
 
     def spectral(self):
         try:
@@ -103,8 +105,11 @@ class GraphController:
             # Plot the spectral clustering result
             self.view.spectral_plot = sc.labels_
 
-            if self.random_graph_generator is not None:
-                self.view.nmi_score_spectral = round(self.random_graph_generator.nmi_score(sc.labels_), 2)
+            # Calculate NMI score only if ground truth is available
+            if self.view.generated_ground_truth:
+                ground_truth = self.view.generated_ground_truth
+                nmi_score = self.nmi_score(ground_truth, sc.labels_)
+                self.view.nmi_score_spectral = round(nmi_score, 2)
             
             self.view.setup_plots()
             end_time = time.time()
@@ -116,6 +121,14 @@ class GraphController:
             print("Error in spectral clustering:", e)
 
 
+    def nmi_score(self, ground_truth, predicted_tangles):
+        """
+        Calculates the NMI score of the predicted tangles
+        """
+        nmi_score = normalized_mutual_info_score(ground_truth, predicted_tangles)
+        return nmi_score
+
+
     def upload_data(self):
         try:
             # Open a file dialog to select the file
@@ -125,27 +138,37 @@ class GraphController:
                 if selected_files:
                     selected_file = selected_files[0]
                     print("Selected file:", selected_file)
-                    G = nx.read_edgelist(selected_file)  # Assuming the data is stored in an edge list format
-
+                    G = nx.read_gml(selected_file)  # Assuming the data is stored in a .gml file
+                    
                     if G is not None:
+                        # Extract ground truth labels based on conference affiliations
+                        ground_truth = []
+                        for node_id, data in G.nodes(data=True):
+                            if 'value' in data:
+                                # Convert 'value' to an integer if it's not already
+                                value = int(data['value']) if not isinstance(data['value'], int) else data['value']
+                                ground_truth.append(value)
+                            else:
+                                # If 'value' attribute is missing, assign 0 as the default label
+                                ground_truth.append(0)
+
+                        
                         # Convert node labels to integers
                         G = nx.convert_node_labels_to_integers(G)
-
+                        
                         # Clear existing generated graph and ground truth
                         self.view.generated_graph = G
-                        self.view.generated_ground_truth = [1] * len(G.nodes)
+                        self.view.generated_ground_truth = ground_truth
+                        
                         # Set the generated graph in the view
-
-                        # Show the upload data view
                         self.view.upload_data_show()
                         self.view.setup_plots()
                     else:
                         print("Error: Graph is None")
-
         except Exception as e:
-            # Handle errors more gracefully
-            print("Error uploading data:", e)
-            # Optionally, show an error dialog to the user or log the error for debugging
+            print("Error:", e)
+
+
 
 
 

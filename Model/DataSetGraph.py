@@ -28,7 +28,7 @@ class DataSetGraph(DataType):
         unique_cuts = set()
         while len(self.cuts) < cuts:
             #initial_partition = generate_initial_partition(G)
-            partition = nx.algorithms.community.kernighan_lin_bisection(G, max_iter=1, weight='weight', seed=None)
+            partition = nx.algorithms.community.kernighan_lin_bisection(G, max_iter=2, weight='weight', seed=None)
             cut = Cut()
             cut.A = partition[0]
             cut.Ac = partition[1]
@@ -79,8 +79,8 @@ class DataSetGraph(DataType):
         for u in cut.A:
             for v in cut.Ac:
                 # Check if there is an edge between nodes u and v
-                if self.G.has_edge(u, v):  # More concise way to check for an edge
-                    edge_weight_sum += self.G[u][v].get('weight', 1)
+                if self.G.has_edge(u, v):
+                    edge_weight_sum += 1  # Increment by 1 if edge exists
 
         # Calculate the cost based on the sum of edge weights
         if total_nodes - A_size != 0:
