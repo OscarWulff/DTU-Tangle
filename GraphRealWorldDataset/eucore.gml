@@ -2,4932 +2,4932 @@ graph [
   node [
     id 0
     label "0"
-    gt "1"
+    value "1"
   ]
   node [
     id 1
     label "1"
-    gt "1"
+    value "1"
   ]
   node [
     id 2
     label "5"
-    gt "25"
+    value "25"
   ]
   node [
     id 3
     label "6"
-    gt "25"
+    value "25"
   ]
   node [
     id 4
     label "17"
-    gt "1"
+    value "1"
   ]
   node [
     id 5
     label "18"
-    gt "1"
+    value "1"
   ]
   node [
     id 6
     label "64"
-    gt "25"
+    value "25"
   ]
   node [
     id 7
     label "65"
-    gt "4"
+    value "4"
   ]
   node [
     id 8
     label "73"
-    gt "1"
+    value "1"
   ]
   node [
     id 9
     label "74"
-    gt "1"
+    value "1"
   ]
   node [
     id 10
     label "88"
-    gt "20"
+    value "20"
   ]
   node [
     id 11
     label "101"
-    gt "16"
+    value "16"
   ]
   node [
     id 12
     label "103"
-    gt "7"
+    value "7"
   ]
   node [
     id 13
     label "120"
-    gt "1"
+    value "1"
   ]
   node [
     id 14
     label "146"
-    gt "15"
+    value "15"
   ]
   node [
     id 15
     label "148"
-    gt "0"
+    value "0"
   ]
   node [
     id 16
     label "166"
-    gt "36"
+    value "36"
   ]
   node [
     id 17
     label "177"
-    gt "1"
+    value "1"
   ]
   node [
     id 18
     label "178"
-    gt "0"
+    value "0"
   ]
   node [
     id 19
     label "215"
-    gt "1"
+    value "1"
   ]
   node [
     id 20
     label "218"
-    gt "1"
+    value "1"
   ]
   node [
     id 21
     label "221"
-    gt "1"
+    value "1"
   ]
   node [
     id 22
     label "222"
-    gt "1"
+    value "1"
   ]
   node [
     id 23
     label "223"
-    gt "1"
+    value "1"
   ]
   node [
     id 24
     label "226"
-    gt "1"
+    value "1"
   ]
   node [
     id 25
     label "238"
-    gt "19"
+    value "19"
   ]
   node [
     id 26
     label "248"
-    gt "1"
+    value "1"
   ]
   node [
     id 27
     label "250"
-    gt "7"
+    value "7"
   ]
   node [
     id 28
     label "266"
-    gt "14"
+    value "14"
   ]
   node [
     id 29
     label "268"
-    gt "39"
+    value "39"
   ]
   node [
     id 30
     label "283"
-    gt "36"
+    value "36"
   ]
   node [
     id 31
     label "297"
-    gt "1"
+    value "1"
   ]
   node [
     id 32
     label "309"
-    gt "1"
+    value "1"
   ]
   node [
     id 33
     label "313"
-    gt "1"
+    value "1"
   ]
   node [
     id 34
     label "316"
-    gt "1"
+    value "1"
   ]
   node [
     id 35
     label "368"
-    gt "7"
+    value "7"
   ]
   node [
     id 36
     label "377"
-    gt "7"
+    value "7"
   ]
   node [
     id 37
     label "380"
-    gt "7"
+    value "7"
   ]
   node [
     id 38
     label "459"
-    gt "1"
+    value "1"
   ]
   node [
     id 39
     label "498"
-    gt "14"
+    value "14"
   ]
   node [
     id 40
     label "560"
-    gt "31"
+    value "31"
   ]
   node [
     id 41
     label "581"
-    gt "3"
+    value "3"
   ]
   node [
     id 42
     label "734"
-    gt "1"
+    value "1"
   ]
   node [
     id 43
     label "21"
-    gt "9"
+    value "9"
   ]
   node [
     id 44
     label "52"
-    gt "7"
+    value "7"
   ]
   node [
     id 45
     label "82"
-    gt "36"
+    value "36"
   ]
   node [
     id 46
     label "84"
-    gt "37"
+    value "37"
   ]
   node [
     id 47
     label "85"
-    gt "1"
+    value "1"
   ]
   node [
     id 48
     label "106"
-    gt "38"
+    value "38"
   ]
   node [
     id 49
     label "121"
-    gt "36"
+    value "36"
   ]
   node [
     id 50
     label "127"
-    gt "6"
+    value "6"
   ]
   node [
     id 51
     label "128"
-    gt "5"
+    value "5"
   ]
   node [
     id 52
     label "142"
-    gt "36"
+    value "36"
   ]
   node [
     id 53
     label "147"
-    gt "23"
+    value "23"
   ]
   node [
     id 54
     label "155"
-    gt "35"
+    value "35"
   ]
   node [
     id 55
     label "187"
-    gt "15"
+    value "15"
   ]
   node [
     id 56
     label "189"
-    gt "15"
+    value "15"
   ]
   node [
     id 57
     label "199"
-    gt "4"
+    value "4"
   ]
   node [
     id 58
     label "224"
-    gt "1"
+    value "1"
   ]
   node [
     id 59
     label "225"
-    gt "1"
+    value "1"
   ]
   node [
     id 60
     label "232"
-    gt "4"
+    value "4"
   ]
   node [
     id 61
     label "254"
-    gt "40"
+    value "40"
   ]
   node [
     id 62
     label "255"
-    gt "6"
+    value "6"
   ]
   node [
     id 63
     label "280"
-    gt "4"
+    value "4"
   ]
   node [
     id 64
     label "284"
-    gt "0"
+    value "0"
   ]
   node [
     id 65
     label "310"
-    gt "1"
+    value "1"
   ]
   node [
     id 66
     label "317"
-    gt "1"
+    value "1"
   ]
   node [
     id 67
     label "351"
-    gt "0"
+    value "0"
   ]
   node [
     id 68
     label "450"
-    gt "4"
+    value "4"
   ]
   node [
     id 69
     label "495"
-    gt "23"
+    value "23"
   ]
   node [
     id 70
     label "537"
-    gt "6"
+    value "6"
   ]
   node [
     id 71
     label "548"
-    gt "6"
+    value "6"
   ]
   node [
     id 72
     label "549"
-    gt "15"
+    value "15"
   ]
   node [
     id 73
     label "568"
-    gt "4"
+    value "4"
   ]
   node [
     id 74
     label "616"
-    gt "6"
+    value "6"
   ]
   node [
     id 75
     label "641"
-    gt "23"
+    value "23"
   ]
   node [
     id 76
     label "726"
-    gt "31"
+    value "31"
   ]
   node [
     id 77
     label "979"
-    gt "23"
+    value "23"
   ]
   node [
     id 78
     label "2"
-    gt "21"
+    value "21"
   ]
   node [
     id 79
     label "3"
-    gt "21"
+    value "21"
   ]
   node [
     id 80
     label "4"
-    gt "21"
+    value "21"
   ]
   node [
     id 81
     label "13"
-    gt "26"
+    value "26"
   ]
   node [
     id 82
     label "54"
-    gt "22"
+    value "22"
   ]
   node [
     id 83
     label "55"
-    gt "22"
+    value "22"
   ]
   node [
     id 84
     label "56"
-    gt "21"
+    value "21"
   ]
   node [
     id 85
     label "57"
-    gt "21"
+    value "21"
   ]
   node [
     id 86
     label "58"
-    gt "21"
+    value "21"
   ]
   node [
     id 87
     label "59"
-    gt "21"
+    value "21"
   ]
   node [
     id 88
     label "62"
-    gt "36"
+    value "36"
   ]
   node [
     id 89
     label "63"
-    gt "21"
+    value "21"
   ]
   node [
     id 90
     label "86"
-    gt "36"
+    value "36"
   ]
   node [
     id 91
     label "89"
-    gt "20"
+    value "20"
   ]
   node [
     id 92
     label "96"
-    gt "20"
+    value "20"
   ]
   node [
     id 93
     label "102"
-    gt "38"
+    value "38"
   ]
   node [
     id 94
     label "107"
-    gt "36"
+    value "36"
   ]
   node [
     id 95
     label "114"
-    gt "10"
+    value "10"
   ]
   node [
     id 96
     label "126"
-    gt "22"
+    value "22"
   ]
   node [
     id 97
     label "131"
-    gt "28"
+    value "28"
   ]
   node [
     id 98
     label "132"
-    gt "28"
+    value "28"
   ]
   node [
     id 99
     label "137"
-    gt "21"
+    value "21"
   ]
   node [
     id 100
     label "138"
-    gt "21"
+    value "21"
   ]
   node [
     id 101
     label "140"
-    gt "17"
+    value "17"
   ]
   node [
     id 102
     label "158"
-    gt "19"
+    value "19"
   ]
   node [
     id 103
     label "160"
-    gt "36"
+    value "36"
   ]
   node [
     id 104
     label "162"
-    gt "37"
+    value "37"
   ]
   node [
     id 105
     label "164"
-    gt "17"
+    value "17"
   ]
   node [
     id 106
     label "174"
-    gt "32"
+    value "32"
   ]
   node [
     id 107
     label "192"
-    gt "21"
+    value "21"
   ]
   node [
     id 108
     label "193"
-    gt "21"
+    value "21"
   ]
   node [
     id 109
     label "194"
-    gt "21"
+    value "21"
   ]
   node [
     id 110
     label "195"
-    gt "21"
+    value "21"
   ]
   node [
     id 111
     label "208"
-    gt "22"
+    value "22"
   ]
   node [
     id 112
     label "211"
-    gt "22"
+    value "22"
   ]
   node [
     id 113
     label "249"
-    gt "14"
+    value "14"
   ]
   node [
     id 114
     label "252"
-    gt "20"
+    value "20"
   ]
   node [
     id 115
     label "271"
-    gt "28"
+    value "28"
   ]
   node [
     id 116
     label "273"
-    gt "17"
+    value "17"
   ]
   node [
     id 117
     label "281"
-    gt "21"
+    value "21"
   ]
   node [
     id 118
     label "285"
-    gt "22"
+    value "22"
   ]
   node [
     id 119
     label "286"
-    gt "21"
+    value "21"
   ]
   node [
     id 120
     label "300"
-    gt "38"
+    value "38"
   ]
   node [
     id 121
     label "305"
-    gt "21"
+    value "21"
   ]
   node [
     id 122
     label "308"
-    gt "1"
+    value "1"
   ]
   node [
     id 123
     label "323"
-    gt "16"
+    value "16"
   ]
   node [
     id 124
     label "333"
-    gt "10"
+    value "10"
   ]
   node [
     id 125
     label "405"
-    gt "38"
+    value "38"
   ]
   node [
     id 126
     label "408"
-    gt "21"
+    value "21"
   ]
   node [
     id 127
     label "409"
-    gt "26"
+    value "26"
   ]
   node [
     id 128
     label "411"
-    gt "28"
+    value "28"
   ]
   node [
     id 129
     label "412"
-    gt "21"
+    value "21"
   ]
   node [
     id 130
     label "434"
-    gt "34"
+    value "34"
   ]
   node [
     id 131
     label "481"
-    gt "22"
+    value "22"
   ]
   node [
     id 132
     label "489"
-    gt "25"
+    value "25"
   ]
   node [
     id 133
     label "494"
-    gt "36"
+    value "36"
   ]
   node [
     id 134
     label "506"
-    gt "14"
+    value "14"
   ]
   node [
     id 135
     label "516"
-    gt "1"
+    value "1"
   ]
   node [
     id 136
     label "517"
-    gt "1"
+    value "1"
   ]
   node [
     id 137
     label "520"
-    gt "21"
+    value "21"
   ]
   node [
     id 138
     label "546"
-    gt "35"
+    value "35"
   ]
   node [
     id 139
     label "564"
-    gt "19"
+    value "19"
   ]
   node [
     id 140
     label "571"
-    gt "21"
+    value "21"
   ]
   node [
     id 141
     label "586"
-    gt "21"
+    value "21"
   ]
   node [
     id 142
     label "587"
-    gt "21"
+    value "21"
   ]
   node [
     id 143
     label "599"
-    gt "19"
+    value "19"
   ]
   node [
     id 144
     label "612"
-    gt "37"
+    value "37"
   ]
   node [
     id 145
     label "635"
-    gt "21"
+    value "21"
   ]
   node [
     id 146
     label "651"
-    gt "26"
+    value "26"
   ]
   node [
     id 147
     label "665"
-    gt "32"
+    value "32"
   ]
   node [
     id 148
     label "685"
-    gt "21"
+    value "21"
   ]
   node [
     id 149
     label "698"
-    gt "22"
+    value "22"
   ]
   node [
     id 150
     label "738"
-    gt "22"
+    value "22"
   ]
   node [
     id 151
     label "803"
-    gt "21"
+    value "21"
   ]
   node [
     id 152
     label "809"
-    gt "22"
+    value "22"
   ]
   node [
     id 153
     label "812"
-    gt "32"
+    value "32"
   ]
   node [
     id 154
     label "826"
-    gt "21"
+    value "21"
   ]
   node [
     id 155
     label "832"
-    gt "21"
+    value "21"
   ]
   node [
     id 156
     label "845"
-    gt "21"
+    value "21"
   ]
   node [
     id 157
     label "859"
-    gt "32"
+    value "32"
   ]
   node [
     id 158
     label "865"
-    gt "21"
+    value "21"
   ]
   node [
     id 159
     label "880"
-    gt "21"
+    value "21"
   ]
   node [
     id 160
     label "886"
-    gt "32"
+    value "32"
   ]
   node [
     id 161
     label "896"
-    gt "38"
+    value "38"
   ]
   node [
     id 162
     label "899"
-    gt "21"
+    value "21"
   ]
   node [
     id 163
     label "971"
-    gt "32"
+    value "32"
   ]
   node [
     id 164
     label "990"
-    gt "21"
+    value "21"
   ]
   node [
     id 165
     label "1001"
-    gt "21"
+    value "21"
   ]
   node [
     id 166
     label "46"
-    gt "17"
+    value "17"
   ]
   node [
     id 167
     label "81"
-    gt "15"
+    value "15"
   ]
   node [
     id 168
     label "175"
-    gt "32"
+    value "32"
   ]
   node [
     id 169
     label "183"
-    gt "4"
+    value "4"
   ]
   node [
     id 170
     label "210"
-    gt "19"
+    value "19"
   ]
   node [
     id 171
     label "236"
-    gt "19"
+    value "19"
   ]
   node [
     id 172
     label "239"
-    gt "19"
+    value "19"
   ]
   node [
     id 173
     label "256"
-    gt "4"
+    value "4"
   ]
   node [
     id 174
     label "272"
-    gt "17"
+    value "17"
   ]
   node [
     id 175
     label "303"
-    gt "20"
+    value "20"
   ]
   node [
     id 176
     label "371"
-    gt "16"
+    value "16"
   ]
   node [
     id 177
     label "473"
-    gt "15"
+    value "15"
   ]
   node [
     id 178
     label "601"
-    gt "36"
+    value "36"
   ]
   node [
     id 179
     label "932"
-    gt "36"
+    value "36"
   ]
   node [
     id 180
     label "145"
-    gt "35"
+    value "35"
   ]
   node [
     id 181
     label "169"
-    gt "13"
+    value "13"
   ]
   node [
     id 182
     label "170"
-    gt "13"
+    value "13"
   ]
   node [
     id 183
     label "282"
-    gt "36"
+    value "36"
   ]
   node [
     id 184
     label "301"
-    gt "26"
+    value "26"
   ]
   node [
     id 185
     label "329"
-    gt "8"
+    value "8"
   ]
   node [
     id 186
     label "360"
-    gt "14"
+    value "14"
   ]
   node [
     id 187
     label "424"
-    gt "34"
+    value "34"
   ]
   node [
     id 188
     label "425"
-    gt "4"
+    value "4"
   ]
   node [
     id 189
     label "430"
-    gt "14"
+    value "14"
   ]
   node [
     id 190
     label "431"
-    gt "37"
+    value "37"
   ]
   node [
     id 191
     label "532"
-    gt "21"
+    value "21"
   ]
   node [
     id 192
     label "533"
-    gt "35"
+    value "35"
   ]
   node [
     id 193
     label "552"
-    gt "22"
+    value "22"
   ]
   node [
     id 194
     label "625"
-    gt "21"
+    value "21"
   ]
   node [
     id 195
     label "712"
-    gt "0"
+    value "0"
   ]
   node [
     id 196
     label "7"
-    gt "14"
+    value "14"
   ]
   node [
     id 197
     label "11"
-    gt "14"
+    value "14"
   ]
   node [
     id 198
     label "24"
-    gt "11"
+    value "11"
   ]
   node [
     id 199
     label "29"
-    gt "11"
+    value "11"
   ]
   node [
     id 200
     label "34"
-    gt "11"
+    value "11"
   ]
   node [
     id 201
     label "35"
-    gt "11"
+    value "11"
   ]
   node [
     id 202
     label "41"
-    gt "5"
+    value "5"
   ]
   node [
     id 203
     label "42"
-    gt "34"
+    value "34"
   ]
   node [
     id 204
     label "47"
-    gt "10"
+    value "10"
   ]
   node [
     id 205
     label "53"
-    gt "4"
+    value "4"
   ]
   node [
     id 206
     label "76"
-    gt "10"
+    value "10"
   ]
   node [
     id 207
     label "97"
-    gt "16"
+    value "16"
   ]
   node [
     id 208
     label "99"
-    gt "16"
+    value "16"
   ]
   node [
     id 209
     label "100"
-    gt "16"
+    value "16"
   ]
   node [
     id 210
     label "105"
-    gt "34"
+    value "34"
   ]
   node [
     id 211
     label "115"
-    gt "13"
+    value "13"
   ]
   node [
     id 212
     label "117"
-    gt "6"
+    value "6"
   ]
   node [
     id 213
     label "125"
-    gt "16"
+    value "16"
   ]
   node [
     id 214
     label "133"
-    gt "4"
+    value "4"
   ]
   node [
     id 215
     label "134"
-    gt "2"
+    value "2"
   ]
   node [
     id 216
     label "135"
-    gt "13"
+    value "13"
   ]
   node [
     id 217
     label "141"
-    gt "14"
+    value "14"
   ]
   node [
     id 218
     label "154"
-    gt "35"
+    value "35"
   ]
   node [
     id 219
     label "157"
-    gt "0"
+    value "0"
   ]
   node [
     id 220
     label "163"
-    gt "24"
+    value "24"
   ]
   node [
     id 221
     label "171"
-    gt "10"
+    value "10"
   ]
   node [
     id 222
     label "184"
-    gt "15"
+    value "15"
   ]
   node [
     id 223
     label "191"
-    gt "0"
+    value "0"
   ]
   node [
     id 224
     label "198"
-    gt "4"
+    value "4"
   ]
   node [
     id 225
     label "201"
-    gt "4"
+    value "4"
   ]
   node [
     id 226
     label "207"
-    gt "4"
+    value "4"
   ]
   node [
     id 227
     label "209"
-    gt "19"
+    value "19"
   ]
   node [
     id 228
     label "230"
-    gt "23"
+    value "23"
   ]
   node [
     id 229
     label "234"
-    gt "19"
+    value "19"
   ]
   node [
     id 230
     label "235"
-    gt "19"
+    value "19"
   ]
   node [
     id 231
     label "237"
-    gt "19"
+    value "19"
   ]
   node [
     id 232
     label "242"
-    gt "19"
+    value "19"
   ]
   node [
     id 233
     label "243"
-    gt "19"
+    value "19"
   ]
   node [
     id 234
     label "261"
-    gt "10"
+    value "10"
   ]
   node [
     id 235
     label "269"
-    gt "17"
+    value "17"
   ]
   node [
     id 236
     label "279"
-    gt "23"
+    value "23"
   ]
   node [
     id 237
     label "291"
-    gt "4"
+    value "4"
   ]
   node [
     id 238
     label "302"
-    gt "20"
+    value "20"
   ]
   node [
     id 239
     label "306"
-    gt "9"
+    value "9"
   ]
   node [
     id 240
     label "312"
-    gt "1"
+    value "1"
   ]
   node [
     id 241
     label "318"
-    gt "10"
+    value "10"
   ]
   node [
     id 242
     label "325"
-    gt "9"
+    value "9"
   ]
   node [
     id 243
     label "327"
-    gt "9"
+    value "9"
   ]
   node [
     id 244
     label "337"
-    gt "13"
+    value "13"
   ]
   node [
     id 245
     label "346"
-    gt "0"
+    value "0"
   ]
   node [
     id 246
     label "349"
-    gt "0"
+    value "0"
   ]
   node [
     id 247
     label "357"
-    gt "8"
+    value "8"
   ]
   node [
     id 248
     label "362"
-    gt "14"
+    value "14"
   ]
   node [
     id 249
     label "374"
-    gt "14"
+    value "14"
   ]
   node [
     id 250
     label "375"
-    gt "8"
+    value "8"
   ]
   node [
     id 251
     label "379"
-    gt "7"
+    value "7"
   ]
   node [
     id 252
     label "417"
-    gt "10"
+    value "10"
   ]
   node [
     id 253
     label "419"
-    gt "4"
+    value "4"
   ]
   node [
     id 254
     label "420"
-    gt "26"
+    value "26"
   ]
   node [
     id 255
     label "423"
-    gt "10"
+    value "10"
   ]
   node [
     id 256
     label "437"
-    gt "13"
+    value "13"
   ]
   node [
     id 257
     label "438"
-    gt "13"
+    value "13"
   ]
   node [
     id 258
     label "440"
-    gt "4"
+    value "4"
   ]
   node [
     id 259
     label "445"
-    gt "3"
+    value "3"
   ]
   node [
     id 260
     label "455"
-    gt "22"
+    value "22"
   ]
   node [
     id 261
     label "458"
-    gt "4"
+    value "4"
   ]
   node [
     id 262
     label "462"
-    gt "30"
+    value "30"
   ]
   node [
     id 263
     label "464"
-    gt "4"
+    value "4"
   ]
   node [
     id 264
     label "466"
-    gt "14"
+    value "14"
   ]
   node [
     id 265
     label "469"
-    gt "22"
+    value "22"
   ]
   node [
     id 266
     label "486"
-    gt "4"
+    value "4"
   ]
   node [
     id 267
     label "492"
-    gt "40"
+    value "40"
   ]
   node [
     id 268
     label "496"
-    gt "14"
+    value "14"
   ]
   node [
     id 269
     label "511"
-    gt "0"
+    value "0"
   ]
   node [
     id 270
     label "527"
-    gt "10"
+    value "10"
   ]
   node [
     id 271
     label "528"
-    gt "25"
+    value "25"
   ]
   node [
     id 272
     label "557"
-    gt "3"
+    value "3"
   ]
   node [
     id 273
     label "572"
-    gt "4"
+    value "4"
   ]
   node [
     id 274
     label "611"
-    gt "4"
+    value "4"
   ]
   node [
     id 275
     label "619"
-    gt "6"
+    value "6"
   ]
   node [
     id 276
     label "644"
-    gt "25"
+    value "25"
   ]
   node [
     id 277
     label "669"
-    gt "23"
+    value "23"
   ]
   node [
     id 278
     label "681"
-    gt "0"
+    value "0"
   ]
   node [
     id 279
     label "690"
-    gt "15"
+    value "15"
   ]
   node [
     id 280
     label "697"
-    gt "1"
+    value "1"
   ]
   node [
     id 281
     label "716"
-    gt "29"
+    value "29"
   ]
   node [
     id 282
     label "718"
-    gt "21"
+    value "21"
   ]
   node [
     id 283
     label "728"
-    gt "22"
+    value "22"
   ]
   node [
     id 284
     label "730"
-    gt "23"
+    value "23"
   ]
   node [
     id 285
     label "763"
-    gt "34"
+    value "34"
   ]
   node [
     id 286
     label "789"
-    gt "4"
+    value "4"
   ]
   node [
     id 287
     label "807"
-    gt "28"
+    value "28"
   ]
   node [
     id 288
     label "815"
-    gt "21"
+    value "21"
   ]
   node [
     id 289
     label "820"
-    gt "5"
+    value "5"
   ]
   node [
     id 290
     label "828"
-    gt "38"
+    value "38"
   ]
   node [
     id 291
     label "833"
-    gt "14"
+    value "14"
   ]
   node [
     id 292
     label "840"
-    gt "4"
+    value "4"
   ]
   node [
     id 293
     label "868"
-    gt "7"
+    value "7"
   ]
   node [
     id 294
     label "900"
-    gt "13"
+    value "13"
   ]
   node [
     id 295
     label "902"
-    gt "4"
+    value "4"
   ]
   node [
     id 296
     label "931"
-    gt "19"
+    value "19"
   ]
   node [
     id 297
     label "980"
-    gt "12"
+    value "12"
   ]
   node [
     id 298
     label "79"
-    gt "3"
+    value "3"
   ]
   node [
     id 299
     label "95"
-    gt "4"
+    value "4"
   ]
   node [
     id 300
     label "139"
-    gt "17"
+    value "17"
   ]
   node [
     id 301
     label "149"
-    gt "0"
+    value "0"
   ]
   node [
     id 302
     label "168"
-    gt "4"
+    value "4"
   ]
   node [
     id 303
     label "181"
-    gt "7"
+    value "7"
   ]
   node [
     id 304
     label "204"
-    gt "5"
+    value "5"
   ]
   node [
     id 305
     label "206"
-    gt "4"
+    value "4"
   ]
   node [
     id 306
     label "275"
-    gt "4"
+    value "4"
   ]
   node [
     id 307
     label "290"
-    gt "4"
+    value "4"
   ]
   node [
     id 308
     label "296"
-    gt "7"
+    value "7"
   ]
   node [
     id 309
     label "299"
-    gt "15"
+    value "15"
   ]
   node [
     id 310
     label "376"
-    gt "7"
+    value "7"
   ]
   node [
     id 311
     label "389"
-    gt "7"
+    value "7"
   ]
   node [
     id 312
     label "397"
-    gt "7"
+    value "7"
   ]
   node [
     id 313
     label "418"
-    gt "15"
+    value "15"
   ]
   node [
     id 314
     label "426"
-    gt "4"
+    value "4"
   ]
   node [
     id 315
     label "429"
-    gt "17"
+    value "17"
   ]
   node [
     id 316
     label "515"
-    gt "4"
+    value "4"
   ]
   node [
     id 317
     label "544"
-    gt "4"
+    value "4"
   ]
   node [
     id 318
     label "562"
-    gt "4"
+    value "4"
   ]
   node [
     id 319
     label "563"
-    gt "4"
+    value "4"
   ]
   node [
     id 320
     label "667"
-    gt "15"
+    value "15"
   ]
   node [
     id 321
     label "751"
-    gt "5"
+    value "5"
   ]
   node [
     id 322
     label "921"
-    gt "21"
+    value "21"
   ]
   node [
     id 323
     label "949"
-    gt "22"
+    value "22"
   ]
   node [
     id 324
     label "994"
-    gt "21"
+    value "21"
   ]
   node [
     id 325
     label "8"
-    gt "14"
+    value "14"
   ]
   node [
     id 326
     label "12"
-    gt "14"
+    value "14"
   ]
   node [
     id 327
     label "19"
-    gt "14"
+    value "14"
   ]
   node [
     id 328
     label "44"
-    gt "14"
+    value "14"
   ]
   node [
     id 329
     label "112"
-    gt "8"
+    value "8"
   ]
   node [
     id 330
     label "161"
-    gt "14"
+    value "14"
   ]
   node [
     id 331
     label "212"
-    gt "34"
+    value "34"
   ]
   node [
     id 332
     label "213"
-    gt "14"
+    value "14"
   ]
   node [
     id 333
     label "246"
-    gt "14"
+    value "14"
   ]
   node [
     id 334
     label "247"
-    gt "14"
+    value "14"
   ]
   node [
     id 335
     label "264"
-    gt "14"
+    value "14"
   ]
   node [
     id 336
     label "265"
-    gt "14"
+    value "14"
   ]
   node [
     id 337
     label "324"
-    gt "14"
+    value "14"
   ]
   node [
     id 338
     label "332"
-    gt "14"
+    value "14"
   ]
   node [
     id 339
     label "358"
-    gt "14"
+    value "14"
   ]
   node [
     id 340
     label "359"
-    gt "14"
+    value "14"
   ]
   node [
     id 341
     label "365"
-    gt "14"
+    value "14"
   ]
   node [
     id 342
     label "406"
-    gt "14"
+    value "14"
   ]
   node [
     id 343
     label "407"
-    gt "14"
+    value "14"
   ]
   node [
     id 344
     label "421"
-    gt "14"
+    value "14"
   ]
   node [
     id 345
     label "422"
-    gt "35"
+    value "35"
   ]
   node [
     id 346
     label "451"
-    gt "14"
+    value "14"
   ]
   node [
     id 347
     label "452"
-    gt "14"
+    value "14"
   ]
   node [
     id 348
     label "499"
-    gt "14"
+    value "14"
   ]
   node [
     id 349
     label "500"
-    gt "14"
+    value "14"
   ]
   node [
     id 350
     label "502"
-    gt "14"
+    value "14"
   ]
   node [
     id 351
     label "504"
-    gt "14"
+    value "14"
   ]
   node [
     id 352
     label "510"
-    gt "14"
+    value "14"
   ]
   node [
     id 353
     label "525"
-    gt "14"
+    value "14"
   ]
   node [
     id 354
     label "529"
-    gt "14"
+    value "14"
   ]
   node [
     id 355
     label "555"
-    gt "14"
+    value "14"
   ]
   node [
     id 356
     label "566"
-    gt "14"
+    value "14"
   ]
   node [
     id 357
     label "569"
-    gt "14"
+    value "14"
   ]
   node [
     id 358
     label "570"
-    gt "14"
+    value "14"
   ]
   node [
     id 359
     label "573"
-    gt "14"
+    value "14"
   ]
   node [
     id 360
     label "608"
-    gt "14"
+    value "14"
   ]
   node [
     id 361
     label "661"
-    gt "14"
+    value "14"
   ]
   node [
     id 362
     label "666"
-    gt "14"
+    value "14"
   ]
   node [
     id 363
     label "672"
-    gt "14"
+    value "14"
   ]
   node [
     id 364
     label "674"
-    gt "14"
+    value "14"
   ]
   node [
     id 365
     label "700"
-    gt "14"
+    value "14"
   ]
   node [
     id 366
     label "707"
-    gt "14"
+    value "14"
   ]
   node [
     id 367
     label "720"
-    gt "14"
+    value "14"
   ]
   node [
     id 368
     label "754"
-    gt "14"
+    value "14"
   ]
   node [
     id 369
     label "765"
-    gt "14"
+    value "14"
   ]
   node [
     id 370
     label "823"
-    gt "14"
+    value "14"
   ]
   node [
     id 371
     label "856"
-    gt "14"
+    value "14"
   ]
   node [
     id 372
     label "913"
-    gt "14"
+    value "14"
   ]
   node [
     id 373
     label "922"
-    gt "14"
+    value "14"
   ]
   node [
     id 374
     label "956"
-    gt "14"
+    value "14"
   ]
   node [
     id 375
     label "9"
-    gt "14"
+    value "14"
   ]
   node [
     id 376
     label "293"
-    gt "14"
+    value "14"
   ]
   node [
     id 377
     label "441"
-    gt "14"
+    value "14"
   ]
   node [
     id 378
     label "950"
-    gt "36"
+    value "36"
   ]
   node [
     id 379
     label "487"
-    gt "14"
+    value "14"
   ]
   node [
     id 380
     label "558"
-    gt "14"
+    value "14"
   ]
   node [
     id 381
     label "565"
-    gt "14"
+    value "14"
   ]
   node [
     id 382
     label "699"
-    gt "14"
+    value "14"
   ]
   node [
     id 383
     label "957"
-    gt "14"
+    value "14"
   ]
   node [
     id 384
     label "10"
-    gt "9"
+    value "9"
   ]
   node [
     id 385
     label "20"
-    gt "9"
+    value "9"
   ]
   node [
     id 386
     label "25"
-    gt "11"
+    value "11"
   ]
   node [
     id 387
     label "36"
-    gt "11"
+    value "11"
   ]
   node [
     id 388
     label "69"
-    gt "15"
+    value "15"
   ]
   node [
     id 389
     label "143"
-    gt "8"
+    value "8"
   ]
   node [
     id 390
     label "173"
-    gt "38"
+    value "38"
   ]
   node [
     id 391
     label "260"
-    gt "9"
+    value "9"
   ]
   node [
     id 392
     label "326"
-    gt "9"
+    value "9"
   ]
   node [
     id 393
     label "339"
-    gt "13"
+    value "13"
   ]
   node [
     id 394
     label "340"
-    gt "2"
+    value "2"
   ]
   node [
     id 395
     label "366"
-    gt "36"
+    value "36"
   ]
   node [
     id 396
     label "400"
-    gt "9"
+    value "9"
   ]
   node [
     id 397
     label "508"
-    gt "15"
+    value "15"
   ]
   node [
     id 398
     label "509"
-    gt "15"
+    value "15"
   ]
   node [
     id 399
     label "535"
-    gt "9"
+    value "9"
   ]
   node [
     id 400
     label "638"
-    gt "38"
+    value "38"
   ]
   node [
     id 401
     label "777"
-    gt "9"
+    value "9"
   ]
   node [
     id 402
     label "22"
-    gt "9"
+    value "9"
   ]
   node [
     id 403
     label "90"
-    gt "8"
+    value "8"
   ]
   node [
     id 404
     label "91"
-    gt "15"
+    value "15"
   ]
   node [
     id 405
     label "92"
-    gt "9"
+    value "9"
   ]
   node [
     id 406
     label "129"
-    gt "4"
+    value "4"
   ]
   node [
     id 407
     label "159"
-    gt "19"
+    value "19"
   ]
   node [
     id 408
     label "233"
-    gt "19"
+    value "19"
   ]
   node [
     id 409
     label "240"
-    gt "19"
+    value "19"
   ]
   node [
     id 410
     label "270"
-    gt "4"
+    value "4"
   ]
   node [
     id 411
     label "518"
-    gt "35"
+    value "35"
   ]
   node [
     id 412
     label "530"
-    gt "14"
+    value "14"
   ]
   node [
     id 413
     label "602"
-    gt "14"
+    value "14"
   ]
   node [
     id 414
     label "621"
-    gt "0"
+    value "0"
   ]
   node [
     id 415
     label "804"
-    gt "14"
+    value "14"
   ]
   node [
     id 416
     label "14"
-    gt "4"
+    value "4"
   ]
   node [
     id 417
     label "267"
-    gt "14"
+    value "14"
   ]
   node [
     id 418
     label "739"
-    gt "14"
+    value "14"
   ]
   node [
     id 419
     label "996"
-    gt "14"
+    value "14"
   ]
   node [
     id 420
     label "15"
-    gt "17"
+    value "17"
   ]
   node [
     id 421
     label "23"
-    gt "11"
+    value "11"
   ]
   node [
     id 422
     label "26"
-    gt "11"
+    value "11"
   ]
   node [
     id 423
     label "27"
-    gt "11"
+    value "11"
   ]
   node [
     id 424
     label "30"
-    gt "11"
+    value "11"
   ]
   node [
     id 425
     label "32"
-    gt "11"
+    value "11"
   ]
   node [
     id 426
     label "33"
-    gt "11"
+    value "11"
   ]
   node [
     id 427
     label "38"
-    gt "11"
+    value "11"
   ]
   node [
     id 428
     label "39"
-    gt "11"
+    value "11"
   ]
   node [
     id 429
     label "40"
-    gt "11"
+    value "11"
   ]
   node [
     id 430
     label "51"
-    gt "5"
+    value "5"
   ]
   node [
     id 431
     label "78"
-    gt "3"
+    value "3"
   ]
   node [
     id 432
     label "83"
-    gt "36"
+    value "36"
   ]
   node [
     id 433
     label "87"
-    gt "34"
+    value "34"
   ]
   node [
     id 434
     label "93"
-    gt "4"
+    value "4"
   ]
   node [
     id 435
     label "94"
-    gt "5"
+    value "5"
   ]
   node [
     id 436
     label "98"
-    gt "16"
+    value "16"
   ]
   node [
     id 437
     label "108"
-    gt "8"
+    value "8"
   ]
   node [
     id 438
     label "113"
-    gt "10"
+    value "10"
   ]
   node [
     id 439
     label "118"
-    gt "26"
+    value "26"
   ]
   node [
     id 440
     label "130"
-    gt "0"
+    value "0"
   ]
   node [
     id 441
     label "156"
-    gt "0"
+    value "0"
   ]
   node [
     id 442
     label "165"
-    gt "13"
+    value "13"
   ]
   node [
     id 443
     label "167"
-    gt "4"
+    value "4"
   ]
   node [
     id 444
     label "172"
-    gt "4"
+    value "4"
   ]
   node [
     id 445
     label "179"
-    gt "0"
+    value "0"
   ]
   node [
     id 446
     label "190"
-    gt "15"
+    value "15"
   ]
   node [
     id 447
     label "197"
-    gt "4"
+    value "4"
   ]
   node [
     id 448
     label "214"
-    gt "0"
+    value "0"
   ]
   node [
     id 449
     label "244"
-    gt "19"
+    value "19"
   ]
   node [
     id 450
     label "263"
-    gt "10"
+    value "10"
   ]
   node [
     id 451
     label "278"
-    gt "0"
+    value "0"
   ]
   node [
     id 452
     label "304"
-    gt "20"
+    value "20"
   ]
   node [
     id 453
     label "322"
-    gt "17"
+    value "17"
   ]
   node [
     id 454
     label "336"
-    gt "13"
+    value "13"
   ]
   node [
     id 455
     label "342"
-    gt "0"
+    value "0"
   ]
   node [
     id 456
     label "343"
-    gt "0"
+    value "0"
   ]
   node [
     id 457
     label "350"
-    gt "0"
+    value "0"
   ]
   node [
     id 458
     label "352"
-    gt "0"
+    value "0"
   ]
   node [
     id 459
     label "356"
-    gt "8"
+    value "8"
   ]
   node [
     id 460
     label "361"
-    gt "10"
+    value "10"
   ]
   node [
     id 461
     label "390"
-    gt "7"
+    value "7"
   ]
   node [
     id 462
     label "413"
-    gt "4"
+    value "4"
   ]
   node [
     id 463
     label "443"
-    gt "10"
+    value "10"
   ]
   node [
     id 464
     label "444"
-    gt "10"
+    value "10"
   ]
   node [
     id 465
     label "446"
-    gt "17"
+    value "17"
   ]
   node [
     id 466
     label "461"
-    gt "17"
+    value "17"
   ]
   node [
     id 467
     label "474"
-    gt "15"
+    value "15"
   ]
   node [
     id 468
     label "476"
-    gt "15"
+    value "15"
   ]
   node [
     id 469
     label "478"
-    gt "8"
+    value "8"
   ]
   node [
     id 470
     label "483"
-    gt "3"
+    value "3"
   ]
   node [
     id 471
     label "484"
-    gt "4"
+    value "4"
   ]
   node [
     id 472
     label "497"
-    gt "3"
+    value "3"
   ]
   node [
     id 473
     label "514"
-    gt "8"
+    value "8"
   ]
   node [
     id 474
     label "526"
-    gt "4"
+    value "4"
   ]
   node [
     id 475
     label "550"
-    gt "15"
+    value "15"
   ]
   node [
     id 476
     label "576"
-    gt "4"
+    value "4"
   ]
   node [
     id 477
     label "579"
-    gt "17"
+    value "17"
   ]
   node [
     id 478
     label "588"
-    gt "11"
+    value "11"
   ]
   node [
     id 479
     label "590"
-    gt "11"
+    value "11"
   ]
   node [
     id 480
     label "624"
-    gt "26"
+    value "26"
   ]
   node [
     id 481
     label "655"
-    gt "4"
+    value "4"
   ]
   node [
     id 482
     label "679"
-    gt "29"
+    value "29"
   ]
   node [
     id 483
     label "748"
-    gt "23"
+    value "23"
   ]
   node [
     id 484
     label "767"
-    gt "18"
+    value "18"
   ]
   node [
     id 485
     label "771"
-    gt "38"
+    value "38"
   ]
   node [
     id 486
     label "785"
-    gt "11"
+    value "11"
   ]
   node [
     id 487
     label "61"
-    gt "7"
+    value "7"
   ]
   node [
     id 488
     label "196"
-    gt "5"
+    value "5"
   ]
   node [
     id 489
     label "203"
-    gt "4"
+    value "4"
   ]
   node [
     id 490
     label "205"
-    gt "5"
+    value "5"
   ]
   node [
     id 491
     label "231"
-    gt "0"
+    value "0"
   ]
   node [
     id 492
     label "277"
-    gt "0"
+    value "0"
   ]
   node [
     id 493
     label "289"
-    gt "0"
+    value "0"
   ]
   node [
     id 494
     label "292"
-    gt "4"
+    value "4"
   ]
   node [
     id 495
     label "394"
-    gt "7"
+    value "7"
   ]
   node [
     id 496
     label "403"
-    gt "4"
+    value "4"
   ]
   node [
     id 497
     label "465"
-    gt "23"
+    value "23"
   ]
   node [
     id 498
     label "482"
-    gt "2"
+    value "2"
   ]
   node [
     id 499
     label "493"
-    gt "4"
+    value "4"
   ]
   node [
     id 500
     label "523"
-    gt "4"
+    value "4"
   ]
   node [
     id 501
     label "556"
-    gt "4"
+    value "4"
   ]
   node [
     id 502
     label "593"
-    gt "5"
+    value "5"
   ]
   node [
     id 503
     label "706"
-    gt "4"
+    value "4"
   ]
   node [
     id 504
     label "776"
-    gt "5"
+    value "5"
   ]
   node [
     id 505
     label "797"
-    gt "1"
+    value "1"
   ]
   node [
     id 506
     label "918"
-    gt "5"
+    value "5"
   ]
   node [
     id 507
     label "936"
-    gt "4"
+    value "4"
   ]
   node [
     id 508
     label "1000"
-    gt "4"
+    value "4"
   ]
   node [
     id 509
     label "16"
-    gt "34"
+    value "34"
   ]
   node [
     id 510
     label "45"
-    gt "17"
+    value "17"
   ]
   node [
     id 511
     label "216"
-    gt "17"
+    value "17"
   ]
   node [
     id 512
     label "274"
-    gt "17"
+    value "17"
   ]
   node [
     id 513
     label "334"
-    gt "17"
+    value "17"
   ]
   node [
     id 514
     label "335"
-    gt "17"
+    value "17"
   ]
   node [
     id 515
     label "353"
-    gt "16"
+    value "16"
   ]
   node [
     id 516
     label "404"
-    gt "16"
+    value "16"
   ]
   node [
     id 517
     label "428"
-    gt "17"
+    value "17"
   ]
   node [
     id 518
     label "447"
-    gt "17"
+    value "17"
   ]
   node [
     id 519
     label "448"
-    gt "17"
+    value "17"
   ]
   node [
     id 520
     label "541"
-    gt "23"
+    value "23"
   ]
   node [
     id 521
     label "592"
-    gt "17"
+    value "17"
   ]
   node [
     id 522
     label "760"
-    gt "17"
+    value "17"
   ]
   node [
     id 523
     label "929"
-    gt "17"
+    value "17"
   ]
   node [
     id 524
     label "933"
-    gt "17"
+    value "17"
   ]
   node [
     id 525
     label "68"
-    gt "15"
+    value "15"
   ]
   node [
     id 526
     label "80"
-    gt "29"
+    value "29"
   ]
   node [
     id 527
     label "153"
-    gt "27"
+    value "27"
   ]
   node [
     id 528
     label "258"
-    gt "8"
+    value "8"
   ]
   node [
     id 529
     label "295"
-    gt "7"
+    value "7"
   ]
   node [
     id 530
     label "311"
-    gt "1"
+    value "1"
   ]
   node [
     id 531
     label "338"
-    gt "13"
+    value "13"
   ]
   node [
     id 532
     label "355"
-    gt "27"
+    value "27"
   ]
   node [
     id 533
     label "363"
-    gt "35"
+    value "35"
   ]
   node [
     id 534
     label "367"
-    gt "10"
+    value "10"
   ]
   node [
     id 535
     label "395"
-    gt "7"
+    value "7"
   ]
   node [
     id 536
     label "543"
-    gt "4"
+    value "4"
   ]
   node [
     id 537
     label "642"
-    gt "6"
+    value "6"
   ]
   node [
     id 538
     label "783"
-    gt "23"
+    value "23"
   ]
   node [
     id 539
     label "180"
-    gt "0"
+    value "0"
   ]
   node [
     id 540
     label "219"
-    gt "1"
+    value "1"
   ]
   node [
     id 541
     label "220"
-    gt "1"
+    value "1"
   ]
   node [
     id 542
     label "228"
-    gt "1"
+    value "1"
   ]
   node [
     id 543
     label "253"
-    gt "31"
+    value "31"
   ]
   node [
     id 544
     label "307"
-    gt "1"
+    value "1"
   ]
   node [
     id 545
     label "314"
-    gt "1"
+    value "1"
   ]
   node [
     id 546
     label "315"
-    gt "1"
+    value "1"
   ]
   node [
     id 547
     label "341"
-    gt "1"
+    value "1"
   ]
   node [
     id 548
     label "378"
-    gt "7"
+    value "7"
   ]
   node [
     id 549
     label "386"
-    gt "7"
+    value "7"
   ]
   node [
     id 550
     label "393"
-    gt "7"
+    value "7"
   ]
   node [
     id 551
     label "427"
-    gt "12"
+    value "12"
   ]
   node [
     id 552
     label "467"
-    gt "15"
+    value "15"
   ]
   node [
     id 553
     label "615"
-    gt "35"
+    value "35"
   ]
   node [
     id 554
     label "643"
-    gt "37"
+    value "37"
   ]
   node [
     id 555
     label "654"
-    gt "37"
+    value "37"
   ]
   node [
     id 556
     label "671"
-    gt "29"
+    value "29"
   ]
   node [
     id 557
     label "696"
-    gt "1"
+    value "1"
   ]
   node [
     id 558
     label "872"
-    gt "1"
+    value "1"
   ]
   node [
     id 559
     label "104"
-    gt "7"
+    value "7"
   ]
   node [
     id 560
     label "182"
-    gt "7"
+    value "7"
   ]
   node [
     id 561
     label "852"
-    gt "1"
+    value "1"
   ]
   node [
     id 562
     label "49"
-    gt "36"
+    value "36"
   ]
   node [
     id 563
     label "288"
-    gt "37"
+    value "37"
   ]
   node [
     id 564
     label "331"
-    gt "39"
+    value "39"
   ]
   node [
     id 565
     label "513"
-    gt "35"
+    value "35"
   ]
   node [
     id 566
     label "28"
-    gt "11"
+    value "11"
   ]
   node [
     id 567
     label "72"
-    gt "9"
+    value "9"
   ]
   node [
     id 568
     label "188"
-    gt "15"
+    value "15"
   ]
   node [
     id 569
     label "259"
-    gt "9"
+    value "9"
   ]
   node [
     id 570
     label "287"
-    gt "15"
+    value "15"
   ]
   node [
     id 571
     label "480"
-    gt "15"
+    value "15"
   ]
   node [
     id 572
     label "519"
-    gt "23"
+    value "23"
   ]
   node [
     id 573
     label "536"
-    gt "15"
+    value "15"
   ]
   node [
     id 574
     label "695"
-    gt "23"
+    value "23"
   ]
   node [
     id 575
     label "715"
-    gt "15"
+    value "15"
   ]
   node [
     id 576
     label "885"
-    gt "9"
+    value "9"
   ]
   node [
     id 577
     label "887"
-    gt "9"
+    value "9"
   ]
   node [
     id 578
     label "152"
-    gt "37"
+    value "37"
   ]
   node [
     id 579
     label "364"
-    gt "37"
+    value "37"
   ]
   node [
     id 580
     label "551"
-    gt "15"
+    value "15"
   ]
   node [
     id 581
     label "647"
-    gt "6"
+    value "6"
   ]
   node [
     id 582
     label "686"
-    gt "6"
+    value "6"
   ]
   node [
     id 583
     label "787"
-    gt "34"
+    value "34"
   ]
   node [
     id 584
     label "966"
-    gt "29"
+    value "29"
   ]
   node [
     id 585
     label "31"
-    gt "11"
+    value "11"
   ]
   node [
     id 586
     label "37"
-    gt "11"
+    value "11"
   ]
   node [
     id 587
     label "116"
-    gt "13"
+    value "13"
   ]
   node [
     id 588
     label "151"
-    gt "10"
+    value "10"
   ]
   node [
     id 589
     label "229"
-    gt "10"
+    value "10"
   ]
   node [
     id 590
     label "251"
-    gt "13"
+    value "13"
   ]
   node [
     id 591
     label "460"
-    gt "34"
+    value "34"
   ]
   node [
     id 592
     label "545"
-    gt "11"
+    value "11"
   ]
   node [
     id 593
     label "878"
-    gt "11"
+    value "11"
   ]
   node [
     id 594
     label "953"
-    gt "11"
+    value "11"
   ]
   node [
     id 595
     label "964"
-    gt "11"
+    value "11"
   ]
   node [
     id 596
     label "609"
-    gt "13"
+    value "13"
   ]
   node [
     id 597
     label "988"
-    gt "22"
+    value "22"
   ]
   node [
     id 598
     label "997"
-    gt "11"
+    value "11"
   ]
   node [
     id 599
     label "370"
-    gt "10"
+    value "10"
   ]
   node [
     id 600
     label "442"
-    gt "10"
+    value "10"
   ]
   node [
     id 601
     label "48"
-    gt "10"
+    value "10"
   ]
   node [
     id 602
     label "136"
-    gt "13"
+    value "13"
   ]
   node [
     id 603
     label "721"
-    gt "11"
+    value "11"
   ]
   node [
     id 604
     label "722"
-    gt "11"
+    value "11"
   ]
   node [
     id 605
     label "883"
-    gt "13"
+    value "13"
   ]
   node [
     id 606
     label "917"
-    gt "5"
+    value "5"
   ]
   node [
     id 607
     label "811"
-    gt "3"
+    value "3"
   ]
   node [
     id 608
     label "877"
-    gt "15"
+    value "15"
   ]
   node [
     id 609
     label "892"
-    gt "38"
+    value "38"
   ]
   node [
     id 610
     label "914"
-    gt "13"
+    value "13"
   ]
   node [
     id 611
     label "952"
-    gt "15"
+    value "15"
   ]
   node [
     id 612
     label "554"
-    gt "2"
+    value "2"
   ]
   node [
     id 613
     label "764"
-    gt "1"
+    value "1"
   ]
   node [
     id 614
     label "123"
-    gt "13"
+    value "13"
   ]
   node [
     id 615
     label "186"
-    gt "40"
+    value "40"
   ]
   node [
     id 616
     label "372"
-    gt "36"
+    value "36"
   ]
   node [
     id 617
     label "75"
-    gt "10"
+    value "10"
   ]
   node [
     id 618
     label "245"
-    gt "10"
+    value "10"
   ]
   node [
     id 619
     label "321"
-    gt "7"
+    value "7"
   ]
   node [
     id 620
     label "547"
-    gt "10"
+    value "10"
   ]
   node [
     id 621
     label "847"
-    gt "10"
+    value "10"
   ]
   node [
     id 622
     label "915"
-    gt "11"
+    value "11"
   ]
   node [
     id 623
     label "119"
-    gt "10"
+    value "10"
   ]
   node [
     id 624
     label "725"
-    gt "10"
+    value "10"
   ]
   node [
     id 625
     label "753"
-    gt "10"
+    value "10"
   ]
   node [
     id 626
     label "816"
-    gt "13"
+    value "13"
   ]
   node [
     id 627
     label "919"
-    gt "10"
+    value "10"
   ]
   node [
     id 628
     label "200"
-    gt "4"
+    value "4"
   ]
   node [
     id 629
     label "202"
-    gt "4"
+    value "4"
   ]
   node [
     id 630
     label "387"
-    gt "7"
+    value "7"
   ]
   node [
     id 631
     label "801"
-    gt "4"
+    value "4"
   ]
   node [
     id 632
     label "908"
-    gt "5"
+    value "5"
   ]
   node [
     id 633
     label "298"
-    gt "15"
+    value "15"
   ]
   node [
     id 634
     label "453"
-    gt "6"
+    value "6"
   ]
   node [
     id 635
     label "490"
-    gt "6"
+    value "6"
   ]
   node [
     id 636
     label "607"
-    gt "34"
+    value "34"
   ]
   node [
     id 637
     label "756"
-    gt "39"
+    value "39"
   ]
   node [
     id 638
     label "43"
-    gt "14"
+    value "14"
   ]
   node [
     id 639
     label "505"
-    gt "14"
+    value "14"
   ]
   node [
     id 640
     label "401"
-    gt "4"
+    value "4"
   ]
   node [
     id 641
     label "501"
-    gt "14"
+    value "14"
   ]
   node [
     id 642
     label "503"
-    gt "14"
+    value "14"
   ]
   node [
     id 643
     label "649"
-    gt "14"
+    value "14"
   ]
   node [
     id 644
     label "729"
-    gt "14"
+    value "14"
   ]
   node [
     id 645
     label "805"
-    gt "14"
+    value "14"
   ]
   node [
     id 646
     label "951"
-    gt "14"
+    value "14"
   ]
   node [
     id 647
     label "967"
-    gt "14"
+    value "14"
   ]
   node [
     id 648
     label "124"
-    gt "16"
+    value "16"
   ]
   node [
     id 649
     label "640"
-    gt "16"
+    value "16"
   ]
   node [
     id 650
     label "838"
-    gt "17"
+    value "17"
   ]
   node [
     id 651
     label "925"
-    gt "10"
+    value "10"
   ]
   node [
     id 652
     label "976"
-    gt "10"
+    value "10"
   ]
   node [
     id 653
     label "981"
-    gt "10"
+    value "10"
   ]
   node [
     id 654
     label "50"
-    gt "37"
+    value "37"
   ]
   node [
     id 655
     label "66"
-    gt "8"
+    value "8"
   ]
   node [
     id 656
     label "485"
-    gt "10"
+    value "10"
   ]
   node [
     id 657
     label "678"
-    gt "15"
+    value "15"
   ]
   node [
     id 658
     label "71"
-    gt "37"
+    value "37"
   ]
   node [
     id 659
     label "217"
-    gt "37"
+    value "37"
   ]
   node [
     id 660
     label "433"
-    gt "37"
+    value "37"
   ]
   node [
     id 661
     label "109"
-    gt "27"
+    value "27"
   ]
   node [
     id 662
     label "399"
-    gt "4"
+    value "4"
   ]
   node [
     id 663
     label "740"
-    gt "20"
+    value "20"
   ]
   node [
     id 664
     label "970"
-    gt "5"
+    value "5"
   ]
   node [
     id 665
     label "185"
-    gt "16"
+    value "16"
   ]
   node [
     id 666
     label "595"
-    gt "15"
+    value "15"
   ]
   node [
     id 667
     label "719"
-    gt "7"
+    value "7"
   ]
   node [
     id 668
     label "781"
-    gt "0"
+    value "0"
   ]
   node [
     id 669
     label "786"
-    gt "23"
+    value "23"
   ]
   node [
     id 670
     label "814"
-    gt "0"
+    value "0"
   ]
   node [
     id 671
     label "822"
-    gt "4"
+    value "4"
   ]
   node [
     id 672
     label "1004"
-    gt "22"
+    value "22"
   ]
   node [
     id 673
     label "610"
-    gt "6"
+    value "6"
   ]
   node [
     id 674
     label "604"
-    gt "22"
+    value "22"
   ]
   node [
     id 675
     label "683"
-    gt "22"
+    value "22"
   ]
   node [
     id 676
     label "849"
-    gt "21"
+    value "21"
   ]
   node [
     id 677
     label "863"
-    gt "21"
+    value "21"
   ]
   node [
     id 678
     label "924"
-    gt "20"
+    value "20"
   ]
   node [
     id 679
     label "373"
-    gt "36"
+    value "36"
   ]
   node [
     id 680
     label "597"
-    gt "23"
+    value "23"
   ]
   node [
     id 681
     label "664"
-    gt "4"
+    value "4"
   ]
   node [
     id 682
     label "963"
-    gt "19"
+    value "19"
   ]
   node [
     id 683
     label "60"
-    gt "7"
+    value "7"
   ]
   node [
     id 684
     label "122"
-    gt "0"
+    value "0"
   ]
   node [
     id 685
     label "150"
-    gt "7"
+    value "7"
   ]
   node [
     id 686
     label "320"
-    gt "7"
+    value "7"
   ]
   node [
     id 687
     label "381"
-    gt "7"
+    value "7"
   ]
   node [
     id 688
     label "384"
-    gt "7"
+    value "7"
   ]
   node [
     id 689
     label "385"
-    gt "7"
+    value "7"
   ]
   node [
     id 690
     label "388"
-    gt "7"
+    value "7"
   ]
   node [
     id 691
     label "391"
-    gt "7"
+    value "7"
   ]
   node [
     id 692
     label "392"
-    gt "7"
+    value "7"
   ]
   node [
     id 693
     label "396"
-    gt "7"
+    value "7"
   ]
   node [
     id 694
     label "947"
-    gt "7"
+    value "7"
   ]
   node [
     id 695
     label "345"
-    gt "0"
+    value "0"
   ]
   node [
     id 696
     label "347"
-    gt "0"
+    value "0"
   ]
   node [
     id 697
     label "758"
-    gt "41"
+    value "41"
   ]
   node [
     id 698
     label "70"
-    gt "37"
+    value "37"
   ]
   node [
     id 699
     label "77"
-    gt "3"
+    value "3"
   ]
   node [
     id 700
     label "262"
-    gt "0"
+    value "0"
   ]
   node [
     id 701
     label "410"
-    gt "27"
+    value "27"
   ]
   node [
     id 702
     label "454"
-    gt "27"
+    value "27"
   ]
   node [
     id 703
     label "457"
-    gt "4"
+    value "4"
   ]
   node [
     id 704
     label "521"
-    gt "2"
+    value "2"
   ]
   node [
     id 705
     label "531"
-    gt "3"
+    value "3"
   ]
   node [
     id 706
     label "582"
-    gt "15"
+    value "15"
   ]
   node [
     id 707
     label "591"
-    gt "23"
+    value "23"
   ]
   node [
     id 708
     label "627"
-    gt "15"
+    value "15"
   ]
   node [
     id 709
     label "662"
-    gt "16"
+    value "16"
   ]
   node [
     id 710
     label "708"
-    gt "16"
+    value "16"
   ]
   node [
     id 711
     label "714"
-    gt "4"
+    value "4"
   ]
   node [
     id 712
     label "736"
-    gt "27"
+    value "27"
   ]
   node [
     id 713
     label "747"
-    gt "15"
+    value "15"
   ]
   node [
     id 714
     label "749"
-    gt "4"
+    value "4"
   ]
   node [
     id 715
     label "769"
-    gt "27"
+    value "27"
   ]
   node [
     id 716
     label "818"
-    gt "15"
+    value "15"
   ]
   node [
     id 717
     label "854"
-    gt "17"
+    value "17"
   ]
   node [
     id 718
     label "330"
-    gt "13"
+    value "13"
   ]
   node [
     id 719
     label "354"
-    gt "16"
+    value "16"
   ]
   node [
     id 720
     label "456"
-    gt "21"
+    value "21"
   ]
   node [
     id 721
     label "733"
-    gt "9"
+    value "9"
   ]
   node [
     id 722
     label "926"
-    gt "19"
+    value "19"
   ]
   node [
     id 723
     label "937"
-    gt "16"
+    value "16"
   ]
   node [
     id 724
     label "176"
-    gt "4"
+    value "4"
   ]
   node [
     id 725
     label "257"
-    gt "0"
+    value "0"
   ]
   node [
     id 726
     label "294"
-    gt "4"
+    value "4"
   ]
   node [
     id 727
     label "435"
-    gt "6"
+    value "6"
   ]
   node [
     id 728
     label "574"
-    gt "4"
+    value "4"
   ]
   node [
     id 729
     label "600"
-    gt "4"
+    value "4"
   ]
   node [
     id 730
     label "639"
-    gt "19"
+    value "19"
   ]
   node [
     id 731
     label "752"
-    gt "36"
+    value "36"
   ]
   node [
     id 732
     label "791"
-    gt "4"
+    value "4"
   ]
   node [
     id 733
     label "835"
-    gt "4"
+    value "4"
   ]
   node [
     id 734
     label "870"
-    gt "33"
+    value "33"
   ]
   node [
     id 735
     label "874"
-    gt "4"
+    value "4"
   ]
   node [
     id 736
     label "910"
-    gt "4"
+    value "4"
   ]
   node [
     id 737
     label "998"
-    gt "14"
+    value "14"
   ]
   node [
     id 738
     label "67"
-    gt "15"
+    value "15"
   ]
   node [
     id 739
     label "111"
-    gt "8"
+    value "8"
   ]
   node [
     id 740
     label "328"
-    gt "8"
+    value "8"
   ]
   node [
     id 741
     label "477"
-    gt "8"
+    value "8"
   ]
   node [
     id 742
     label "984"
-    gt "35"
+    value "35"
   ]
   node [
     id 743
     label "663"
-    gt "15"
+    value "15"
   ]
   node [
     id 744
     label "710"
-    gt "15"
+    value "15"
   ]
   node [
     id 745
     label "713"
-    gt "15"
+    value "15"
   ]
   node [
     id 746
     label "958"
-    gt "15"
+    value "15"
   ]
   node [
     id 747
     label "432"
-    gt "37"
+    value "37"
   ]
   node [
     id 748
     label "524"
-    gt "9"
+    value "9"
   ]
   node [
     id 749
     label "227"
-    gt "1"
+    value "1"
   ]
   node [
     id 750
     label "468"
-    gt "1"
+    value "1"
   ]
   node [
     id 751
     label "745"
-    gt "6"
+    value "6"
   ]
   node [
     id 752
     label "905"
-    gt "1"
+    value "1"
   ]
   node [
     id 753
     label "470"
-    gt "12"
+    value "12"
   ]
   node [
     id 754
     label "539"
-    gt "3"
+    value "3"
   ]
   node [
     id 755
     label "866"
-    gt "22"
+    value "22"
   ]
   node [
     id 756
     label "911"
-    gt "15"
+    value "15"
   ]
   node [
     id 757
     label "540"
-    gt "15"
+    value "15"
   ]
   node [
     id 758
     label "567"
-    gt "4"
+    value "4"
   ]
   node [
     id 759
     label "594"
-    gt "36"
+    value "36"
   ]
   node [
     id 760
     label "693"
-    gt "36"
+    value "36"
   ]
   node [
     id 761
     label "782"
-    gt "6"
+    value "6"
   ]
   node [
     id 762
     label "853"
-    gt "7"
+    value "7"
   ]
   node [
     id 763
     label "589"
-    gt "23"
+    value "23"
   ]
   node [
     id 764
     label "727"
-    gt "4"
+    value "4"
   ]
   node [
     id 765
     label "110"
-    gt "8"
+    value "8"
   ]
   node [
     id 766
     label "144"
-    gt "40"
+    value "40"
   ]
   node [
     id 767
     label "471"
-    gt "31"
+    value "31"
   ]
   node [
     id 768
     label "553"
-    gt "2"
+    value "2"
   ]
   node [
     id 769
     label "585"
-    gt "4"
+    value "4"
   ]
   node [
     id 770
     label "598"
-    gt "2"
+    value "2"
   ]
   node [
     id 771
     label "623"
-    gt "4"
+    value "4"
   ]
   node [
     id 772
     label "780"
-    gt "15"
+    value "15"
   ]
   node [
     id 773
     label "507"
-    gt "31"
+    value "31"
   ]
   node [
     id 774
     label "778"
-    gt "15"
+    value "15"
   ]
   node [
     id 775
     label "415"
-    gt "1"
+    value "1"
   ]
   node [
     id 776
     label "584"
-    gt "4"
+    value "4"
   ]
   node [
     id 777
     label "620"
-    gt "4"
+    value "4"
   ]
   node [
     id 778
     label "687"
-    gt "16"
+    value "16"
   ]
   node [
     id 779
     label "855"
-    gt "15"
+    value "15"
   ]
   node [
     id 780
     label "626"
-    gt "4"
+    value "4"
   ]
   node [
     id 781
     label "810"
-    gt "26"
+    value "26"
   ]
   node [
     id 782
     label "909"
-    gt "4"
+    value "4"
   ]
   node [
     id 783
     label "954"
-    gt "35"
+    value "35"
   ]
   node [
     id 784
     label "974"
-    gt "5"
+    value "5"
   ]
   node [
     id 785
     label "369"
-    gt "20"
+    value "20"
   ]
   node [
     id 786
     label "750"
-    gt "20"
+    value "20"
   ]
   node [
     id 787
     label "806"
-    gt "20"
+    value "20"
   ]
   node [
     id 788
     label "989"
-    gt "8"
+    value "8"
   ]
   node [
     id 789
     label "538"
-    gt "9"
+    value "9"
   ]
   node [
     id 790
     label "723"
-    gt "9"
+    value "9"
   ]
   node [
     id 791
     label "813"
-    gt "4"
+    value "4"
   ]
   node [
     id 792
     label "940"
-    gt "4"
+    value "4"
   ]
   node [
     id 793
     label "955"
-    gt "5"
+    value "5"
   ]
   node [
     id 794
     label "942"
-    gt "6"
+    value "6"
   ]
   node [
     id 795
     label "439"
-    gt "13"
+    value "13"
   ]
   node [
     id 796
     label "842"
-    gt "16"
+    value "16"
   ]
   node [
     id 797
     label "867"
-    gt "22"
+    value "22"
   ]
   node [
     id 798
     label "881"
-    gt "9"
+    value "9"
   ]
   node [
     id 799
     label "618"
-    gt "16"
+    value "16"
   ]
   node [
     id 800
     label "768"
-    gt "16"
+    value "16"
   ]
   node [
     id 801
     label "935"
-    gt "16"
+    value "16"
   ]
   node [
     id 802
     label "743"
-    gt "1"
+    value "1"
   ]
   node [
     id 803
     label "741"
-    gt "7"
+    value "7"
   ]
   node [
     id 804
     label "614"
-    gt "24"
+    value "24"
   ]
   node [
     id 805
     label "717"
-    gt "24"
+    value "24"
   ]
   node [
     id 806
     label "319"
-    gt "19"
+    value "19"
   ]
   node [
     id 807
     label "702"
-    gt "4"
+    value "4"
   ]
   node [
     id 808
     label "704"
-    gt "10"
+    value "10"
   ]
   node [
     id 809
     label "834"
-    gt "6"
+    value "6"
   ]
   node [
     id 810
     label "837"
-    gt "6"
+    value "6"
   ]
   node [
     id 811
     label "652"
-    gt "8"
+    value "8"
   ]
   node [
     id 812
     label "983"
-    gt "10"
+    value "10"
   ]
   node [
     id 813
     label "895"
-    gt "10"
+    value "10"
   ]
   node [
     id 814
     label "436"
-    gt "13"
+    value "13"
   ]
   node [
     id 815
     label "860"
-    gt "13"
+    value "13"
   ]
   node [
     id 816
     label "978"
-    gt "13"
+    value "13"
   ]
   node [
     id 817
     label "987"
-    gt "22"
+    value "22"
   ]
   node [
     id 818
     label "491"
-    gt "6"
+    value "6"
   ]
   node [
     id 819
     label "613"
-    gt "6"
+    value "6"
   ]
   node [
     id 820
     label "759"
-    gt "31"
+    value "31"
   ]
   node [
     id 821
     label "792"
-    gt "24"
+    value "24"
   ]
   node [
     id 822
     label "796"
-    gt "17"
+    value "17"
   ]
   node [
     id 823
     label "890"
-    gt "9"
+    value "9"
   ]
   node [
     id 824
     label "656"
-    gt "0"
+    value "0"
   ]
   node [
     id 825
     label "542"
-    gt "4"
+    value "4"
   ]
   node [
     id 826
     label "694"
-    gt "4"
+    value "4"
   ]
   node [
     id 827
     label "802"
-    gt "4"
+    value "4"
   ]
   node [
     id 828
     label "992"
-    gt "4"
+    value "4"
   ]
   node [
     id 829
     label "692"
-    gt "0"
+    value "0"
   ]
   node [
     id 830
     label "646"
-    gt "22"
+    value "22"
   ]
   node [
     id 831
     label "402"
-    gt "0"
+    value "0"
   ]
   node [
     id 832
     label "844"
-    gt "4"
+    value "4"
   ]
   node [
     id 833
     label "766"
-    gt "2"
+    value "2"
   ]
   node [
     id 834
     label "901"
-    gt "21"
+    value "21"
   ]
   node [
     id 835
     label "982"
-    gt "21"
+    value "21"
   ]
   node [
     id 836
     label "819"
-    gt "17"
+    value "17"
   ]
   node [
     id 837
     label "617"
-    gt "17"
+    value "17"
   ]
   node [
     id 838
     label "735"
-    gt "17"
+    value "17"
   ]
   node [
     id 839
     label "488"
-    gt "14"
+    value "14"
   ]
   node [
     id 840
     label "559"
-    gt "27"
+    value "27"
   ]
   node [
     id 841
     label "577"
-    gt "27"
+    value "27"
   ]
   node [
     id 842
     label "999"
-    gt "15"
+    value "15"
   ]
   node [
     id 843
     label "779"
-    gt "15"
+    value "15"
   ]
   node [
     id 844
     label "344"
-    gt "0"
+    value "0"
   ]
   node [
     id 845
     label "575"
-    gt "0"
+    value "0"
   ]
   node [
     id 846
     label "512"
-    gt "23"
+    value "23"
   ]
   node [
     id 847
     label "645"
-    gt "1"
+    value "1"
   ]
   node [
     id 848
     label "906"
-    gt "23"
+    value "23"
   ]
   node [
     id 849
     label "907"
-    gt "0"
+    value "0"
   ]
   node [
     id 850
     label "382"
-    gt "7"
+    value "7"
   ]
   node [
     id 851
     label "383"
-    gt "7"
+    value "7"
   ]
   node [
     id 852
     label "398"
-    gt "7"
+    value "7"
   ]
   node [
     id 853
     label "668"
-    gt "0"
+    value "0"
   ]
   node [
     id 854
     label "851"
-    gt "0"
+    value "0"
   ]
   node [
     id 855
     label "241"
-    gt "19"
+    value "19"
   ]
   node [
     id 856
     label "927"
-    gt "19"
+    value "19"
   ]
   node [
     id 857
     label "930"
-    gt "19"
+    value "19"
   ]
   node [
     id 858
     label "631"
-    gt "19"
+    value "19"
   ]
   node [
     id 859
     label "676"
-    gt "17"
+    value "17"
   ]
   node [
     id 860
     label "724"
-    gt "13"
+    value "13"
   ]
   node [
     id 861
     label "799"
-    gt "15"
+    value "15"
   ]
   node [
     id 862
     label "821"
-    gt "24"
+    value "24"
   ]
   node [
     id 863
     label "857"
-    gt "0"
+    value "0"
   ]
   node [
     id 864
     label "882"
-    gt "21"
+    value "21"
   ]
   node [
     id 865
     label "934"
-    gt "35"
+    value "35"
   ]
   node [
     id 866
     label "742"
-    gt "23"
+    value "23"
   ]
   node [
     id 867
     label "276"
-    gt "4"
+    value "4"
   ]
   node [
     id 868
     label "829"
-    gt "4"
+    value "4"
   ]
   node [
     id 869
     label "875"
-    gt "31"
+    value "31"
   ]
   node [
     id 870
     label "416"
-    gt "9"
+    value "9"
   ]
   node [
     id 871
     label "479"
-    gt "1"
+    value "1"
   ]
   node [
     id 872
     label "629"
-    gt "1"
+    value "1"
   ]
   node [
     id 873
     label "869"
-    gt "7"
+    value "7"
   ]
   node [
     id 874
     label "348"
-    gt "0"
+    value "0"
   ]
   node [
     id 875
     label "628"
-    gt "7"
+    value "7"
   ]
   node [
     id 876
     label "705"
-    gt "4"
+    value "4"
   ]
   node [
     id 877
     label "968"
-    gt "15"
+    value "15"
   ]
   node [
     id 878
     label "969"
-    gt "15"
+    value "15"
   ]
   node [
     id 879
     label "709"
-    gt "16"
+    value "16"
   ]
   node [
     id 880
     label "800"
-    gt "15"
+    value "15"
   ]
   node [
     id 881
     label "941"
-    gt "41"
+    value "41"
   ]
   node [
     id 882
     label "682"
-    gt "0"
+    value "0"
   ]
   node [
     id 883
     label "824"
-    gt "0"
+    value "0"
   ]
   node [
     id 884
     label "839"
-    gt "0"
+    value "0"
   ]
   node [
     id 885
     label "903"
-    gt "0"
+    value "0"
   ]
   node [
     id 886
     label "689"
-    gt "4"
+    value "4"
   ]
   node [
     id 887
     label "677"
-    gt "26"
+    value "26"
   ]
   node [
     id 888
     label "850"
-    gt "4"
+    value "4"
   ]
   node [
     id 889
     label "793"
-    gt "23"
+    value "23"
   ]
   node [
     id 890
     label "637"
-    gt "19"
+    value "19"
   ]
   node [
     id 891
     label "977"
-    gt "19"
+    value "19"
   ]
   node [
     id 892
     label "636"
-    gt "21"
+    value "21"
   ]
   node [
     id 893
     label "755"
-    gt "21"
+    value "21"
   ]
   node [
     id 894
     label "928"
-    gt "21"
+    value "21"
   ]
   node [
     id 895
     label "650"
-    gt "1"
+    value "1"
   ]
   node [
     id 896
     label "596"
-    gt "23"
+    value "23"
   ]
   node [
     id 897
     label "898"
-    gt "22"
+    value "22"
   ]
   node [
     id 898
     label "920"
-    gt "23"
+    value "23"
   ]
   node [
     id 899
     label "841"
-    gt "7"
+    value "7"
   ]
   node [
     id 900
     label "871"
-    gt "0"
+    value "0"
   ]
   node [
     id 901
     label "939"
-    gt "6"
+    value "6"
   ]
   node [
     id 902
     label "622"
-    gt "21"
+    value "21"
   ]
   node [
     id 903
     label "879"
-    gt "19"
+    value "19"
   ]
   node [
     id 904
     label "472"
-    gt "6"
+    value "6"
   ]
   node [
     id 905
     label "534"
-    gt "4"
+    value "4"
   ]
   node [
     id 906
     label "831"
-    gt "31"
+    value "31"
   ]
   node [
     id 907
     label "1003"
-    gt "6"
+    value "6"
   ]
   node [
     id 908
     label "986"
-    gt "22"
+    value "22"
   ]
   node [
     id 909
     label "897"
-    gt "10"
+    value "10"
   ]
   node [
     id 910
     label "657"
-    gt "17"
+    value "17"
   ]
   node [
     id 911
     label "737"
-    gt "28"
+    value "28"
   ]
   node [
     id 912
     label "774"
-    gt "21"
+    value "21"
   ]
   node [
     id 913
     label "843"
-    gt "4"
+    value "4"
   ]
   node [
     id 914
     label "943"
-    gt "7"
+    value "7"
   ]
   node [
     id 915
     label "475"
-    gt "8"
+    value "8"
   ]
   node [
     id 916
     label "889"
-    gt "38"
+    value "38"
   ]
   node [
     id 917
     label "630"
-    gt "20"
+    value "20"
   ]
   node [
     id 918
     label "825"
-    gt "9"
+    value "9"
   ]
   node [
     id 919
     label "858"
-    gt "9"
+    value "9"
   ]
   node [
     id 920
     label "904"
-    gt "1"
+    value "1"
   ]
   node [
     id 921
     label "794"
-    gt "17"
+    value "17"
   ]
   node [
     id 922
     label "945"
-    gt "9"
+    value "9"
   ]
   node [
     id 923
     label "962"
-    gt "9"
+    value "9"
   ]
   node [
     id 924
     label "923"
-    gt "9"
+    value "9"
   ]
   node [
     id 925
     label "894"
-    gt "9"
+    value "9"
   ]
   node [
     id 926
     label "836"
-    gt "4"
+    value "4"
   ]
   node [
     id 927
     label "848"
-    gt "3"
+    value "3"
   ]
   node [
     id 928
     label "861"
-    gt "5"
+    value "5"
   ]
   node [
     id 929
     label "770"
-    gt "16"
+    value "16"
   ]
   node [
     id 930
     label "757"
-    gt "10"
+    value "10"
   ]
   node [
     id 931
     label "414"
-    gt "1"
+    value "1"
   ]
   node [
     id 932
     label "632"
-    gt "7"
+    value "7"
   ]
   node [
     id 933
     label "985"
-    gt "7"
+    value "7"
   ]
   node [
     id 934
     label "659"
-    gt "6"
+    value "6"
   ]
   node [
     id 935
     label "959"
-    gt "4"
+    value "4"
   ]
   node [
     id 936
     label "960"
-    gt "6"
+    value "6"
   ]
   node [
     id 937
     label "961"
-    gt "4"
+    value "4"
   ]
   node [
     id 938
     label "680"
-    gt "0"
+    value "0"
   ]
   node [
     id 939
     label "948"
-    gt "6"
+    value "6"
   ]
   node [
     id 940
     label "761"
-    gt "7"
+    value "7"
   ]
   node [
     id 941
     label "873"
-    gt "15"
+    value "15"
   ]
   node [
     id 942
     label "773"
-    gt "38"
+    value "38"
   ]
   node [
     id 943
     label "891"
-    gt "38"
+    value "38"
   ]
   node [
     id 944
     label "993"
-    gt "21"
+    value "21"
   ]
   node [
     id 945
     label "784"
-    gt "28"
+    value "28"
   ]
   node [
     id 946
     label "864"
-    gt "28"
+    value "28"
   ]
   node [
     id 947
     label "884"
-    gt "21"
+    value "21"
   ]
   node [
     id 948
     label "888"
-    gt "32"
+    value "32"
   ]
   node [
     id 949
     label "991"
-    gt "32"
+    value "32"
   ]
   node [
     id 950
     label "449"
-    gt "1"
+    value "1"
   ]
   node [
     id 951
     label "603"
-    gt "1"
+    value "1"
   ]
   node [
     id 952
     label "605"
-    gt "1"
+    value "1"
   ]
   node [
     id 953
     label "916"
-    gt "1"
+    value "1"
   ]
   node [
     id 954
     label "795"
-    gt "10"
+    value "10"
   ]
   node [
     id 955
     label "830"
-    gt "14"
+    value "14"
   ]
   node [
     id 956
     label "463"
-    gt "30"
+    value "30"
   ]
   node [
     id 957
     label "561"
-    gt "34"
+    value "34"
   ]
   node [
     id 958
     label "701"
-    gt "30"
+    value "30"
   ]
   node [
     id 959
     label "893"
-    gt "14"
+    value "14"
   ]
   node [
     id 960
     label "912"
-    gt "14"
+    value "14"
   ]
   node [
     id 961
     label "522"
-    gt "4"
+    value "4"
   ]
   node [
     id 962
     label "817"
-    gt "4"
+    value "4"
   ]
   node [
     id 963
     label "606"
-    gt "21"
+    value "21"
   ]
   node [
     id 964
     label "673"
-    gt "23"
+    value "23"
   ]
   node [
     id 965
     label "827"
-    gt "14"
+    value "14"
   ]
   node [
     id 966
     label "972"
-    gt "15"
+    value "15"
   ]
   node [
     id 967
     label "762"
-    gt "21"
+    value "21"
   ]
   node [
     id 968
     label "583"
-    gt "2"
+    value "2"
   ]
   node [
     id 969
     label "688"
-    gt "4"
+    value "4"
   ]
   node [
     id 970
     label "790"
-    gt "4"
+    value "4"
   ]
   node [
     id 971
     label "775"
-    gt "1"
+    value "1"
   ]
   node [
     id 972
     label "1002"
-    gt "1"
+    value "1"
   ]
   node [
     id 973
     label "876"
-    gt "30"
+    value "30"
   ]
   node [
     id 974
     label "578"
-    gt "27"
+    value "27"
   ]
   node [
     id 975
     label "846"
-    gt "1"
+    value "1"
   ]
   node [
     id 976
     label "938"
-    gt "4"
+    value "4"
   ]
   node [
     id 977
     label "634"
-    gt "21"
+    value "21"
   ]
   node [
     id 978
     label "946"
-    gt "23"
+    value "23"
   ]
   node [
     id 979
     label "995"
-    gt "6"
+    value "6"
   ]
   node [
     id 980
     label "788"
-    gt "24"
+    value "24"
   ]
   node [
     id 981
     label "944"
-    gt "23"
+    value "23"
   ]
   node [
     id 982
     label "862"
-    gt "2"
+    value "2"
   ]
   node [
     id 983
     label "965"
-    gt "4"
+    value "4"
   ]
   node [
     id 984
     label "973"
-    gt "14"
+    value "14"
   ]
   node [
     id 985
     label "975"
-    gt "9"
+    value "9"
   ]
   edge [
     source 0

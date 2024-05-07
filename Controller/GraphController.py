@@ -99,7 +99,7 @@ class GraphController:
                 self.view.numb_plots += 1
 
             # Cluster
-            sc = SpectralClustering(k)
+            sc = SpectralClustering(k, affinity='precomputed')  # Specify affinity as precomputed
             sc.fit(adj_mat)
 
             # Plot the spectral clustering result
@@ -148,11 +148,13 @@ class GraphController:
                                 # Convert 'value' to an integer if it's not already
                                 value = int(data['value']) if not isinstance(data['value'], int) else data['value']
                                 ground_truth.append(value)
+                            elif 'gt' in data:
+                                # Ground truth is a string, append it directly
+                                ground_truth.append(data['gt'])
                             else:
-                                # If 'value' attribute is missing, assign 0 as the default label
+                                # If neither 'value' nor 'gt' attribute is found, assign 0 as the default label
                                 ground_truth.append(0)
 
-                        
                         # Convert node labels to integers
                         G = nx.convert_node_labels_to_integers(G)
                         
