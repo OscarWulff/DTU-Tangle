@@ -48,6 +48,34 @@ class DataSetGraph(DataType):
 #                unique_cuts.add((tuple(cut.A), tuple(cut.Ac)))
 #                self.cuts.append(cut)
 
+
+    def generate_kmeans_cut(self, G):
+        """
+        Generate a cut using KMeans.
+        
+        Parameters:
+        G (networkx.Graph): Graph
+        
+        Returns:
+        cut (Cut): Cut instance
+        """
+        # Convert graph to adjacency matrix
+        adjacency_matrix = nx.to_numpy_array(G)
+        
+        # Apply KMeans
+        kmeans = KMeans(n_clusters=2, random_state=random.randint(0, 100))
+        labels = kmeans.fit_predict(adjacency_matrix)
+        
+        # Create a new cut
+        cut = Cut()
+        cut.A = [node for node, label in zip(G.nodes, labels) if label == 0]
+        cut.Ac = [node for node, label in zip(G.nodes, labels) if label == 1]
+        
+        if len(cut.A) == 0 or len(cut.Ac) == 0:
+            return None  # Invalid cut, skip
+        
+        return cut
+    
     def generate_spectral_cut(self, G):
         """
         Generate a cut using Spectral Clustering.
