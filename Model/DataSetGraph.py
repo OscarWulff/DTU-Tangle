@@ -1,12 +1,15 @@
 import random
 import networkx as nx
+from sklearn.cluster import KMeans, SpectralClustering
 from Model.Cut import Cut
 from Model.DataType import DataType
+import numpy as np
 
 class DataSetGraph(DataType):
-    def __init__(self, agreement_param, cuts=[], search_tree=None):
+    def __init__(self, agreement_param, k, cuts=[], search_tree=None):
         super().__init__(agreement_param, cuts, search_tree)
         self.G = None  # Attribute to hold the graph
+        self.k = k  # Number of clusters for spectral clustering
 
     def initialize(self):
         if self.G is None:
@@ -23,7 +26,7 @@ class DataSetGraph(DataType):
         G (networkx.Graph): Graph
         """
         # only generate a few initial cuts based on the size of the graph
-        cuts = min(10, len(G.nodes))
+        cuts = 8
         self.cuts = []
         unique_cuts = set()
         while len(self.cuts) < cuts:
@@ -36,8 +39,6 @@ class DataSetGraph(DataType):
             if (tuple(cut.A), tuple(cut.Ac)) not in unique_cuts and (tuple(cut.Ac), tuple(cut.A)) not in unique_cuts:
                 unique_cuts.add((tuple(cut.A), tuple(cut.Ac)))
                 self.cuts.append(cut)
-
-            
 
     def cost_function_Graph(self):
         """ 
@@ -94,7 +95,7 @@ class DataSetGraph(DataType):
         """Return cuts in list of ascending order of the cost."""
         return sorted(self.cuts, key=lambda x: x.cost)
 
-
+# Helper function to generate initial partition using greedy modularity communities
 def generate_initial_partition(G):
         """Generate initial partition randomly."""
         partition = ([], [])

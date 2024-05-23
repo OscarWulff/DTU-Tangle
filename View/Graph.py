@@ -4,8 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import networkx as nx
 import numpy as np
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QFileDialog, QComboBox, \
-    QLabel, QLineEdit, QApplication, QSizePolicy
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QFileDialog, QLabel, QLineEdit, QApplication, QSizePolicy
 from PyQt5 import QtCore
 from sklearn.metrics import normalized_mutual_info_score
 
@@ -36,8 +35,13 @@ class GraphWindow(QMainWindow):
         self.generated_ground_truth = None
         self.tangles_plot = None
         self.spectral_plot = None
+        self.louvain_plot = None
         self.nmi_score_tangles = None
         self.nmi_score_spectral = None
+        self.nmi_score_louvain = None
+        self.tangles_time = None
+        self.spectral_time = None
+        self.louvain_time = None
 
         # Flag to track if a random graph has been generated
         self.graph_generated_flag = False
@@ -45,7 +49,7 @@ class GraphWindow(QMainWindow):
         # Add buttons
         button_layout = QHBoxLayout()
 
-        self.upload_data_button = QPushButton("Upload Data as .csv", self)
+        self.upload_data_button = QPushButton("Upload Data as .gml file", self)
         button_layout.addWidget(self.upload_data_button)
 
         self.generate_data_button = QPushButton("Generate Data", self)
@@ -60,10 +64,13 @@ class GraphWindow(QMainWindow):
         button_layout.addWidget(self.generate_tangles_button)
         self.generate_tangles_button.hide()
 
-
         self.generate_spectral_button = QPushButton("Apply Spectral", self)
         button_layout.addWidget(self.generate_spectral_button)
         self.generate_spectral_button.hide()
+
+        self.generate_louvain_button = QPushButton("Apply Louvain", self)  # Add Louvain button
+        button_layout.addWidget(self.generate_louvain_button)
+        self.generate_louvain_button.hide()
 
         self.numb_nodes = QLineEdit()
         self.numb_nodes.setFixedSize(300, 30)
@@ -130,6 +137,7 @@ class GraphWindow(QMainWindow):
         self.generate_random_button.show()
         self.generate_spectral_button.show()
         self.generate_tangles_button.show()
+        self.generate_louvain_button.show()  # Show Louvain button
         self.numb_nodes.show()
         self.numb_clusters.show()
         self.average_edges_to_same_cluster.show()
@@ -144,7 +152,6 @@ class GraphWindow(QMainWindow):
         self.average_edges_to_other_clusters.show()
         self.agreement_parameter.show()
         self.k_spectral.show()
-
 
     def setup_plots(self):
         self.figure.clear()
@@ -162,10 +169,10 @@ class GraphWindow(QMainWindow):
 
             if self.tangles_plot is not None:
                 plot = self.figure.add_subplot(122)
-                plot.set_title('Tangles (NMI = {})'.format(self.nmi_score_tangles))
+                plot.set_title('Tangles (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_tangles, self.tangles_time))
                 self.visualize_graph(self.generated_graph, self.tangles_plot)
-            
-        else:
+
+        elif self.numb_plots == 3:
             if self.generated_graph is not None:
                 plot = self.figure.add_subplot(221)
                 plot.set_title('Ground truth')
@@ -173,17 +180,37 @@ class GraphWindow(QMainWindow):
 
             if self.tangles_plot is not None:
                 plot = self.figure.add_subplot(222)
-                plot.set_title('Tangles (NMI = {})'.format(self.nmi_score_tangles))
+                plot.set_title('Tangles (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_tangles, self.tangles_time))
                 self.visualize_graph(self.generated_graph, self.tangles_plot)
 
             if self.spectral_plot is not None:
                 plot = self.figure.add_subplot(223)
-                plot.set_title('Spectral (NMI = {})'.format(self.nmi_score_spectral))
+                plot.set_title('Spectral (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_spectral, self.spectral_time))
                 self.visualize_graph(self.generated_graph, self.spectral_plot)
+
+        elif self.numb_plots == 4:
+            if self.generated_graph is not None:
+                plot = self.figure.add_subplot(221)
+                plot.set_title('Ground truth')
+                self.visualize_graph(self.generated_graph, self.generated_ground_truth)
+
+            if self.tangles_plot is not None:
+                plot = self.figure.add_subplot(222)
+                plot.set_title('Tangles (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_tangles, self.tangles_time))
+                self.visualize_graph(self.generated_graph, self.tangles_plot)
+
+            if self.spectral_plot is not None:
+                plot = self.figure.add_subplot(223)
+                plot.set_title('Spectral (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_spectral, self.spectral_time))
+                self.visualize_graph(self.generated_graph, self.spectral_plot)
+
+            if self.louvain_plot is not None:
+                plot = self.figure.add_subplot(224)
+                plot.set_title('Louvain (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_louvain, self.louvain_time))
+                self.visualize_graph(self.generated_graph, self.louvain_plot)
 
         self.figure.subplots_adjust(hspace=0.5, wspace=0.5)
         self.canvas.draw()
-
 
 
     def visualize_graph(self, graph, plot):
@@ -194,30 +221,22 @@ class GraphWindow(QMainWindow):
         color_map = {cluster: color for cluster, color in zip(clusters, colors)}
         node_colors = [color_map[cluster] for cluster in plot]
 
-
         nx.draw(graph, pos, with_labels=True, node_color=node_colors, node_size=500, edge_color='black',
                 linewidths=1, font_size=10)
 
         nx.draw_networkx_edges(graph, pos, edge_color='black')
 
-
-
     def go_back_to_main_page(self):
         if self.upload_data_button.isVisible() or self.generate_data_button.isVisible():
-            # If either of the upload or generate data buttons are visible,
-            # it means the user is on the page where they choose between uploading or generating data.
-            # In this case, we close the current window and return to the main page.
-            self.close()  # Close the current window
-            self.main_page.show()  # Show the main page
+            self.close()
+            self.main_page.show()
         else:
-            # Otherwise, the user is on some other page (e.g., after choosing upload or generate data)
-            # and we go back to the page where they choose between uploading or generating data.
-            self.generate_data_button.show()  # Show the generate data button
-            self.upload_data_button.show()  # Show the upload data button
-            # Hide other buttons and input fields
+            self.generate_data_button.show()
+            self.upload_data_button.show()
             self.generate_random_button.hide()
             self.generate_tangles_button.hide()
             self.generate_spectral_button.hide()
+            self.generate_louvain_button.hide()
             self.numb_nodes.hide()
             self.numb_clusters.hide()
             self.average_edges_to_same_cluster.hide()
@@ -225,17 +244,16 @@ class GraphWindow(QMainWindow):
             self.agreement_parameter.hide()
             self.k_spectral.hide()
 
-
     def upload_data_show(self):
         self.upload_data_button.hide()
         self.generate_data_button.hide()
         self.generate_random_button.hide()
         self.generate_spectral_button.show()
         self.generate_tangles_button.show()
+        self.generate_louvain_button.show()  # Show Louvain button
         self.numb_nodes.hide()
         self.numb_clusters.hide()
         self.average_edges_to_same_cluster.hide()
         self.average_edges_to_other_clusters.hide()
         self.agreement_parameter.show()
         self.k_spectral.show()
-        

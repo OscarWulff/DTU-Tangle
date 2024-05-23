@@ -109,15 +109,15 @@ class GraphTest:
     
 if __name__ == "__main__":
     test = GraphTest()
-    num_of_clusters = 10
+    num_of_clusters = 20
     agreement_parameter = [4, 7, 10, 13, 16]
-    avg_edges_to_same_cluster = 0.6
-    avg_edges_to_other_clusters = 0.4
+    avg_edges_to_same_cluster = 0.7
+    avg_edges_to_other_clusters = 0.3
     k = num_of_clusters
     num_iterations = 10
 
     # Varying number of nodes for testing
-    num_of_nodes_list = [100, 200, 300, 400, 500]
+    num_of_nodes_list = [200, 400, 600, 800, 1000]
 
     avg_nmi_scores_list = []
     avg_running_times_list = []
