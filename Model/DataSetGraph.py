@@ -30,16 +30,51 @@ class DataSetGraph(DataType):
         self.cuts = []
         unique_cuts = set()
         while len(self.cuts) < cuts:
-            #initial_partition = generate_initial_partition(G)
-            partition = nx.algorithms.community.kernighan_lin_bisection(G, max_iter=2, weight='weight', seed=None)
-            cut = Cut()
-            cut.A = partition[0]
-            cut.Ac = partition[1]
-            # check if cut is unique
-            if (tuple(cut.A), tuple(cut.Ac)) not in unique_cuts and (tuple(cut.Ac), tuple(cut.A)) not in unique_cuts:
-                unique_cuts.add((tuple(cut.A), tuple(cut.Ac)))
-                self.cuts.append(cut)
+            # Generate partition using Spectral Clustering
+            cut = self.generate_spectral_cut(G)
+            if cut:
+                # Check if the cut is unique
+                if (tuple(cut.A), tuple(cut.Ac)) not in unique_cuts and (tuple(cut.Ac), tuple(cut.A)) not in unique_cuts:
+                    unique_cuts.add((tuple(cut.A), tuple(cut.Ac)))
+                    self.cuts.append(cut)
+#        while len(self.cuts) < cuts:
+#            #initial_partition = generate_initial_partition(G)
+#            partition = nx.algorithms.community.kernighan_lin_bisection(G, max_iter=2, weight='weight', seed=None)
+#            cut = Cut()
+#            cut.A = partition[0]
+#            cut.Ac = partition[1]
+#            # check if cut is unique
+#            if (tuple(cut.A), tuple(cut.Ac)) not in unique_cuts and (tuple(cut.Ac), tuple(cut.A)) not in unique_cuts:
+#                unique_cuts.add((tuple(cut.A), tuple(cut.Ac)))
+#                self.cuts.append(cut)
 
+    def generate_spectral_cut(self, G):
+        """
+        Generate a cut using Spectral Clustering.
+        
+        Parameters:
+        G (networkx.Graph): Graph
+        
+        Returns:
+        cut (Cut): Cut instance
+        """
+        # Convert graph to adjacency matrix
+        adjacency_matrix = nx.to_numpy_array(G)
+        
+        # Apply Spectral Clustering
+        sc = SpectralClustering(2, affinity='precomputed', n_init=10, random_state=random.randint(0, 100))
+        labels = sc.fit_predict(adjacency_matrix)
+        
+        # Create a new cut
+        cut = Cut()
+        cut.A = [node for node, label in zip(G.nodes, labels) if label == 0]
+        cut.Ac = [node for node, label in zip(G.nodes, labels) if label == 1]
+        
+        if len(cut.A) == 0 or len(cut.Ac) == 0:
+            return None  # Invalid cut, skip
+        
+        return cut
+    
     def cost_function_Graph(self):
         """ 
         Calculate the cost of cuts for Data Set Graph.
