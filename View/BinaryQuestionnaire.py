@@ -36,15 +36,24 @@ class BinaryQuestionnaireWindow(QMainWindow):
 
         # Variables of figures
         self.numb_plots = 1
+
         self.tangles_plot = None
         self.tangles_points = None
+
         self.dbscan_plot = None
         self.dbscan_points = None
+
         self.kmeans_plot = None
         self.kmeans_points = None
+
         self.nmi_score_tangles = None
         self.nmi_score_kmeans = None
         self.nmi_score_dbscan = None
+
+        self.time_tangles = None
+        self.time_kmeans = None
+        self.time_dbscan = None
+
         self.nmi_checked = False
         self.prob_checked = False
 
@@ -379,7 +388,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
 
         if self.numb_plots == 1:
             plot = self.figure.add_subplot(111)
-            plot.set_title('Ground thruth')
+            plot.set_title('Ground truth')
             self.plot_points(self.generated_data.points, self.generated_data.ground_truth, plot)
         elif self.numb_plots == 2:
             if self.generated_data != None: 
@@ -388,18 +397,18 @@ class BinaryQuestionnaireWindow(QMainWindow):
                 self.plot_points(self.generated_data.points, self.generated_data.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(122)
-                plot.set_title(f'Tangles - NMI Score: {self.nmi_score_tangles}')
+                plot.set_title(f'Tangles - NMI Score: {self.nmi_score_tangles}, Time: {self.time_tangles} s')
                 if self.prob_checked:
                     self.plot_points_prob(self.tangles_points, self.tangles_plot, plot)
                 else:
                     self.plot_points(self.tangles_points, self.tangles_plot, plot)
             if self.dbscan_plot is not None: 
                 plot = self.figure.add_subplot(122)
-                plot.set_title(f'DBSCAN - NMI Score: {self.nmi_score_dbscan}')
+                plot.set_title(f'DBSCAN - NMI Score: {self.nmi_score_dbscan}, Time: {self.time_dbscan} s')
                 self.plot_points(self.dbscan_points, self.dbscan_plot, plot)
             if self.kmeans_plot is not None: 
                 plot = self.figure.add_subplot(122)
-                plot.set_title(f'K-means - NMI Score: {self.nmi_score_kmeans}')
+                plot.set_title(f'K-means - NMI Score: {self.nmi_score_kmeans}, Time: {self.time_kmeans} s')
                 self.plot_points(self.kmeans_points, self.kmeans_plot, plot)
         else:
             if self.generated_data != None: 
@@ -408,18 +417,18 @@ class BinaryQuestionnaireWindow(QMainWindow):
                 self.plot_points(self.generated_data.points, self.generated_data.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(222)
-                plot.set_title(f'Tangles - NMI Score: {self.nmi_score_tangles}')
+                plot.set_title(f'Tangles - NMI Score: {self.nmi_score_tangles}, Time: {self.time_tangles} s')
                 if self.prob_checked:
                     self.plot_points_prob(self.tangles_points, self.tangles_plot, plot)
                 else:
                     self.plot_points(self.tangles_points, self.tangles_plot, plot)
             if self.dbscan_plot is not None: 
                 plot = self.figure.add_subplot(223)
-                plot.set_title(f'DBSCAN - NMI Score: {self.nmi_score_dbscan}')
+                plot.set_title(f'DBSCAN - NMI Score: {self.nmi_score_dbscan}, Time: {self.time_dbscan} s')
                 self.plot_points(self.dbscan_points, self.dbscan_plot, plot)
             if self.kmeans_plot is not None: 
                 plot = self.figure.add_subplot(224)
-                plot.set_title(f'K-means - NMI Score: {self.nmi_score_kmeans}')
+                plot.set_title(f'K-means - NMI Score: {self.nmi_score_kmeans}, Time: {self.time_kmeans} s')
                 self.plot_points(self.kmeans_points, self.kmeans_plot, plot)
 
         self.figure.subplots_adjust(hspace=0.5, wspace=0.5)
@@ -470,7 +479,10 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.generate_Kmeans_button.show()
         self.generate_DBSCAN_button.show()
         self.generate_tangles_button.show()
+        self.epsilon.show()
+        self.min_samples.show()
         self.k_kmeans.show()
+        self.sim_fun.show()
         self.agreement_parameter.show()
         
 
