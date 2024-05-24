@@ -54,6 +54,7 @@ class BinaryQuestionnaireController:
 
 
     def tangles(self):
+        start_tangle = time.time()
         a = self.view.agreement_parameter.text()
        
 
@@ -76,6 +77,8 @@ class BinaryQuestionnaireController:
         
         hard = hard_clustering(soft)
 
+        self.view.time_tangles = round(time.time() - start_tangle, 2)
+
 
         if self.view.tangles_plot == None: 
             self.view.numb_plots += 1    
@@ -92,6 +95,7 @@ class BinaryQuestionnaireController:
 
 
     def dbscan(self):
+        dbscan_time = time.time()
         min_s = self.view.min_samples.text()
         eps = self.view.epsilon.text()
         print("min s :", min_s)
@@ -107,14 +111,18 @@ class BinaryQuestionnaireController:
         generated_data.points = self.view.generated_data.points
         self.view.dbscan_points = self.view.generated_data.points
 
+        
+
         if self.view.dbscan_plot is None: 
             self.view.numb_plots += 1
 
         self.view.dbscan_plot = generated_data.DBscan(min_s, eps)
+        self.view.time_dbscan = round(time.time() - dbscan_time, 2)
         self.view.nmi_score_dbscan = round(self.view.generated_data.nmi_score(self.view.dbscan_plot.tolist()), 2)
         self.view.setup_plots()
 
     def kmeans(self):
+        kmeans_time = time.time()
         k = self.view.k_kmeans.text()
 
         try:      
@@ -128,6 +136,7 @@ class BinaryQuestionnaireController:
         if self.view.kmeans_plot is None: 
             self.view.numb_plots += 1
         self.view.kmeans_plot = generated_data.k_means(k)
+        self.view.time_kmeans = round(time.time() - kmeans_time, 2)
         self.view.nmi_score_kmeans = round(self.view.generated_data.nmi_score(self.view.kmeans_plot.tolist()), 2)
         self.view.setup_plots()
 
