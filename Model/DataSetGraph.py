@@ -18,90 +18,69 @@ class DataSetGraph(DataType):
         self.generate_multiple_cuts(self.G)
         self.cost_function_Graph()
 
-    def generate_multiple_cuts(self, G): 
+    def generate_multiple_cuts(self, G , initial_partition_method="K-Means"): 
         """ 
         Generate multiple cuts for the graph.
         
         Parameters:
         G (networkx.Graph): Graph
         """
-        # only generate a few initial cuts based on the size of the graph
-        cuts = 8
+        # Only generate a few initial cuts based on the size of the graph
+        cuts = 10
         self.cuts = []
         unique_cuts = set()
-        while len(self.cuts) < cuts:
-            # Generate partition using Spectral Clustering
-            cut = self.generate_spectral_cut(G)
-            if cut:
-                # Check if the cut is unique
+        if initial_partition_method == "K-Means":
+            bipartitions = self.generate_kmeans_cut(G)
+            if bipartitions:
+                for partition in bipartitions:
+                    # Create a new cut object
+                    cut = Cut()
+                    cut.A = partition[0]
+                    cut.Ac = partition[1]
+                    self.cuts.append(cut)
+        elif initial_partition_method == "Kernighan-Lin":
+            while len(self.cuts) < cuts:
+                partition = nx.algorithms.community.kernighan_lin_bisection(G, max_iter=2, weight='weight', seed=None)
+                cut = Cut()
+                cut.A = partition[0]
+                cut.Ac = partition[1]
+                # check if cut is unique
                 if (tuple(cut.A), tuple(cut.Ac)) not in unique_cuts and (tuple(cut.Ac), tuple(cut.A)) not in unique_cuts:
                     unique_cuts.add((tuple(cut.A), tuple(cut.Ac)))
                     self.cuts.append(cut)
-#        while len(self.cuts) < cuts:
-#            #initial_partition = generate_initial_partition(G)
-#            partition = nx.algorithms.community.kernighan_lin_bisection(G, max_iter=2, weight='weight', seed=None)
-#            cut = Cut()
-#            cut.A = partition[0]
-#            cut.Ac = partition[1]
-#            # check if cut is unique
-#            if (tuple(cut.A), tuple(cut.Ac)) not in unique_cuts and (tuple(cut.Ac), tuple(cut.A)) not in unique_cuts:
-#                unique_cuts.add((tuple(cut.A), tuple(cut.Ac)))
-#                self.cuts.append(cut)
+                else:
+                    print("Duplicate cut found.")
+        else:
+            raise ValueError("Invalid initial partitioning method.")
 
 
     def generate_kmeans_cut(self, G):
         """
-        Generate a cut using KMeans.
+        Generate cuts using KMeans.
         
         Parameters:
         G (networkx.Graph): Graph
         
         Returns:
-        cut (Cut): Cut instance
+        list of tuples: Each tuple represents a bipartition (A, Ac)
         """
         # Convert graph to adjacency matrix
-        adjacency_matrix = nx.to_numpy_array(G)
+        adjacency_matrix = nx.convert_matrix.to_numpy_array(G)
         
         # Apply KMeans
-        kmeans = KMeans(n_clusters=2, random_state=random.randint(0, 100))
+        kmeans = KMeans(n_clusters=self.k)
         labels = kmeans.fit_predict(adjacency_matrix)
         
-        # Create a new cut
-        cut = Cut()
-        cut.A = [node for node, label in zip(G.nodes, labels) if label == 0]
-        cut.Ac = [node for node, label in zip(G.nodes, labels) if label == 1]
+        # Generate bipartitions based on centroids
+        bipartitions = []
+        for i in range(self.k):
+            # Nodes in the same cluster as the centroid
+            partition_A = set(node for node, label in zip(G.nodes, labels) if label == i)
+            # Nodes not in the same cluster as the centroid
+            partition_Ac = set(G.nodes) - partition_A
+            bipartitions.append((partition_A, partition_Ac))
         
-        if len(cut.A) == 0 or len(cut.Ac) == 0:
-            return None  # Invalid cut, skip
-        
-        return cut
-    
-    def generate_spectral_cut(self, G):
-        """
-        Generate a cut using Spectral Clustering.
-        
-        Parameters:
-        G (networkx.Graph): Graph
-        
-        Returns:
-        cut (Cut): Cut instance
-        """
-        # Convert graph to adjacency matrix
-        adjacency_matrix = nx.to_numpy_array(G)
-        
-        # Apply Spectral Clustering
-        sc = SpectralClustering(2, affinity='precomputed', n_init=10, random_state=random.randint(0, 100))
-        labels = sc.fit_predict(adjacency_matrix)
-        
-        # Create a new cut
-        cut = Cut()
-        cut.A = [node for node, label in zip(G.nodes, labels) if label == 0]
-        cut.Ac = [node for node, label in zip(G.nodes, labels) if label == 1]
-        
-        if len(cut.A) == 0 or len(cut.Ac) == 0:
-            return None  # Invalid cut, skip
-        
-        return cut
+        return bipartitions
     
     def cost_function_Graph(self):
         """ 
@@ -152,16 +131,7 @@ class DataSetGraph(DataType):
 
         return cut_cost
 
-
-
     def order_function(self):
         """Return cuts in list of ascending order of the cost."""
         return sorted(self.cuts, key=lambda x: x.cost)
 
-# Helper function to generate initial partition using greedy modularity communities
-def generate_initial_partition(G):
-        """Generate initial partition randomly."""
-        partition = ([], [])
-        for node in G.nodes:
-            partition[random.randint(0, 1)].append(node)
-        return partition

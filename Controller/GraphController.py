@@ -55,8 +55,12 @@ class GraphController:
             agreement_parameter = int(self.view.agreement_parameter.text())
             data = DataSetGraph(agreement_param=agreement_parameter, k=int(self.view.k_spectral.text()))
             data.G = self.view.generated_graph
+            initial_partioning = self.view.partition_method_combobox.currentText()
             start_time = time.time()
-            data.generate_multiple_cuts(data.G) 
+            if initial_partioning == "K-Means":  # Access initial_partition_method here
+                data.generate_multiple_cuts(data.G, initial_partition_method="K-Means")  # Use K-Means for initial partitioning
+            else:
+                data.generate_multiple_cuts(data.G, initial_partition_method="Kernighan-Lin")  # Use Kernighan-Lin for initial partitioning
             data.cost_function_Graph()
 
             
@@ -93,14 +97,13 @@ class GraphController:
 
             G = self.view.generated_graph
             # Get adjacency matrix as numpy array
+            start_time = time.time()
             adj_mat = nx.convert_matrix.to_numpy_array(G)
 
             # Get the number of clusters from the input field
             k = int(self.view.k_spectral.text())  # Assuming you have a QLineEdit for input
             if self.view.spectral_plot is None: 
                 self.view.numb_plots += 1
-            
-            start_time = time.time()
 
             # Cluster
             sc = SpectralClustering(k, affinity='precomputed')  # Specify affinity as precomputed
@@ -212,10 +215,3 @@ class GraphController:
                         print("Error: Graph is None")
         except Exception as e:
             print("Error:", e)
-
-
-
-
-
-
-        

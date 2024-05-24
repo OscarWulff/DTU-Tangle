@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import networkx as nx
 import numpy as np
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QFileDialog, QLabel, QLineEdit, QApplication, QSizePolicy
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QFileDialog, QLabel, QLineEdit, QApplication, QSizePolicy, QComboBox, QMessageBox
 from PyQt5 import QtCore
 from sklearn.metrics import normalized_mutual_info_score
 
@@ -72,6 +72,18 @@ class GraphWindow(QMainWindow):
         button_layout.addWidget(self.generate_louvain_button)
         self.generate_louvain_button.hide()
 
+        # Add label to prompt user to choose initial partitioning method
+        self.partition_label = QLabel("Choose Initial Partitioning Method:", self)
+        layout.addWidget(self.partition_label)
+
+        # Create a combo box for choosing initial partitioning method
+        self.partition_method_combobox = QComboBox()
+        self.partition_method_combobox.addItems(["K-Means", "Kernighan-Lin"])
+        self.partition_label.hide()
+        self.partition_method_combobox.hide()
+        layout.addWidget(self.partition_method_combobox)
+
+
         self.numb_nodes = QLineEdit()
         self.numb_nodes.setFixedSize(300, 30)
         self.numb_nodes.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -138,12 +150,17 @@ class GraphWindow(QMainWindow):
         self.generate_spectral_button.show()
         self.generate_tangles_button.show()
         self.generate_louvain_button.show()  # Show Louvain button
+        self.partition_label.show()
+        self.partition_method_combobox.show()
         self.numb_nodes.show()
         self.numb_clusters.show()
         self.average_edges_to_same_cluster.show()
         self.average_edges_to_other_clusters.show()
         self.agreement_parameter.show()
         self.k_spectral.show()
+
+    def update_partition_method(self):
+        self.selected_partition_method = self.partition_method_combobox.currentText()
 
     def show_input_fields(self):
         self.numb_nodes.show()
@@ -152,7 +169,6 @@ class GraphWindow(QMainWindow):
         self.average_edges_to_other_clusters.show()
         self.agreement_parameter.show()
         self.k_spectral.show()
-
     def setup_plots(self):
         self.figure.clear()
 
