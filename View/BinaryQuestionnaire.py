@@ -479,7 +479,10 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.generate_Kmeans_button.show()
         self.generate_DBSCAN_button.show()
         self.generate_tangles_button.show()
+        self.epsilon.show()
+        self.min_samples.show()
         self.k_kmeans.show()
+        self.sim_fun.show()
         self.agreement_parameter.show()
         
 

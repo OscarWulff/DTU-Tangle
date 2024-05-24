@@ -26,7 +26,6 @@ class BinaryQuestionnaireController:
         number_of_clusters = self.view.numb_clusters.text()
         number_of_questions = self.view.numb_questions.text()
         number_of_participants = self.view.numb_participants.text()
-        agreement_parameter = self.view.agreement_parameter.text()
         dim_choice = self.view.dim_red.currentText()
 
 
@@ -34,10 +33,15 @@ class BinaryQuestionnaireController:
             number_of_clusters = int(number_of_clusters)
             number_of_questions = int(number_of_questions)
             number_of_participants = int(number_of_participants)
-            agreement_parameter = int(agreement_parameter)
+            # agreement_parameter = int(agreement_parameter)
+
+            if (number_of_clusters <= 0 or number_of_questions <= 0 or number_of_participants <= 0 ):
+                print("Error: All inputs must be positive integers.")
+                return
 
         except ValueError: 
             print("Invalid input")
+            return
 
     
         self.view.generated_data = GenerateDataBinaryQuestionnaire(number_of_participants, number_of_questions, number_of_clusters)
@@ -60,9 +64,15 @@ class BinaryQuestionnaireController:
 
         try:      
             a = int(a)
+
+            if (a <= 0):
+                print("Error: All inputs must be positive integers.")
+                return
         except ValueError: 
             print("Invalid input")
-    
+            return
+        print("a: ", a)
+        print(self.view.generated_data.questionaire)
         # Creating the tangles
         data = DataSetBinaryQuestionnaire(a).cut_generator_binary(self.view.generated_data.questionaire, self.view.sim_fun.currentText())
         
@@ -89,8 +99,10 @@ class BinaryQuestionnaireController:
 
         self.view.tangles_plot = hard
         self.view.tangles_points = self.view.generated_data.points
-
-        self.view.nmi_score_tangles = round(self.view.generated_data.nmi_score(hard), 2)
+        try:
+            self.view.nmi_score_tangles = round(self.view.generated_data.nmi_score(hard), 2)
+        except:
+            self.view.nmi_score_tangles = 0
         self.view.setup_plots()
 
 
@@ -104,8 +116,13 @@ class BinaryQuestionnaireController:
         try:       
             min_s = int(min_s)
             eps = float(eps)
+
+            if (min_s <= 0 or eps <= 0):
+                print("Error: All inputs must be positive integers.")
+                return
         except ValueError: 
             print("Invalid input")
+            return
 
         generated_data = GenerateDataBinaryQuestionnaire(0, 0, 0)
         generated_data.points = self.view.generated_data.points
@@ -127,8 +144,13 @@ class BinaryQuestionnaireController:
 
         try:      
             k = int(k)
+            if (k <= 0):
+                print("Error: All inputs must be positive integers.")
+                return
+            
         except ValueError: 
             print("Invalid input")
+            return
 
         generated_data = GenerateDataBinaryQuestionnaire(0, 0, 0)
         generated_data.points = self.view.generated_data.points
@@ -149,9 +171,11 @@ class BinaryQuestionnaireController:
             X = read_file(selected_file)  # Get the path of the selected file
             print(X)
             self.data = tsne(X)
+           
         self.view.upload_data_button.hide()
         self.view.generate_data_button.hide()
         self.view.generated_data = GenerateDataBinaryQuestionnaire(0, 0,0)
+        self.view.generated_data.questionaire = X
 
         self.view.generated_data.points = [inner + [index] for index, inner in enumerate(self.data.tolist())]
         self.view.generated_data.ground_truth = [1] * len(self.view.generated_data.points)
