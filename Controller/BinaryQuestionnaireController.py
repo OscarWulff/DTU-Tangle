@@ -1,3 +1,4 @@
+
 import ast
 import time
 import numpy as np
@@ -71,7 +72,6 @@ class BinaryQuestionnaireController:
         except ValueError: 
             print("Invalid input")
             return
-        print("a: ", a)
         print(self.view.generated_data.questionaire)
         # Creating the tangles
         data = DataSetBinaryQuestionnaire(a).cut_generator_binary(self.view.generated_data.questionaire, self.view.sim_fun.currentText())
@@ -83,7 +83,17 @@ class BinaryQuestionnaireController:
         contracting_search_tree(self.view.tangle_root)
         # time.sleep(2)
         soft = soft_clustering(self.view.tangle_root)
-        # print(soft)
+
+        prob_array = np.array(soft)
+
+        # Find the index of the maximum value in each row
+        max_indices = np.argmax(prob_array, axis=1)
+
+        # Extract the maximum values using the indices
+        max_values = prob_array[np.arange(prob_array.shape[0]), max_indices]
+
+        self.view.prob = max_values
+        print(soft)
         
         hard = hard_clustering(soft)
 

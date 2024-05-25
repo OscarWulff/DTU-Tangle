@@ -1,3 +1,4 @@
+
 import time
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QFileDialog, QVBoxLayout, QWidget, QHBoxLayout, QLabel
 import numpy as np
@@ -56,6 +57,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
 
         self.nmi_checked = False
         self.prob_checked = False
+        self.prob = None
 
 
 
@@ -253,6 +255,8 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.dim_red.show()
         self.sim_fun.show()
         self.generate_random_button.show()
+        self.soft_clustering.show()
+        
 
         
        
@@ -486,5 +490,3 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.agreement_parameter.show()
         
 
-
-    
