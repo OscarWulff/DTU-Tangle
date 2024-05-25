@@ -1,26 +1,26 @@
 import matplotlib.pyplot as plt
 import time
 import networkx as nx
-from sklearn.cluster import SpectralClustering
+from sklearn.cluster import SpectralClustering, KMeans
 from sklearn.metrics import normalized_mutual_info_score
 from Model.GenerateTestData import GenerateRandomGraph
 from Model.DataSetGraph import DataSetGraph
 from Model.TangleCluster import *
-from community import community_louvain  # Ensure you have the python-louvain package installed
+import community as community_louvain
 
 class GraphTest:
     def __init__(self):
         print("Graph test class constructor")
 
-    def tangles_test(self, generated_graph, generated_ground_truth, agreement_parameter, k, initial_partition_method="Kernighan-Lin"):
+    def tangles_test(self, generated_graph, generated_ground_truth, agreement_parameter, k, initial_partition_method="K-Means"):
         try:
             # Perform tangles on the generated graph
             data = DataSetGraph(agreement_param=agreement_parameter, k=k)
             data.G = generated_graph
-            start_time_total = time.time()
-            start_time_partition = time.time()
+            start_time = time.time()
+            start_time_kernighan = time.time()
             data.generate_multiple_cuts(data.G, initial_partition_method=initial_partition_method)
-            end_time_partition = time.time()
+            end_time_kernighan = time.time()
             data.cost_function_Graph()
             root = create_searchtree(data)
             
@@ -32,16 +32,15 @@ class GraphTest:
             
             soft = soft_clustering(tangle_root)
             hard = hard_clustering(soft)
-            
-            end_time_total = time.time()
+            end_time = time.time()
 
-            total_time_partition = end_time_partition - start_time_partition
-            total_time = end_time_total - start_time_total
+            total_time_kernighan = end_time_kernighan - start_time_kernighan
+            total_time = end_time - start_time
 
             # Calculate NMI score only if ground truth is available
             if generated_ground_truth:
                 nmi_score = normalized_mutual_info_score(generated_ground_truth, hard)  # Assuming tangles contain the predicted tangles
-                return total_time, total_time_partition, round(nmi_score, 2)
+                return total_time, total_time_kernighan, round(nmi_score, 2)
             else:
                 return total_time, None
 
@@ -51,8 +50,8 @@ class GraphTest:
 
     def spectral_test(self, generated_graph, generated_ground_truth, k):
         try:
-            G = generated_graph
             start_time = time.time()
+            G = generated_graph
             # Get adjacency matrix as numpy array
             adj_mat = nx.convert_matrix.to_numpy_array(G)
 

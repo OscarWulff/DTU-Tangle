@@ -48,8 +48,6 @@ class DataSetGraph(DataType):
                 if (tuple(cut.A), tuple(cut.Ac)) not in unique_cuts and (tuple(cut.Ac), tuple(cut.A)) not in unique_cuts:
                     unique_cuts.add((tuple(cut.A), tuple(cut.Ac)))
                     self.cuts.append(cut)
-                else:
-                    print("Duplicate cut found.")
         else:
             raise ValueError("Invalid initial partitioning method.")
 
@@ -82,7 +80,7 @@ class DataSetGraph(DataType):
         
         return bipartitions
     
-    def cost_function_Graph(self):
+    def cost_function_Graph(self, cost_function="Kernighan-Lin Cost Function"):
         """ 
         Calculate the cost of cuts for Data Set Graph.
         """
@@ -90,10 +88,16 @@ class DataSetGraph(DataType):
             raise ValueError("Graph G is not initialized.")
         
         for cut in self.cuts:
-            # Initialize the cost to 0 before calculating
-            cut.cost = self.calculate_cut_cost(cut)
+            if cost_function == "Kernighan-Lin Cost Function":
+                cut.cost = self.calculate_kernighan_lin_cost(cut)
+            elif cost_function == "Modularity":
+                cut.cost = self.calculate_modularity_cost(cut)
+            elif cost_function == "Ratio Cut":
+                cut.cost = self.calculate_edge_cut_cost(cut)
+            else:
+                raise ValueError("Invalid cost function.")
 
-    def calculate_cut_cost(self, cut):
+    def calculate_kernighan_lin_cost(self, cut):
         """ 
         Helper function to calculate the cost of cuts for Data Set Graph.
         
@@ -130,6 +134,59 @@ class DataSetGraph(DataType):
             cut_cost = edge_weight_sum / (A_size * (total_nodes - A_size))
 
         return cut_cost
+    
+    def calculate_edge_cut_cost(self, cut):
+        """ 
+        Helper function to calculate the edge cut cost for Data Set Graph.
+        
+        Parameters:
+        cut (Cut): Cut instance
+
+        Returns:
+        cost of the cut
+        """
+        if self.G is None:
+            raise ValueError("Graph G is not initialized.")
+
+        # Calculate the sum of edge weights between nodes in A and nodes in Ac
+        edge_cut_cost = sum(1 for u in cut.A for v in cut.Ac if self.G.has_edge(u, v))
+
+        return edge_cut_cost
+
+    def calculate_modularity_cost(self, cut):
+        """ 
+        Helper function to calculate the modularity cost for Data Set Graph.
+        
+        Parameters:
+        cut (Cut): Cut instance
+
+        Returns:
+        cost of the cut
+        """
+        if self.G is None:
+            raise ValueError("Graph G is not initialized.")
+
+        # Initialize modularity cost
+        modularity_cost = 0
+
+        # Calculate total number of edges in the graph
+        total_edges = self.G.number_of_edges()
+
+        # Calculate the sum of edge weights between nodes in A and nodes in Ac
+        for u in cut.A:
+            for v in cut.Ac:
+                if self.G.has_edge(u, v):
+                    modularity_cost += 1
+
+        # Calculate the expected number of edges between nodes in A and nodes in Ac
+        expected_edges = (cut.A_size * cut.Ac_size) / (2 * total_edges)
+
+        # Calculate modularity cost
+        modularity_cost -= expected_edges
+
+        return modularity_cost
+
+
 
     def order_function(self):
         """Return cuts in list of ascending order of the cost."""
