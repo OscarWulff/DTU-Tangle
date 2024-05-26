@@ -27,7 +27,7 @@ class DataSetGraph(DataType):
         G (networkx.Graph): Graph
         """
         # Only generate a few initial cuts based on the size of the graph
-        cuts = self.agreement_param // 2
+        cuts = self.agreement_param
         self.cuts = []
         unique_cuts = set()
         if initial_partition_method == "K-Means":

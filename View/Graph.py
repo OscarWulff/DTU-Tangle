@@ -78,7 +78,7 @@ class GraphWindow(QMainWindow):
 
         # Create a combo box for choosing initial partitioning method
         self.partition_method_combobox = QComboBox()
-        self.partition_method_combobox.addItems(["K-Means", "Kernighan-Lin"])
+        self.partition_method_combobox.addItems(["K-Means", "Kernighan-Lin", "K-Means-Half", "K-Means-Both"])
         self.partition_label.hide()
         self.partition_method_combobox.hide()
         layout.addWidget(self.partition_method_combobox)

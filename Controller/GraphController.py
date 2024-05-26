@@ -59,6 +59,10 @@ class GraphController:
             start_time = time.time()
             if initial_partioning == "K-Means":  # Access initial_partition_method here
                 data.generate_multiple_cuts(data.G, initial_partition_method="K-Means")  # Use K-Means for initial partitioning
+            elif initial_partioning == "K-Means-Half":
+                data.generate_multiple_cuts(data.G, initial_partition_method="K-Means-Half")
+            elif initial_partioning == "K-Means-Both":
+                data.generate_multiple_cuts(data.G, initial_partition_method="K-Means-Both")
             else:
                 data.generate_multiple_cuts(data.G, initial_partition_method="Kernighan-Lin")  # Use Kernighan-Lin for initial partitioning
             data.cost_function_Graph()
