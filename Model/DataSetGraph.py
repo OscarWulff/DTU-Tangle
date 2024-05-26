@@ -26,11 +26,29 @@ class DataSetGraph(DataType):
         G (networkx.Graph): Graph
         """
         # Only generate a few initial cuts based on the size of the graph
-        cuts = 10
+        cuts = self.agreement_param // 2
         self.cuts = []
         unique_cuts = set()
         if initial_partition_method == "K-Means":
             bipartitions = self.generate_kmeans_cut(G)
+            if bipartitions:
+                for partition in bipartitions:
+                    # Create a new cut object
+                    cut = Cut()
+                    cut.A = partition[0]
+                    cut.Ac = partition[1]
+                    self.cuts.append(cut)
+        elif initial_partition_method == "K-Means-Half":
+            bipartitions = self.generate_kmeans_half_cut(G)
+            if bipartitions:
+                for partition in bipartitions:
+                    # Create a new cut object
+                    cut = Cut()
+                    cut.A = partition[0]
+                    cut.Ac = partition[1]
+                    self.cuts.append(cut)
+        elif initial_partition_method == "K-Means-Both":
+            bipartitions = self.generate_kmeans_both_methods(G)
             if bipartitions:
                 for partition in bipartitions:
                     # Create a new cut object
@@ -55,10 +73,10 @@ class DataSetGraph(DataType):
     def generate_kmeans_cut(self, G):
         """
         Generate cuts using KMeans.
-        
+
         Parameters:
         G (networkx.Graph): Graph
-        
+
         Returns:
         list of tuples: Each tuple represents a bipartition (A, Ac)
         """
@@ -79,6 +97,72 @@ class DataSetGraph(DataType):
             bipartitions.append((partition_A, partition_Ac))
         
         return bipartitions
+
+    def generate_kmeans_half_cut(self, G):
+        """
+        Generate half/half cuts using KMeans.
+
+        Parameters:
+        G (networkx.Graph): Graph
+
+        Returns:
+        list of tuples: Each tuple represents a bipartition (A, Ac)
+        """
+        # Convert graph to adjacency matrix
+        adjacency_matrix = nx.convert_matrix.to_numpy_array(G)
+        
+        # Apply KMeans
+        kmeans = KMeans(n_clusters=self.k, random_state=42)
+        labels = kmeans.fit_predict(adjacency_matrix)
+
+        bipartitions = []
+        centroids_list = list(range(self.k))
+        for _ in range(10):  # Generate 10 unique half/half cuts
+            np.random.shuffle(centroids_list)
+            centroids_A = centroids_list[:self.k // 2]
+            partition_A = set(node for node, label in zip(G.nodes, labels) if label in centroids_A)
+            partition_Ac = set(G.nodes) - partition_A
+            bipartitions.append((partition_A, partition_Ac))
+        
+        return bipartitions
+    
+    def generate_kmeans_both_methods(self, G):
+        """
+        Generate cuts using both KMeans strategies.
+
+        Parameters:
+        G (networkx.Graph): Graph
+
+        Returns:
+        list of tuples: Each tuple represents a bipartition (A, Ac)
+        """
+        # Convert graph to adjacency matrix
+        adjacency_matrix = nx.convert_matrix.to_numpy_array(G)
+        
+        # Apply KMeans
+        kmeans = KMeans(n_clusters=self.k)
+        labels = kmeans.fit_predict(adjacency_matrix)
+        
+        # Generate bipartitions based on centroids
+        bipartitions = []
+
+        # Strategy 1: One centroid on one side and the rest on the other
+        for i in range(self.k):
+            partition_A = set(node for node, label in zip(G.nodes, labels) if label == i)
+            partition_Ac = set(G.nodes) - partition_A
+            bipartitions.append((partition_A, partition_Ac))
+
+        # Strategy 2: Half/Half
+        centroids_list = list(range(self.k))
+        for _ in range(10):  # Generate 10 unique half/half cuts
+            np.random.shuffle(centroids_list)
+            centroids_A = centroids_list[:self.k // 2]
+            partition_A = set(node for node, label in zip(G.nodes, labels) if label in centroids_A)
+            partition_Ac = set(G.nodes) - partition_A
+            bipartitions.append((partition_A, partition_Ac))
+
+        return bipartitions
+    
     
     def cost_function_Graph(self, cost_function="Kernighan-Lin Cost Function"):
         """ 
