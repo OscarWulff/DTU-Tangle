@@ -1,3 +1,4 @@
+from itertools import permutations
 import random
 import networkx as nx
 from sklearn.cluster import KMeans, SpectralClustering
@@ -112,20 +113,39 @@ class DataSetGraph(DataType):
         adjacency_matrix = nx.convert_matrix.to_numpy_array(G)
         
         # Apply KMeans
-        kmeans = KMeans(n_clusters=self.k, random_state=42)
+        kmeans = KMeans(n_clusters=self.k)
         labels = kmeans.fit_predict(adjacency_matrix)
 
         bipartitions = []
         centroids_list = list(range(self.k))
-        for _ in range(10):  # Generate 10 unique half/half cuts
-            np.random.shuffle(centroids_list)
+        
+        # Maintain a set to store generated partitions
+        generated_partitions = set()
+        
+        # Generate 10 unique half/half cuts
+        for _ in range(10):
+            # Select the first half of the centroids
             centroids_A = centroids_list[:self.k // 2]
+            
+            # Assign nodes associated with selected centroids to one partition
             partition_A = set(node for node, label in zip(G.nodes, labels) if label in centroids_A)
+            
+            # Assign the rest of the nodes to the complementary partition
             partition_Ac = set(G.nodes) - partition_A
-            bipartitions.append((partition_A, partition_Ac))
+            
+            # Convert partitions to tuples for hashing
+            partition_tuple = (frozenset(partition_A), frozenset(partition_Ac))
+            
+            # Check if the partition is unique
+            if partition_tuple not in generated_partitions:
+                bipartitions.append((partition_A, partition_Ac))
+                generated_partitions.add(partition_tuple)
+            
+            # Rotate the centroids list by moving one position
+            centroids_list = centroids_list[1:] + [centroids_list[0]]
         
         return bipartitions
-    
+
     def generate_kmeans_both_methods(self, G):
         """
         Generate cuts using both KMeans strategies.
@@ -153,13 +173,29 @@ class DataSetGraph(DataType):
             bipartitions.append((partition_A, partition_Ac))
 
         # Strategy 2: Half/Half
+        generated_partitions = set()
         centroids_list = list(range(self.k))
-        for _ in range(10):  # Generate 10 unique half/half cuts
-            np.random.shuffle(centroids_list)
+        # Generate 10 unique half/half cuts
+        for _ in range(10):
+            # Select the first half of the centroids
             centroids_A = centroids_list[:self.k // 2]
+            
+            # Assign nodes associated with selected centroids to one partition
             partition_A = set(node for node, label in zip(G.nodes, labels) if label in centroids_A)
+            
+            # Assign the rest of the nodes to the complementary partition
             partition_Ac = set(G.nodes) - partition_A
-            bipartitions.append((partition_A, partition_Ac))
+            
+            # Convert partitions to tuples for hashing
+            partition_tuple = (frozenset(partition_A), frozenset(partition_Ac))
+            
+            # Check if the partition is unique
+            if partition_tuple not in generated_partitions:
+                bipartitions.append((partition_A, partition_Ac))
+                generated_partitions.add(partition_tuple)
+            
+            # Rotate the centroids list by moving one position
+            centroids_list = centroids_list[1:] + [centroids_list[0]]
 
         return bipartitions
     

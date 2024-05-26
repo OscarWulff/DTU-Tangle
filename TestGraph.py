@@ -282,7 +282,7 @@ if __name__ == "__main__":
     avg_edges_to_same_cluster = 0.6
     avg_edges_to_other_clusters = 0.4
     k = num_of_clusters
-    num_iterations = 1
+    num_iterations = 10
 
     num_of_nodes_list = [400, 800, 1200, 1600, 2000]
 
