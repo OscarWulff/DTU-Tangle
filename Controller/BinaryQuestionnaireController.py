@@ -5,7 +5,7 @@ import numpy as np
 from PyQt5.QtWidgets import QFileDialog, QCheckBox, QComboBox, QLineEdit, QPushButton, QMainWindow
 from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire, perform_tsne
 from Model.DataSetFeatureBased import read_file, tsne
-from Model.GenerateTestData import GenerateDataBinaryQuestionnaire, GenerateDataFeatureBased
+from Model.GenerateTestData import GenerateDataBinaryQuestionnaire, GenerateDataFeatureBased, export_to_csv
 from Model.TangleCluster import create_searchtree
 from Model.SearchTree import condense_tree, soft_clustering, hard_clustering, contracting_search_tree
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -20,6 +20,7 @@ class BinaryQuestionnaireController:
         self.view.generate_tangles_button.clicked.connect(self.tangles)
         self.view.generate_DBSCAN_button.clicked.connect(self.dbscan)
         self.view.generate_Kmeans_button.clicked.connect(self.kmeans)
+        self.view.export_button.clicked.connect(self.export_data)
 
 
 
@@ -194,5 +195,12 @@ class BinaryQuestionnaireController:
         
 
         self.view.setup_plots()
-
+    
+    def export_data(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self.view, "Save CSV", "", "CSV Files (*.csv);;All Files (*)", options=options)
+        if fileName:
+            print("Saving data to:", fileName)
+            export_to_csv(self.view.generated_data.questionaire, fileName)
     
