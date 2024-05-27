@@ -69,7 +69,9 @@ def create_searchtree(data : DataType):
     root = Searchtree(None, 0)
 
     leaves = [root]
+
     cuts_ordered = data.order_function()
+    #cuts_ordered = [cuts_ordered[1]]
 
     # for cut in cuts_ordered:
     #     print(cut.A)

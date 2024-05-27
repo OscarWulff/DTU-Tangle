@@ -6,9 +6,12 @@ class Cut:
         self.A = A
         self.Ac = Ac
         self.line_placement = None
+        self.A_points = []
+        self.Ac_points = []
 
     def init(self):
         self.A = set()
         self.Ac = set() 
-   
+        self.A_points = []
+        self.Ac_points = []
    

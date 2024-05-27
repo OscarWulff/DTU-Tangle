@@ -88,7 +88,54 @@ class GenerateDataFeatureBased():
 
         # Combine points from all dimensions into a single list of tuples
         self.points = [list(x) for x in zip(*points)]
-           
+        
+    def random_different_clusters(self, cluster_points, dimensions,range_value,  overlap=0.3):
+        """
+        Create a chosen number of clusters from Gaussian Distribution.
+        Standard deviation and centroids are chosen randomly.
+        """
+        # Parameter that controls how much overlap is allowed
+
+        tries = 0
+        while tries < 1000:
+            tries += 1
+            start_over = False
+            centroids = []
+            std_deviations = []
+            for i in range(self.numb_clusters):
+                std_deviation_cluster = np.random.uniform(0, self.std_deviation, size=dimensions)
+                center_cluster = np.random.uniform(self.box_low_x, self.box_high_x, size=dimensions)
+                
+                for centroid, std_deviation in zip(centroids, std_deviations):
+                    for j in range(dimensions):
+                        if np.abs(centroid[j] - center_cluster[j]) < (std_deviation[j] + std_deviation_cluster[j]) * overlap:
+                            start_over = True
+                            break
+
+                if start_over:
+                    break
+                
+                centroids.append(center_cluster)
+                std_deviations.append(std_deviation_cluster)
+
+            if not start_over:
+                points = [[] for _ in range(dimensions)]  # List to store points for each dimension
+
+                for truth, (center, std_deviation) in enumerate(zip(centroids, std_deviations)):
+                    # Generate points using Gaussian distribution for each dimension
+                    for dim in range(dimensions):
+                        points[dim].extend(np.random.normal(loc=center[dim], scale=std_deviation[dim], size=cluster_points))
+
+                    for _ in range(cluster_points):
+                        self.ground_truth.append(truth)
+
+                    cluster_points += range_value
+                # Combine points from all dimensions into a single list of tuples
+                self.points = [list(x) for x in zip(*points)]
+                break
+
+        if tries == 1000:
+            print("Too many tries")      
 
     def random_clusters(self, cluster_points, dimensions, overlap=0.3):
         """

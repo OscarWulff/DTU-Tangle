@@ -9,79 +9,24 @@ from Model.DataType import DataType
 from Model.Cut import Cut
 from sklearn.manifold import TSNE
 from sklearn.metrics.cluster import normalized_mutual_info_score
-from sklearn.metrics import davies_bouldin_score
+from sklearn.metrics import davies_bouldin_score, silhouette_score
 from sklearn.neighbors import KernelDensity
 import random 
-from sklearn.cluster import SpectralClustering
+from sklearn.cluster import SpectralClustering, KMeans
 from scipy.spatial import cKDTree
 import heapq
+from scipy.stats import gaussian_kde
+import time
 
 class DataSetFeatureBased(DataType):
 
     def __init__(self,agreement_param, cuts : list[Cut] =[], search_tree=None):
         super().__init__(agreement_param, cuts, search_tree)
         self.points = []
-        #self.initialize()
 
-    def initialize(self):
-        _, X = pca("iris.csv")
-        x1 = X[:, 0]
-        x2 = X[:, 1]
 
-        for z, (x, y) in enumerate(zip(x1, x2)):
-           self.points.append((x, y, z))
-        
-        self.cut_generator_axis_dimensions()
-        self.cost_function()
 
-    def density_cost(self, radius):
-    
-        # Create KDE of the all the points before the cut
-        # Afterwards create KDE of the all the points of each side of the cut
-
-        # Take every point and calculate the diffrence in density from the KDE before and after the cut
-        # Sum the diffrences and set it as the cost of the cut
-        def calculate_density(points, radius):
-            # Convert points to numpy array
-            points = np.array(points)
-
-            # Fit Kernel Density Estimation (KDE) model
-            kde = KernelDensity(bandwidth=radius, kernel='gaussian')
-            kde.fit(points)
-
-            # Estimate density at each point
-            density = np.exp(kde.score_samples(points))
-
-            # Return density values
-            return density
-
-        density_all = calculate_density(self.points, radius)
-
-        for cut in self.cuts: 
-            sum_cost = 0.0
-            left_oriented = cut.A
-            right_oriented = cut.Ac
-
-            left_points = []
-            right_points = []
-
-            for left_or in left_oriented:
-                left_points.append(self.points[left_or][:-1])
-
-            for right_or in right_oriented:
-                right_points.append(self.points[right_or][:-1])
-
-            density_left = calculate_density(left_points, radius)
-            density_right = calculate_density(right_points, radius)
-
-            for i in range(len(density_left)):
-                sum_cost += abs(density_all[i] - density_left[i])
-
-            for i in range(len(density_right)):
-                sum_cost += abs(density_all[i] - density_right[i])
-
-            cut.cost = sum_cost
-
+    # Cost functions 
 
     def CURE_cost(self):
 
@@ -119,6 +64,7 @@ class DataSetFeatureBased(DataType):
                 merged_cluster = Cluster(None)
                 merged_cluster.points = closest_clusters[0].points + closest_clusters[1].points
                 merged_cluster.mean = np.mean(merged_cluster.points, axis=0)
+
                 clusters.append(merged_cluster)
 
             return clusters
@@ -126,164 +72,49 @@ class DataSetFeatureBased(DataType):
 
         for cut in self.cuts: 
             sum_cost = 0.0
-            left_oriented = cut.A
-            right_oriented = cut.Ac
 
-            left_points = []
-            right_points = []
+            A_points = []
+            Ac_points = []
 
-            for left_or in left_oriented:
-                left_points.append(self.points[left_or][:-1])
+            for left_or in cut.A:
+                A_points.append(self.points[left_or][:-1])
 
-            for right_or in right_oriented:
-                right_points.append(self.points[right_or][:-1])
+            for right_or in cut.Ac:
+                Ac_points.append(self.points[right_or][:-1])
 
             # Find representatives for each cluster
-            rep_left = select_representatives(left_points, min(10, self.agreement_param//2))
-            rep_right = select_representatives(right_points, min(10, self.agreement_param//2))
+            rep_left = select_representatives(A_points, min(5, self.agreement_param//2))
+            rep_right = select_representatives(Ac_points, min(5, self.agreement_param//2))
 
-            clusters_left = find_clusters(rep_left, math.ceil(len(left_points)/self.agreement_param))
-            clusters_right = find_clusters(rep_right, math.ceil(len(right_points)/self.agreement_param))
-
-            for left_cluster in clusters_left:
-                for right_cluster in clusters_right:
-                    sum_cost += -np.linalg.norm(left_cluster.mean - right_cluster.mean)
+            clusters_left = find_clusters(rep_left, math.ceil(len(A_points)/self.agreement_param))
+            clusters_right = find_clusters(rep_right, math.ceil(len(Ac_points)/self.agreement_param))
             
-            cut.cost = sum_cost
+            # Calculate the cost
+            left_sum = 0
+            right_sum = 0
+            for left_or in A_points:
+                min_distance = float('inf')
+                min_point = None
+                for left_cluster in clusters_left:
+                    if min_distance > np.linalg.norm(left_or - left_cluster.mean):
+                        min_distance = np.linalg.norm(left_or - left_cluster.mean)
+                        min_point = left_cluster.mean
 
-
-    def CURE_cost_heap(self):
-        class Cluster:
-            def __init__(self, point):
-                self.points = [point]  # Initially, each cluster has only one point
-                self.mean = np.array(point)  # Mean of the points in the cluster
-                self.rep = [point]  # Representative points of the cluster
-                self.closest = None  # Closest cluster
-                self.closest_distance = float('inf')  # Distance to the closest cluster
-
-            def __lt__(self, other):
-                # Define comparison for clusters based on their closest distance
-                return self.closest_distance < other.closest_distance
-
-        def calculate_distance(point1, point2):
-            # Euclidean distance between two points
-            return np.linalg.norm(np.array(point1) - np.array(point2))
-
-        def calculate_mean(cluster):
-            # Calculate mean of points in the cluster
-            return np.mean(cluster.points, axis=0)
-
-        def update_closest_cluster(cluster, clusters):
-            # Update closest cluster for the given cluster
-            for other_cluster in clusters:
-                if other_cluster != cluster:
-                    distance = calculate_distance(cluster.mean, other_cluster.mean)
-
-                    if distance < cluster.closest_distance or cluster.closest not in clusters:
-                        cluster.closest = other_cluster
-                        cluster.closest_distance = distance
-
-        def update_heap(cluster, clusters, heap):
-            # Update heap after merging clusters
-            updated_heap = []
-            for item in heap:
-                if item[1] != cluster and item[1] != cluster.closest:
-                    updated_heap.append(item)
-            heapq.heapify(updated_heap)
-            for other_cluster in clusters:
-                if other_cluster != cluster and other_cluster != cluster.closest:
-                    distance = calculate_distance(cluster.mean, other_cluster.mean)
-                    heapq.heappush(updated_heap, (distance, other_cluster))
-            return updated_heap
-
-        def merge_clusters(cluster1, cluster2):
-            # Merge two clusters
-            merged_cluster = Cluster(None)
-            merged_cluster.points = cluster1.points + cluster2.points
-            merged_cluster.mean = calculate_mean(merged_cluster)
-            merged_cluster.rep = cluster1.rep + cluster2.rep
-            return merged_cluster
-
-        def select_representatives(points, num_representatives):
-            # Randomly select representatives from the data
-            indices = np.random.choice(len(points), size=num_representatives, replace=False)
-            representatives = [points[idx] for idx in indices] 
-            return representatives
-
-        def find_clusters(points, k):
-            # Initialize clusters
-            clusters = []
-            for point in points:
-                clusters.append(Cluster(point))
-            #clusters = [Cluster(point) for point in points]
-            heap = []
-
-            # Build k-d tree
-            tree = cKDTree(points)
-
-            # Populate heap with closest clusters for each cluster
-            for cluster in clusters:
-                cluster.mean = calculate_mean(cluster)
-                for other_cluster in clusters:
-                    if other_cluster != cluster:
-                        distance = calculate_distance(cluster.mean, other_cluster.mean)
-                        if distance < cluster.closest_distance:
-                            cluster.closest = other_cluster
-                            cluster.closest_distance = distance
-                heapq.heappush(heap, (cluster.closest_distance, cluster))
-
-            # Main loop
-            while len(heap) > k:
-                # Merge closest clusters
-                distance, cluster = heapq.heappop(heap)
-                other_cluster = cluster.closest
-                merged_cluster = merge_clusters(cluster, other_cluster)
-
-                # Update mean and representative points for the merged cluster
-                merged_cluster.mean = calculate_mean(merged_cluster)
-                merged_cluster.rep = cluster.rep + other_cluster.rep
-
-                clusters.remove(cluster)
-                clusters.remove(other_cluster)
-                # Remove clusters from heap and tree
-                heap = update_heap(cluster, clusters, heap)
-                heap = update_heap(other_cluster, clusters, heap)
-
-                # Insert merged cluster into heap and tree
-                heapq.heappush(heap, (merged_cluster.closest_distance, merged_cluster))
-                clusters.append(merged_cluster)
-                # Update closest clusters for remaining clusters
-                for remaining_cluster in clusters:
-                    update_closest_cluster(remaining_cluster, clusters)
-            return clusters
-
-        for cut in self.cuts: 
-            sum_cost = 0.0
-            left_oriented = cut.A
-            right_oriented = cut.Ac
-
-            left_points = []
-            right_points = []
-
-            for left_or in left_oriented:
-                left_points.append(self.points[left_or][:-1])
-
-            for right_or in right_oriented:
-                right_points.append(self.points[right_or][:-1])
-
-            # Find representatives for each cluster
-            rep_left = select_representatives(left_points, self.agreement_param//2)
-            rep_right = select_representatives(right_points, self.agreement_param//2)
-
-            clusters_left = find_clusters(rep_left, math.ceil(len(left_points)/self.agreement_param))
-            clusters_right = find_clusters(rep_right, math.ceil(len(right_points)/self.agreement_param))
-
-            for left_cluster in clusters_left:
+                left_sum += np.linalg.norm(left_or - min_point)
+                
+            for right_or in Ac_points:
+                min_distance = float('inf')
+                min_point = None
                 for right_cluster in clusters_right:
-                    sum_cost += -np.linalg.norm(left_cluster.mean - right_cluster.mean)
-            
-            cut.cost = sum_cost
+                    if min_distance > np.linalg.norm(right_or - right_cluster.mean):
+                        min_distance = np.linalg.norm(right_or - right_cluster.mean)
+                        min_point = right_cluster.mean
 
+                right_sum += np.linalg.norm(right_or - min_point)
+
+            sum_cost = left_sum/len(A_points) + right_sum/len(Ac_points)
+
+            cut.cost = sum_cost
 
     def pairwise_cost(self):
         """ 
@@ -302,59 +133,98 @@ class DataSetFeatureBased(DataType):
             # Calculate the cost
             for left_or in left_oriented:
                 for right_or in right_oriented:
-                    point1 = np.array(self.points[left_or][:-1])
-                    point2 = np.array(self.points[right_or][:-1])
+                    point1 = np.array(self.points[int(left_or)][:-1])
+                    point2 = np.array(self.points[int(right_or)][:-1])
                     sum_cost += -np.linalg.norm(point1 - point2)
             cut.cost = sum_cost
 
     def mean_cost(self):
         for cut in self.cuts:
+
             sum_cost = 0.0
-            left_oriented = cut.A
-            right_oriented = cut.Ac
-
-            A_points = []
-            Ac_points = []
-
-            # Calculate the mean 
-            for left_or in left_oriented:
-                A_points.append(self.points[left_or])
-                
-            for right_or in right_oriented:
-                Ac_points.append(self.points[right_or])
-            
-            mean_A = np.mean(np.array(A_points)[:, :-1], axis=0)
-            mean_Ac = np.mean(np.array(A_points)[:, :-1], axis=0)
+            mean_A = np.mean(np.array(cut.A_points), axis=0)
+            mean_Ac = np.mean(np.array(cut.Ac_points), axis=0)
 
             # Calculate the cost
-            for left_or in left_oriented:
-                sum_cost += -np.linalg.norm(self.points[left_or][:-1] - mean_A)
+            for point in cut.A_points:
+                sum_cost += -np.linalg.norm(point - mean_Ac)
                 
-            for right_or in right_oriented:
-                sum_cost += -np.linalg.norm(self.points[right_or][:-1] - mean_Ac)
+            for point in cut.Ac_points:
+                sum_cost += -np.linalg.norm(point - mean_A)
+
+            cut.cost = sum_cost
+      
+    def mean_cut_cost(self):
+        for cut in self.cuts:
+            sum_cost = 0.0
+            mean_A = np.mean(np.array(cut.A_points), axis=0)
+            mean_Ac = np.mean(np.array(cut.Ac_points), axis=0)
+
+            # Calculate the cost
+            for point in cut.A_points:
+                sum_cost += -np.linalg.norm(point - mean_Ac)
+                
+            for point in cut.Ac_points:
+                sum_cost += -np.linalg.norm(point - mean_A)
 
             cut.cost = sum_cost
 
 
-    def random_cuts(self):
-        """ 
-        This function is used to generate random cuts for feature based data set
-        
-        Parameters:
-        cuts of the dataset
+    # Cut generators
 
-        Returns:
-        random cuts
-        """
+    def mean_cut(self):
         self.cuts = []
         n = len(self.points)
         dimensions = len(self.points[0])
+        interval = self.agreement_param//2
+        
+        # Add index to keep track of original order
+        if type(self.points) == np.ndarray:
+            self.points = self.points.tolist()
+        self.points = [point + [z] for z, point in enumerate(self.points)]
+
+        values = [[] for _ in range(dimensions)]  # 
+
+        # Extract values for each dimension
+        for point in self.points:
+            for dim in range(dimensions):
+                values[dim].append(point[dim])
+
+        sorted_points = [self.sort_for_list(values[dim], self.points) for dim in range(dimensions)]
+        
+        i = self.agreement_param + int(self.agreement_param * 0.05)
+        while n >= i + self.agreement_param:
+            cuts = [Cut() for _ in range(dimensions)]  # Create cuts for each dimension
+            for dim in range(dimensions):
+                cuts[dim].init()
+                
+                mean_A = np.mean(np.array(sorted_points[dim])[(i-interval):i, :-1], axis=0)
+                mean_Ac = np.mean(np.array(sorted_points[dim])[i:(i+interval), :-1], axis=0)
+
+                for point in sorted_points[dim]:
+                    if np.linalg.norm(point[:-1] - mean_A) < np.linalg.norm(point[:-1] - mean_Ac):
+                        cuts[dim].A.add(point[-1])
+                        cuts[dim].A_points.append(point[:-1])
+                    else:
+                        cuts[dim].Ac.add(point[-1])
+                        cuts[dim].Ac_points.append(point[:-1])
+                self.cuts.append(cuts[dim])
+            i += self.agreement_param + int(self.agreement_param * 0.05)
+
+    
+    def adjusted_cut(self):
+        self.cuts = []
+        n = len(self.points)
+        dimensions = len(self.points[0])
+        interval = self.agreement_param//2
 
 
         # Add index to keep track of original order
+        if type(self.points) == np.ndarray:
+            self.points = self.points.tolist()
         self.points = [point + [z] for z, point in enumerate(self.points)]
 
-        values = [[] for _ in range(dimensions)]  
+        values = [[] for _ in range(dimensions)]
 
         # Extract values for each dimension
         for point in self.points:
@@ -363,28 +233,80 @@ class DataSetFeatureBased(DataType):
 
         sorted_points = [self.sort_for_list(values[dim], self.points) for dim in range(dimensions)]
 
+        i = self.agreement_param
+        while n >= i + self.agreement_param:
+            cuts = [Cut() for _ in range(dimensions)]
+            for dim in range(dimensions):
+                cuts[dim].init()
+                highest_gap = 0
+                gap_index = 0
+                prev_point = sorted_points[dim][i-interval][dim]
+              
+                for k in range(i-interval+1, i+interval):
+                    gap = abs(prev_point - sorted_points[dim][k][dim])
+                    if gap > highest_gap:
+                        highest_gap = gap
+                        gap_index = k
+                    prev_point = sorted_points[dim][k][dim]
 
-        for dim in range(dimensions):
-            for _ in range(int(2*(n/self.agreement_param))):
+                for point in sorted_points[dim][:gap_index]:
+                    cuts[dim].A.add(point[-1])
+                    cuts[dim].A_points.append(point[:-1])
+                for point in sorted_points[dim][gap_index:]:
+                    cuts[dim].Ac.add(point[-1])
+                    cuts[dim].Ac_points.append(point[:-1])
+                self.cuts.append(cuts[dim])
+            i += self.agreement_param                
+ 
+    def cut_kmeans(self):
+        self.cuts = []
+        partitions = []
+        n_partitions = 2
+
+        n_clusters = len(self.points)//self.agreement_param
+
+        for i in range(n_partitions):
+            # Create a SpectralClustering object
+
+            # set n_jobs = -1 , to obtain parallel computation
+            kmeans = KMeans(n_clusters=n_clusters, init="random", n_init=1, max_iter=2)
+                
+            labels = kmeans.fit_predict(self.points)
+            
+            partitions.append(labels)
+
+            print(labels)
+
+        # Create cuts based on the partitions
+        for part in partitions:
+            index = 1
+            while True: 
                 cut = Cut()
                 cut.init()
-                i = random.uniform(1, n)
-                for k in range(0, n):
-                    if k < i:
-                        cut.A.add(sorted_points[dim][k][dimensions])
-                    else:
-                        cut.Ac.add(sorted_points[dim][k][dimensions])
+            
+                for i in range(index):
+                    cut.A.update(np.where(part == i)[0])
+                    selected_points = [self.points[idx] for idx in np.where(part == i)[0]]
+                    # Append the selected points to cut.A_points
+                    cut.A_points = selected_points
+                for i in range(index, n_clusters):
+                    cut.Ac.update(np.where(part == i)[0])
+                    selected_points = [self.points[idx] for idx in np.where(part == i)[0]]
+                    # Append the selected points to cut.A_points
+                    cut.Ac_points = selected_points
                 self.cuts.append(cut)
 
+                if index == math.ceil(n_clusters/2):
+                    break
+                
+                index += 1
 
-        # If we could make some test that shows that generally how bad random cuts are.
-        # But we could also make a test that shows that random cuts are better than the other cuts.
-        # This would be a good test to show how the tangles is limited by its cuts.
+        self.cuts = []
 
     def cut_spectral(self):
         self.cuts = []
         partitions = []
-        n_partitions = 1
+        n_partitions = 2
 
         n_clusters = len(self.points)//self.agreement_param
         n_neighbors = (len(self.points)//n_clusters)//12
@@ -410,9 +332,18 @@ class DataSetFeatureBased(DataType):
             
                 for i in range(index):
                     cut.A.update(np.where(part == i)[0])
+                    print(cut.A)
+                    selected_points = [self.points[idx] for idx in np.where(part == i)[0]]
+                    # Append the selected points to cut.A_points
+                    cut.A_points = selected_points
+                    print(cut.A_points)
                 for i in range(index, n_clusters):
                     cut.Ac.update(np.where(part == i)[0])
-
+                    print(cut.Ac)
+                    selected_points = [self.points[idx] for idx in np.where(part == i)[0]]
+                    # Append the selected points to cut.A_points
+                    cut.Ac_points = selected_points
+                    print(cut.Ac_points)
                 self.cuts.append(cut)
 
                 if index == math.ceil(n_clusters/2):
@@ -420,7 +351,6 @@ class DataSetFeatureBased(DataType):
                 
                 index += 1
 
-    def cut_generator_axis_solveig(self):
         self.cuts = []
         n = len(self.points)
         dimensions = len(self.points[0])
@@ -447,29 +377,64 @@ class DataSetFeatureBased(DataType):
             cut = Cut()
             cut.init()
             cut.A.add(sorted_points[dim][0][dimensions])
+            cut.A_points.append(sorted_points[dim][0][:-1])
             for k in range(i, n):
                 cut.Ac.add(sorted_points[dim][k][dimensions])
+                cut.Ac_points.append(sorted_points[dim][0][:-1])
             self.cuts.append(cut)
 
         i += self.agreement_param - 1 
-        while n > i + self.agreement_param - 1:
-            cuts = [Cut() for _ in range(dimensions)]  # Create cuts for each dimension
+        while n >= i:
             for dim in range(dimensions):
-                cuts[dim].init()
+                cut = Cut()
+                cut.init()
                 for k in range(0, i):
-                    cuts[dim].A.add(sorted_points[dim][k][dimensions])
+                    cut.A.add(sorted_points[dim][k][dimensions])
+                    cut.A_points.append(sorted_points[dim][k][:-1])
                     if k == i - 1:
-                        cuts[dim].line_placement = (sorted_points[dim][k][0], dim)
+                        cut.line_placement = (sorted_points[dim][k][0], dim)
                 for k in range(i, n):
-                    cuts[dim].Ac.add(sorted_points[dim][k][dimensions])
-                self.cuts.append(cuts[dim])
+                    cut.Ac.add(sorted_points[dim][k][dimensions])
+                    cut.Ac_points.append(sorted_points[dim][k][:-1])
+                self.cuts.append(cut)
             i += self.agreement_param - 1
+        
+    def cut_axis(self):
+        n = len(self.points)
+        d = len(self.points[0])
+        
+        if type(self.points) == np.ndarray:
+            self.points = self.points.tolist()
+        self.points = [point + [z] for z, point in enumerate(self.points)]
+
+        axis_values = [[] for _ in range(d)]  # 
+
+        # Extract values for each dimension
+        for point in self.points:
+            for dim in range(d):
+                axis_values[dim].append(point[dim])
+     
+        sorted_points = [self.sort_for_list(axis_values[dim], self.points) for dim in range(d)]
+
+        i = self.agreement_param
+        while n >= i + self.agreement_param:
+            cuts = [Cut() for _ in range(d)]
+            for dim in range(d):
+                cuts[dim].init()
+                for point in sorted_points[dim][:i]:
+                    cuts[dim].A.add(point[-1])
+                    cuts[dim].A_points.append(point[:-1])
+                for point in sorted_points[dim][i:]:
+                    cuts[dim].Ac.add(point[-1])
+                    cuts[dim].Ac_points.append(point[:-1])
+                self.cuts.append(cuts[dim])
+            i += self.agreement_param
 
     def cut_generator_axis_dimensions(self):
         self.cuts = []
         n = len(self.points)
-
         dimensions = len(self.points[0])
+        
         # Add index to keep track of original order
         if type(self.points) == np.ndarray:
             self.points = self.points.tolist()
@@ -491,45 +456,18 @@ class DataSetFeatureBased(DataType):
                 cuts[dim].init()
                 for k in range(0, i):
                     cuts[dim].A.add(sorted_points[dim][k][dimensions])
+                    cuts[dim].A_points.append(sorted_points[dim][k][:-1])
                     if k == i - 1:
                         cuts[dim].line_placement = (sorted_points[dim][k][0], dim)
                 for k in range(i, n):
                     cuts[dim].Ac.add(sorted_points[dim][k][dimensions])
+                    cuts[dim].Ac_points.append(sorted_points[dim][k][:-1])
                 self.cuts.append(cuts[dim])
             i += self.agreement_param
-    
-    def cut_generator_axis_dimensions_finer(self, increaser):
-        self.cuts = []
-        n = len(self.points)
+   
 
-        dimensions = len(self.points[0])
-        # Add index to keep track of original order
-        if type(self.points) == np.ndarray:
-            self.points = self.points.tolist()
-        self.points = [point + [z] for z, point in enumerate(self.points)]
 
-        values = [[] for _ in range(dimensions)]  # 
 
-        # Extract values for each dimension
-        for point in self.points:
-            for dim in range(dimensions):
-                values[dim].append(point[dim])
-
-        sorted_points = [self.sort_for_list(values[dim], self.points) for dim in range(dimensions)]
-
-        i = increaser
-        while n >= i + increaser:
-            cuts = [Cut() for _ in range(dimensions)]  # Create cuts for each dimension
-            for dim in range(dimensions):
-                cuts[dim].init()
-                for k in range(0, i):
-                    cuts[dim].A.add(sorted_points[dim][k][dimensions])
-                    if k == i - 1:
-                        cuts[dim].line_placement = (sorted_points[dim][k][0], dim)
-                for k in range(i, n):
-                    cuts[dim].Ac.add(sorted_points[dim][k][dimensions])
-                self.cuts.append(cuts[dim])
-            i += increaser
 
 
     def order_function(self):
@@ -546,20 +484,11 @@ class DataSetFeatureBased(DataType):
         costs = []
         for cut in self.cuts: 
             costs.append(cut.cost)
-
         zipped_data = zip(costs, self.cuts)
         # Sort the zipped data based on the costs
         sorted_data = sorted(zipped_data, key=lambda x: x[0])
         _, cuts_ordered = zip(*sorted_data)
         return cuts_ordered
-
-    def euclidean_distance(self, x1, x2, y1, y2):
-        distance = math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
-        return distance
-
-    def euclidean_distance_eulers(self, x1, x2, y1, y2):
-        distance = math.e(-math.sqrt((x1 - x2)**2 + (y1 - y2)**2))
-        return distance
 
     def sort_for_list(self, axis_values, points):
         combined = list(zip(axis_values, points))
@@ -567,6 +496,9 @@ class DataSetFeatureBased(DataType):
         sorted_combined = [e[1] for e in sorted_combined]
         return sorted_combined
     
+
+    # Evaluation functions
+
     def davies_bouldin_score(self, ground_truth, labels):
         score = davies_bouldin_score(ground_truth, labels)
         return score
@@ -577,6 +509,9 @@ class DataSetFeatureBased(DataType):
         """
         nmi_score = normalized_mutual_info_score(ground_truth, labels)
         return nmi_score
+
+
+# dimensionality reduction functions and input functions
 
 def pca(X):
     """ 
