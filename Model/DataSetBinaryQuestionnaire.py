@@ -31,7 +31,7 @@ class DataSetBinaryQuestionnaire(DataType):
         
 
     
-    def cut_generator_binary(self,nd_questionnaires, method):
+    def cut_generator_binary(self,nd_questionnaires, method="Element by element"):
         
         """ 
         This function is used to generate the cuts for binary questionnaires data set
@@ -58,6 +58,8 @@ class DataSetBinaryQuestionnaire(DataType):
         cost = 0
         orientation = "None"
         sim_fun = sim(method)
+        nd_questionnaires = np.array(nd_questionnaires)
+        # print(nd_questionnaires)
 
         num_of_participants = nd_questionnaires.shape[0]
         num_of_quest = nd_questionnaires.shape[1]

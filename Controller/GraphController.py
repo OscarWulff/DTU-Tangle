@@ -1,9 +1,11 @@
+from sklearn.metrics import normalized_mutual_info_score
 from Model.GenerateTestData import GenerateRandomGraph
 from Model.DataSetGraph import DataSetGraph
 from sklearn.cluster import SpectralClustering
 from PyQt5.QtWidgets import QFileDialog, QCheckBox, QComboBox, QLineEdit, QPushButton, QMainWindow
 from Model.TangleCluster import *
 import time
+import community as community_louvain
 
 
 class GraphController:
@@ -13,6 +15,7 @@ class GraphController:
         self.view.generate_random_button.clicked.connect(self.generate_random)
         self.view.generate_tangles_button.clicked.connect(self.tangles)
         self.view.generate_spectral_button.clicked.connect(self.spectral)
+        self.view.generate_louvain_button.clicked.connect(self.louvain)
         self.random_graph_generator = None  # Initialize random_graph_generator attribute
 
 
@@ -31,7 +34,6 @@ class GraphController:
 
             # Generate a random graph using the ground truth
             self.view.generated_graph, self.view.generated_ground_truth = self.random_graph_generator.generate_random_graph()
-            print("ground truth", self.view.generated_ground_truth)
 
             self.view.setup_plots()
 
@@ -48,12 +50,17 @@ class GraphController:
 
             if self.view.tangles_plot is None: 
                 self.view.numb_plots += 1 
+
             # Perform tangles on the generated graph
             agreement_parameter = int(self.view.agreement_parameter.text())
-            start_time = time.time()
-            data = DataSetGraph(agreement_param=agreement_parameter)
+            data = DataSetGraph(agreement_param=agreement_parameter, k=int(self.view.k_spectral.text()))
             data.G = self.view.generated_graph
-            data.generate_multiple_cuts(data.G) 
+            initial_partioning = self.view.partition_method_combobox.currentText()
+            start_time = time.time()
+            if initial_partioning == "K-Means":  # Access initial_partition_method here
+                data.generate_multiple_cuts(data.G, initial_partition_method="K-Means")  # Use K-Means for initial partitioning
+            else:
+                data.generate_multiple_cuts(data.G, initial_partition_method="Kernighan-Lin")  # Use Kernighan-Lin for initial partitioning
             data.cost_function_Graph()
 
             
@@ -63,21 +70,23 @@ class GraphController:
             soft = soft_clustering(root_condense)
             hard = hard_clustering(soft)
 
+            end_time = time.time()
 
             self.view.tangles_plot = hard
-            end_time = time.time()
 
             total_time = end_time - start_time
             print("Total time for tangles:", total_time)
-            # Visualize tangles
-            # if data is uploaded nmi score should not be calculated
-            if self.random_graph_generator is not None:
-                self.view.nmi_score_tangles = round(self.random_graph_generator.nmi_score(hard), 2)
 
+            # Calculate NMI score directly using ground truth and predicted tangles
+            ground_truth = self.view.generated_ground_truth
+            nmi_score = self.nmi_score(ground_truth, hard)  # Assuming hard contains the predicted tangles
+
+            self.view.nmi_score_tangles = round(nmi_score, 2)
+            self.view.tangles_time = total_time  # Store the running time
             self.view.setup_plots()
 
-        except ValueError as e:
-            print("Invalid input", e)
+        except Exception as e:
+            print("Error:", e)
 
     def spectral(self):
         try:
@@ -86,9 +95,9 @@ class GraphController:
                 print("No generated graph available.")
                 return
 
-            start_time = time.time()
             G = self.view.generated_graph
             # Get adjacency matrix as numpy array
+            start_time = time.time()
             adj_mat = nx.convert_matrix.to_numpy_array(G)
 
             # Get the number of clusters from the input field
@@ -97,25 +106,75 @@ class GraphController:
                 self.view.numb_plots += 1
 
             # Cluster
-            sc = SpectralClustering(k)
+            sc = SpectralClustering(k, affinity='precomputed')  # Specify affinity as precomputed
             sc.fit(adj_mat)
+            end_time = time.time()
 
             # Plot the spectral clustering result
             self.view.spectral_plot = sc.labels_
 
-            if self.random_graph_generator is not None:
-                self.view.nmi_score_spectral = round(self.random_graph_generator.nmi_score(sc.labels_), 2)
+            # Calculate NMI score only if ground truth is available
+            if self.view.generated_ground_truth:
+                ground_truth = self.view.generated_ground_truth
+                nmi_score = self.nmi_score(ground_truth, sc.labels_)
+                self.view.nmi_score_spectral = round(nmi_score, 2)
             
-            self.view.setup_plots()
-            end_time = time.time()
-
             total_time = end_time - start_time
             print("Total time for spectral clustering:", total_time)
+            self.view.spectral_time = total_time  # Store the running time
+
+            self.view.setup_plots()
 
         except Exception as e:
             print("Error in spectral clustering:", e)
 
 
+    def louvain(self):
+        try:
+            # Check if the generated graph exists
+            if self.view.generated_graph is None:
+                print("No generated graph available.")
+                return
+            G = self.view.generated_graph
+
+            start_time = time.time()
+            # Apply the Louvain method for community detection
+            partition = community_louvain.best_partition(G)
+            end_time = time.time()
+
+            # Convert the partition dictionary to a list of labels
+            louvain_labels = [partition[node] for node in G.nodes()]
+
+            if self.view.louvain_plot is None:
+                self.view.numb_plots += 1
+
+            # Plot the Louvain clustering result
+            self.view.louvain_plot = louvain_labels
+
+            # Calculate NMI score only if ground truth is available
+            if self.view.generated_ground_truth:
+                ground_truth = self.view.generated_ground_truth
+                nmi_score = self.nmi_score(ground_truth, louvain_labels)
+                self.view.nmi_score_louvain = round(nmi_score, 2)
+            
+            total_time = end_time - start_time
+            print("Total time for Louvain clustering:", total_time)
+            self.view.louvain_time = total_time  # Store the running time
+
+            self.view.setup_plots()
+
+        except Exception as e:
+            print("Error in Louvain clustering:", e)
+
+
+    def nmi_score(self, ground_truth, predicted_tangles):
+        """
+        Calculates the NMI score of the predicted tangles
+        """
+        nmi_score = normalized_mutual_info_score(ground_truth, predicted_tangles)
+        return nmi_score
+
+    
     def upload_data(self):
         try:
             # Open a file dialog to select the file
@@ -125,29 +184,34 @@ class GraphController:
                 if selected_files:
                     selected_file = selected_files[0]
                     print("Selected file:", selected_file)
-                    G = nx.read_edgelist(selected_file)  # Assuming the data is stored in an edge list format
-
+                    G = nx.read_gml(selected_file)  # Assuming the data is stored in a .gml file
+                    
                     if G is not None:
+                        # Extract ground truth labels based on conference affiliations
+                        ground_truth = []
+                        for node_id, data in G.nodes(data=True):
+                            if 'value' in data:
+                                # Convert 'value' to an integer if it's not already
+                                value = int(data['value']) if not isinstance(data['value'], int) else data['value']
+                                ground_truth.append(value)
+                            elif 'gt' in data:
+                                # Ground truth is a string, append it directly
+                                ground_truth.append(data['gt'])
+                            else:
+                                # If neither 'value' nor 'gt' attribute is found, assign 0 as the default label
+                                ground_truth.append(0)
+
                         # Convert node labels to integers
                         G = nx.convert_node_labels_to_integers(G)
-
+                        
                         # Clear existing generated graph and ground truth
                         self.view.generated_graph = G
-                        self.view.generated_ground_truth = [1] * len(G.nodes)
+                        self.view.generated_ground_truth = ground_truth
+                        
                         # Set the generated graph in the view
-
-                        # Show the upload data view
                         self.view.upload_data_show()
                         self.view.setup_plots()
                     else:
                         print("Error: Graph is None")
-
         except Exception as e:
-            # Handle errors more gracefully
-            print("Error uploading data:", e)
-            # Optionally, show an error dialog to the user or log the error for debugging
-
-
-
-
-        
+            print("Error:", e)
