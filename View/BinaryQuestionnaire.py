@@ -1,6 +1,7 @@
 
 import time
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QFileDialog, QVBoxLayout, QWidget, QHBoxLayout, QLabel
+from tkinter import messagebox
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QFileDialog, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QMessageBox
 import numpy as np
 import matplotlib.pyplot as plt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QFileDialog, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QLineEdit, QComboBox, QSizePolicy, QCheckBox
@@ -84,13 +85,20 @@ class BinaryQuestionnaireWindow(QMainWindow):
         button_layout.addWidget(self.generate_DBSCAN_button)
         self.generate_DBSCAN_button.hide()
 
-        self.export_button = QPushButton("Export dataset", self)
-        button_layout.addWidget(self.export_button)
-        self.export_button.hide()
+       
 
         self.generate_Kmeans_button = QPushButton("apply k-means", self)
         button_layout.addWidget(self.generate_Kmeans_button)
         self.generate_Kmeans_button.hide()
+
+        self.export_button = QPushButton("Export dataset", self)
+        button_layout.addWidget(self.export_button)
+        self.export_button.hide()
+
+        self.export_plot_button = QPushButton("Export plot", self)
+        button_layout.addWidget(self.export_plot_button)
+        self.export_plot_button.hide()
+
 
         self.numb_questions = QLineEdit()
         self.numb_questions.setFixedSize(150, 30)  # Set a fixed size for the input field
@@ -244,6 +252,11 @@ class BinaryQuestionnaireWindow(QMainWindow):
         # Show the main page again
         self.main_page.show()
 
+    def show_error_message(self, error_message):
+    # Add a title parameter to the critical method call
+        QMessageBox.critical(self, "Error", error_message)
+       
+
     
 
     def show_buttons(self):
@@ -254,6 +267,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.numb_questions.show()
         self.agreement_parameter.show()
         self.export_button.show()
+        self.export_plot_button.show()
         self.epsilon.show()
         self.min_samples.show()
         self.k_kmeans.show()
