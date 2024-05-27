@@ -318,3 +318,6 @@ class GenerateDataBinaryQuestionnaire():
         print(kmeans.labels_)
 
         return kmeans.labels_
+    
+def export_to_csv(data, filename):
+    np.savetxt(filename, data, delimiter=",", fmt='%d')

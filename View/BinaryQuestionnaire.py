@@ -84,6 +84,10 @@ class BinaryQuestionnaireWindow(QMainWindow):
         button_layout.addWidget(self.generate_DBSCAN_button)
         self.generate_DBSCAN_button.hide()
 
+        self.export_button = QPushButton("Export dataset", self)
+        button_layout.addWidget(self.export_button)
+        self.export_button.hide()
+
         self.generate_Kmeans_button = QPushButton("apply k-means", self)
         button_layout.addWidget(self.generate_Kmeans_button)
         self.generate_Kmeans_button.hide()
@@ -249,6 +253,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.numb_participants.show()
         self.numb_questions.show()
         self.agreement_parameter.show()
+        self.export_button.show()
         self.epsilon.show()
         self.min_samples.show()
         self.k_kmeans.show()
@@ -488,5 +493,6 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.k_kmeans.show()
         self.sim_fun.show()
         self.agreement_parameter.show()
+        self.soft_clustering.show()
         
 
