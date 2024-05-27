@@ -90,6 +90,17 @@ class GraphWindow(QMainWindow):
         self.partition_method_combobox.hide()
         layout.addWidget(self.partition_method_combobox)
 
+         # Add label to prompt user to choose cost method
+        self.cost_label = QLabel("Choose Cost Function:", self)
+        layout.addWidget(self.cost_label)
+
+        # Create a combo box for choosing initial partitioning method
+        self.cost_method_combobox = QComboBox()
+        self.cost_method_combobox.addItems(["Kernighan-Lin Cost Function", "Modularity cost", "Edge cut cost"])
+        self.cost_label.hide()
+        self.cost_method_combobox.hide()
+        layout.addWidget(self.cost_method_combobox)
+
 
         self.numb_nodes = QLineEdit()
         self.numb_nodes.setFixedSize(300, 30)
@@ -159,6 +170,8 @@ class GraphWindow(QMainWindow):
         self.generate_louvain_button.show()  # Show Louvain button
         self.partition_label.show()
         self.partition_method_combobox.show()
+        self.cost_label.show()
+        self.cost_method_combobox.show()
         self.numb_nodes.show()
         self.numb_clusters.show()
         self.average_edges_to_same_cluster.show()
@@ -169,6 +182,9 @@ class GraphWindow(QMainWindow):
 
     def update_partition_method(self):
         self.selected_partition_method = self.partition_method_combobox.currentText()
+
+    def update_cost_method(self):
+        self.selected_cost_method = self.cost_method_combobox.currentText()
 
     def show_input_fields(self):
         self.numb_nodes.show()

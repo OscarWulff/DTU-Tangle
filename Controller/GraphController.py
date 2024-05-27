@@ -59,6 +59,7 @@ class GraphController:
             agreement_parameter = int(self.view.agreement_parameter.text())
             data = DataSetGraph(agreement_param=agreement_parameter, k=int(self.view.k_spectral.text()))
             data.G = self.view.generated_graph
+            # choose initial partitioning
             initial_partitioning = self.view.partition_method_combobox.currentText()
             start_time = time.time()
             if initial_partitioning == "K-Means":
@@ -69,7 +70,14 @@ class GraphController:
                 data.generate_multiple_cuts(data.G, initial_partition_method="K-Means-Both")
             else:
                 data.generate_multiple_cuts(data.G, initial_partition_method="Kernighan-Lin")
-            data.cost_function_Graph()
+            # choose Cost function
+            initital_cost = self.view.cost_method_combobox.currentText()
+            if initital_cost == "Kernighan-Lin Cost Function":
+                data.cost_function_Graph(cost_function="Kernighan-Lin Cost Function")
+            elif initital_cost == "Modularity":
+                data.cost_function_Graph(cost_function="Modularity")
+            else:
+                data.cost_function_Graph(cost_function="Ratio Cut")
             root = create_searchtree(data)
             root_condense = condense_tree(root)
             contracting_search_tree(root_condense)

@@ -210,9 +210,9 @@ class DataSetGraph(DataType):
         for cut in self.cuts:
             if cost_function == "Kernighan-Lin Cost Function":
                 cut.cost = self.calculate_kernighan_lin_cost(cut)
-            elif cost_function == "Modularity":
+            elif cost_function == "Modularity cost":
                 cut.cost = self.calculate_modularity_cost(cut)
-            elif cost_function == "Ratio Cut":
+            elif cost_function == "Edge cut cost":
                 cut.cost = self.calculate_edge_cut_cost(cut)
             else:
                 raise ValueError("Invalid cost function.")
@@ -267,9 +267,16 @@ class DataSetGraph(DataType):
         """
         if self.G is None:
             raise ValueError("Graph G is not initialized.")
+        
+        # Initialize cost for the current cut
+        edge_cut_cost = 0
 
         # Calculate the sum of edge weights between nodes in A and nodes in Ac
-        edge_cut_cost = sum(1 for u in cut.A for v in cut.Ac if self.G.has_edge(u, v))
+        for u in cut.A:
+            for v in cut.Ac:
+                # Check if there is an edge between nodes u and v
+                if self.G.has_edge(u, v):
+                    edge_cut_cost += 1
 
         return edge_cut_cost
 
@@ -295,11 +302,12 @@ class DataSetGraph(DataType):
         # Calculate the sum of edge weights between nodes in A and nodes in Ac
         for u in cut.A:
             for v in cut.Ac:
+                # Check if there is an edge between nodes u and v
                 if self.G.has_edge(u, v):
                     modularity_cost += 1
 
         # Calculate the expected number of edges between nodes in A and nodes in Ac
-        expected_edges = (cut.A_size * cut.Ac_size) / (2 * total_edges)
+        expected_edges = (len(cut.A) * len(cut.Ac)) / (2 * total_edges)
 
         # Calculate modularity cost
         modularity_cost -= expected_edges
