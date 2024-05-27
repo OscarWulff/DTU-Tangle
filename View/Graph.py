@@ -180,11 +180,19 @@ class GraphWindow(QMainWindow):
         self.soft_clustering.show()
 
     def soft_clustering_changed(self, state):
-        if state == 2: 
-            self.prob_checked = True
-        else:
+        if state == 2:  # Checked
+            if self.tangles_plot is None:
+                QMessageBox.warning(self, "Error", "You must apply Tangles before using Soft Clustering.")
+                self.soft_clustering.setChecked(False)
+                self.prob_checked = False
+                
+            else:
+                self.prob_checked = True
+                self.setup_plots()
+        else:  # Unchecked
             self.prob_checked = False
-        self.setup_plots()
+            self.setup_plots()
+
 
     def setup_plots(self):
         self.figure.clear()
@@ -204,7 +212,7 @@ class GraphWindow(QMainWindow):
                 plot = self.figure.add_subplot(122)
                 plot.set_title('Tangles (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_tangles, self.tangles_time))
                 if self.prob_checked:
-                    self.visualize_graph_prob(self.generated_graph, self.tangles_plot)  # Pass self.prob
+                    self.visualize_graph_prob(self.generated_graph, self.tangles_plot)
                 else:
                     self.visualize_graph(self.generated_graph, self.tangles_plot)
 
@@ -218,7 +226,7 @@ class GraphWindow(QMainWindow):
                 plot = self.figure.add_subplot(222)
                 plot.set_title('Tangles (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_tangles, self.tangles_time))
                 if self.prob_checked:
-                    self.visualize_graph_prob(self.generated_graph, self.tangles_plot, self.prob)  # Pass self.prob
+                    self.visualize_graph_prob(self.generated_graph, self.tangles_plot)
                 else:
                     self.visualize_graph(self.generated_graph, self.tangles_plot)
 
@@ -237,7 +245,7 @@ class GraphWindow(QMainWindow):
                 plot = self.figure.add_subplot(222)
                 plot.set_title('Tangles (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_tangles, self.tangles_time))
                 if self.prob_checked:
-                    self.visualize_graph_prob(self.generated_graph, self.tangles_plot, self.prob)  # Pass self.prob
+                    self.visualize_graph_prob(self.generated_graph, self.tangles_plot) 
                 else:
                     self.visualize_graph(self.generated_graph, self.tangles_plot)
 
@@ -256,6 +264,7 @@ class GraphWindow(QMainWindow):
 
 
 
+
     def visualize_graph(self, graph, plot):
         pos = nx.spring_layout(graph)
 
@@ -269,7 +278,7 @@ class GraphWindow(QMainWindow):
 
         nx.draw_networkx_edges(graph, pos, edge_color='black')
 
-    def visualize_graph_prob(self, graph, plot, prob=None):
+    def visualize_graph_prob(self, graph, plot):
         pos = nx.spring_layout(graph)
 
         clusters = sorted(set(plot))
@@ -277,7 +286,7 @@ class GraphWindow(QMainWindow):
         color_map = {cluster: color for cluster, color in zip(clusters, colors)}
 
         # Adjusting the node colors based on probabilities
-        alpha_values = [prob[i] for i in range(len(plot))] if prob is not None else [1] * len(plot)
+        alpha_values = [self.prob[i] for i in range(len(plot))] if self.prob is not None else [1] * len(plot)
 
         for node, (cluster, alpha) in enumerate(zip(plot, alpha_values)):
             nx.draw_networkx_nodes(graph, pos, nodelist=[node], node_color=[color_map[cluster]], alpha=alpha, node_size=500)
@@ -288,23 +297,9 @@ class GraphWindow(QMainWindow):
 
 
     def go_back_to_main_page(self):
-        if self.upload_data_button.isVisible() or self.generate_data_button.isVisible():
-            self.close()
-            self.main_page.show()
-        else:
-            self.generate_data_button.show()
-            self.upload_data_button.show()
-            self.generate_random_button.hide()
-            self.generate_tangles_button.hide()
-            self.soft_clustering.hide()
-            self.generate_spectral_button.hide()
-            self.generate_louvain_button.hide()
-            self.numb_nodes.hide()
-            self.numb_clusters.hide()
-            self.average_edges_to_same_cluster.hide()
-            self.average_edges_to_other_clusters.hide()
-            self.agreement_parameter.hide()
-            self.k_spectral.hide()
+        self.close()  # Close the current window
+        # Show the main page again
+        self.main_page.show()
 
     def upload_data_show(self):
         self.upload_data_button.hide()
