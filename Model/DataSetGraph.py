@@ -59,7 +59,7 @@ class DataSetGraph(DataType):
                     self.cuts.append(cut)
         elif initial_partition_method == "Kernighan-Lin":
             while len(self.cuts) < cuts:
-                partition = nx.algorithms.community.kernighan_lin_bisection(G, max_iter=2, weight='weight', seed=None)
+                partition = nx.algorithms.community.kernighan_lin_bisection(G, max_iter=1, weight='weight', seed=None)
                 cut = Cut()
                 cut.A = partition[0]
                 cut.Ac = partition[1]

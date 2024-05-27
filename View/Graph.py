@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import networkx as nx
 import numpy as np
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QFileDialog, QLabel, QLineEdit, QApplication, QSizePolicy, QComboBox, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QFileDialog, QLabel, QLineEdit, QApplication, QSizePolicy, QComboBox, QMessageBox, QCheckBox
 from PyQt5 import QtCore
 from sklearn.metrics import normalized_mutual_info_score
 
@@ -42,9 +42,11 @@ class GraphWindow(QMainWindow):
         self.tangles_time = None
         self.spectral_time = None
         self.louvain_time = None
+        self.prob = None
 
         # Flag to track if a random graph has been generated
         self.graph_generated_flag = False
+        self.prob_checked = False
 
         # Add buttons
         button_layout = QHBoxLayout()
@@ -63,6 +65,11 @@ class GraphWindow(QMainWindow):
         self.generate_tangles_button = QPushButton("Apply Tangles", self)
         button_layout.addWidget(self.generate_tangles_button)
         self.generate_tangles_button.hide()
+
+        self.soft_clustering = QCheckBox("soft clustering")
+        self.soft_clustering.stateChanged.connect(self.soft_clustering_changed)
+        self.soft_clustering.hide()
+        layout.addWidget(self.soft_clustering)
 
         self.generate_spectral_button = QPushButton("Apply Spectral", self)
         button_layout.addWidget(self.generate_spectral_button)
@@ -158,6 +165,7 @@ class GraphWindow(QMainWindow):
         self.average_edges_to_other_clusters.show()
         self.agreement_parameter.show()
         self.k_spectral.show()
+        self.soft_clustering.show()
 
     def update_partition_method(self):
         self.selected_partition_method = self.partition_method_combobox.currentText()
@@ -169,6 +177,15 @@ class GraphWindow(QMainWindow):
         self.average_edges_to_other_clusters.show()
         self.agreement_parameter.show()
         self.k_spectral.show()
+        self.soft_clustering.show()
+
+    def soft_clustering_changed(self, state):
+        if state == 2: 
+            self.prob_checked = True
+        else:
+            self.prob_checked = False
+        self.setup_plots()
+
     def setup_plots(self):
         self.figure.clear()
 
@@ -186,7 +203,10 @@ class GraphWindow(QMainWindow):
             if self.tangles_plot is not None:
                 plot = self.figure.add_subplot(122)
                 plot.set_title('Tangles (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_tangles, self.tangles_time))
-                self.visualize_graph(self.generated_graph, self.tangles_plot)
+                if self.prob_checked:
+                    self.visualize_graph_prob(self.generated_graph, self.tangles_plot)  # Pass self.prob
+                else:
+                    self.visualize_graph(self.generated_graph, self.tangles_plot)
 
         elif self.numb_plots == 3:
             if self.generated_graph is not None:
@@ -197,7 +217,10 @@ class GraphWindow(QMainWindow):
             if self.tangles_plot is not None:
                 plot = self.figure.add_subplot(222)
                 plot.set_title('Tangles (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_tangles, self.tangles_time))
-                self.visualize_graph(self.generated_graph, self.tangles_plot)
+                if self.prob_checked:
+                    self.visualize_graph_prob(self.generated_graph, self.tangles_plot, self.prob)  # Pass self.prob
+                else:
+                    self.visualize_graph(self.generated_graph, self.tangles_plot)
 
             if self.spectral_plot is not None:
                 plot = self.figure.add_subplot(223)
@@ -213,7 +236,10 @@ class GraphWindow(QMainWindow):
             if self.tangles_plot is not None:
                 plot = self.figure.add_subplot(222)
                 plot.set_title('Tangles (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_tangles, self.tangles_time))
-                self.visualize_graph(self.generated_graph, self.tangles_plot)
+                if self.prob_checked:
+                    self.visualize_graph_prob(self.generated_graph, self.tangles_plot, self.prob)  # Pass self.prob
+                else:
+                    self.visualize_graph(self.generated_graph, self.tangles_plot)
 
             if self.spectral_plot is not None:
                 plot = self.figure.add_subplot(223)
@@ -229,6 +255,7 @@ class GraphWindow(QMainWindow):
         self.canvas.draw()
 
 
+
     def visualize_graph(self, graph, plot):
         pos = nx.spring_layout(graph)
 
@@ -242,6 +269,24 @@ class GraphWindow(QMainWindow):
 
         nx.draw_networkx_edges(graph, pos, edge_color='black')
 
+    def visualize_graph_prob(self, graph, plot, prob=None):
+        pos = nx.spring_layout(graph)
+
+        clusters = sorted(set(plot))
+        colors = plt.cm.viridis(np.linspace(0, 1, len(clusters)))
+        color_map = {cluster: color for cluster, color in zip(clusters, colors)}
+
+        # Adjusting the node colors based on probabilities
+        alpha_values = [prob[i] for i in range(len(plot))] if prob is not None else [1] * len(plot)
+
+        for node, (cluster, alpha) in enumerate(zip(plot, alpha_values)):
+            nx.draw_networkx_nodes(graph, pos, nodelist=[node], node_color=[color_map[cluster]], alpha=alpha, node_size=500)
+
+        nx.draw_networkx_labels(graph, pos, font_size=10)
+        nx.draw_networkx_edges(graph, pos, edge_color='black', width=1)
+
+
+
     def go_back_to_main_page(self):
         if self.upload_data_button.isVisible() or self.generate_data_button.isVisible():
             self.close()
@@ -251,6 +296,7 @@ class GraphWindow(QMainWindow):
             self.upload_data_button.show()
             self.generate_random_button.hide()
             self.generate_tangles_button.hide()
+            self.soft_clustering.hide()
             self.generate_spectral_button.hide()
             self.generate_louvain_button.hide()
             self.numb_nodes.hide()

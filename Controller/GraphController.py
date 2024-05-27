@@ -67,11 +67,18 @@ class GraphController:
                 data.generate_multiple_cuts(data.G, initial_partition_method="Kernighan-Lin")  # Use Kernighan-Lin for initial partitioning
             data.cost_function_Graph()
 
-            
             root = create_searchtree(data)
             root_condense = condense_tree(root)
             contracting_search_tree(root_condense)
             soft = soft_clustering(root_condense)
+            self.view.prob = []
+
+            for i in range(len(soft)):
+                prob = 0
+                for j in range(len(soft[0])):
+                    if soft[i][j] > prob:
+                        prob = soft[i][j]
+                self.view.prob.append(prob)
             hard = hard_clustering(soft)
 
             end_time = time.time()
@@ -79,7 +86,6 @@ class GraphController:
             self.view.tangles_plot = hard
 
             total_time = end_time - start_time
-            print("Total time for tangles:", total_time)
 
             # Calculate NMI score directly using ground truth and predicted tangles
             ground_truth = self.view.generated_ground_truth
@@ -124,7 +130,6 @@ class GraphController:
                 self.view.nmi_score_spectral = round(nmi_score, 2)
             
             total_time = end_time - start_time
-            print("Total time for spectral clustering:", total_time)
             self.view.spectral_time = total_time  # Store the running time
 
             self.view.setup_plots()
@@ -162,7 +167,6 @@ class GraphController:
                 self.view.nmi_score_louvain = round(nmi_score, 2)
             
             total_time = end_time - start_time
-            print("Total time for Louvain clustering:", total_time)
             self.view.louvain_time = total_time  # Store the running time
 
             self.view.setup_plots()
@@ -219,3 +223,4 @@ class GraphController:
                         print("Error: Graph is None")
         except Exception as e:
             print("Error:", e)
+    
