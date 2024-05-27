@@ -5,7 +5,7 @@ import numpy as np
 from PyQt5.QtWidgets import QFileDialog, QCheckBox, QComboBox, QLineEdit, QPushButton, QMainWindow
 from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire, perform_tsne
 from Model.DataSetFeatureBased import read_file, tsne
-from Model.GenerateTestData import GenerateDataBinaryQuestionnaire, GenerateDataFeatureBased, export_to_csv
+from Model.GenerateTestData import GenerateDataBinaryQuestionnaire, GenerateDataFeatureBased, export_fig_to_jpg, export_to_csv
 from Model.TangleCluster import create_searchtree
 from Model.SearchTree import condense_tree, soft_clustering, hard_clustering, contracting_search_tree
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -21,6 +21,7 @@ class BinaryQuestionnaireController:
         self.view.generate_DBSCAN_button.clicked.connect(self.dbscan)
         self.view.generate_Kmeans_button.clicked.connect(self.kmeans)
         self.view.export_button.clicked.connect(self.export_data)
+        self.view.export_plot_button.clicked.connect(self.export_plot)
 
 
 
@@ -38,11 +39,11 @@ class BinaryQuestionnaireController:
             # agreement_parameter = int(agreement_parameter)
 
             if (number_of_clusters <= 0 or number_of_questions <= 0 or number_of_participants <= 0 ):
-                print("Error: All inputs must be positive integers.")
+                self.view.show_error_message("Error: All inputs must be positive integers.")
                 return
 
         except ValueError: 
-            print("Invalid input")
+            self.view.show_error_message("Error: Invalid input")
             return
 
     
@@ -68,10 +69,10 @@ class BinaryQuestionnaireController:
             a = int(a)
 
             if (a <= 0):
-                print("Error: All inputs must be positive integers.")
+                self.view.show_error_message("Error: All inputs must be positive integers.")
                 return
         except ValueError: 
-            print("Invalid input")
+            self.view.show_error_message("Error: Invalid input")
             return
         print(self.view.generated_data.questionaire)
         # Creating the tangles
@@ -129,10 +130,10 @@ class BinaryQuestionnaireController:
             eps = float(eps)
 
             if (min_s <= 0 or eps <= 0):
-                print("Error: All inputs must be positive integers.")
+                self.view.show_error_message("Error: All inputs must be positive integers.")
                 return
         except ValueError: 
-            print("Invalid input")
+            self.view.show_error_message("Error: Invalid input")
             return
 
         generated_data = GenerateDataBinaryQuestionnaire(0, 0, 0)
@@ -156,11 +157,11 @@ class BinaryQuestionnaireController:
         try:      
             k = int(k)
             if (k <= 0):
-                print("Error: All inputs must be positive integers.")
+                self.view.show_error_message("Error: All inputs must be positive integers.")
                 return
             
         except ValueError: 
-            print("Invalid input")
+            self.view.show_error_message("Error: Invalid input")
             return
 
         generated_data = GenerateDataBinaryQuestionnaire(0, 0, 0)
@@ -203,4 +204,13 @@ class BinaryQuestionnaireController:
         if fileName:
             print("Saving data to:", fileName)
             export_to_csv(self.view.generated_data.questionaire, fileName)
+
+    def export_plot(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        # Change the dialog to save JPG files
+        fileName, _ = QFileDialog.getSaveFileName(self.view, "Save Plot", "", "JPEG Files (*.jpg);;All Files (*)", options=options)
+        if fileName:
+            print("Saving plot to:", fileName)
+            export_fig_to_jpg(self.view.figure ,fileName)
     
