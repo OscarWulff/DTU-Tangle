@@ -2,7 +2,7 @@ import ast
 import time
 import numpy as np
 from PyQt5.QtWidgets import QFileDialog, QCheckBox, QComboBox, QLineEdit, QPushButton, QMainWindow, QMessageBox
-from Model.GenerateTestData import GenerateDataFeatureBased
+from Model.GenerateTestData import GenerateDataFeatureBased, export_fig_to_jpg, export_to_csv
 from Model.DataSetFeatureBased import tsne, read_file, pca, calculate_explained_varince, DataSetFeatureBased
 from Model.TangleCluster import create_searchtree
 from Model.SearchTree import condense_tree, soft_clustering, hard_clustering, contracting_search_tree
@@ -23,6 +23,8 @@ class FeatureBasedController:
         self.view.soft_clustering.stateChanged.connect(self.soft_clustering_changed)
         self.view.nmi.stateChanged.connect(self.nmi_changed)
         self.view.davies.stateChanged.connect(self.davies_changed)
+        self.view.export_button.clicked.connect(self.export_data)
+        self.view.export_plot_button.clicked.connect(self.export_plot)
 
 
     def generate_fixed(self):
@@ -250,4 +252,22 @@ class FeatureBasedController:
         else: 
             self.view.davies_checked = False
         self.view.setup_plots()
+
+    
+    def export_data(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self.view, "Save CSV", "", "CSV Files (*.csv);;All Files (*)", options=options)
+        if fileName:
+            print("Saving data to:", fileName)
+            export_to_csv(self.view.generated_data.questionaire, fileName + ".csv")
+
+    def export_plot(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        # Change the dialog to save JPG files
+        fileName, _ = QFileDialog.getSaveFileName(self.view, "Save Plot", "", "JPEG Files (*.jpg);;All Files (*)", options=options)
+        if fileName:
+            print("Saving plot to:", fileName)
+            export_fig_to_jpg(self.view.figure ,fileName + ".jpg")
     

@@ -94,6 +94,11 @@ class FeatureBasedWindow(QMainWindow):
         button_layout.addWidget(self.export_button)
         self.export_button.hide()
 
+        self.export_plot_button = QPushButton("Export plot", self)
+        button_layout.addWidget(self.export_plot_button)
+        self.export_plot_button.hide()
+
+
         self.cluster_points = QLineEdit()
         self.cluster_points.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.cluster_points.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -239,6 +244,7 @@ class FeatureBasedWindow(QMainWindow):
         self.generate_tangles_button.show()
         self.cluster_points.show()
         self.export_button.show()
+        self.export_plot_button.show()
         self.std.show()
         self.k_spectral.show()
         self.k_kmeans.show()
