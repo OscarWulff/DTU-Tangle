@@ -61,8 +61,9 @@ class Test:
         start_time = time.time()
         
         tangle.mean_cut()
+        print("cuts")
         tangle.mean_cost()
-
+        print("costs")
         root = create_searchtree(tangle)
         tangle_root = condense_tree(root)
         contracting_search_tree(tangle_root)
@@ -92,19 +93,21 @@ class Test:
         start_time = time.time()
         
         tangle.cut_generator_axis_dimensions()
+        print("cuts")
         tangle.mean_cost()
-
+        print("costs")
 
         root = create_searchtree(tangle)
+        print("searchtree")
         tangle_root = condense_tree(root)
         contracting_search_tree(tangle_root)
-
+        print("contracting")
         if tangle_root.numb_tangles == 0:
             print("No tangles found")
         
         soft = soft_clustering(tangle_root)
         hard = hard_clustering(soft)
-    
+        print("clustering")
 
         end_time = time.time()
 
@@ -444,11 +447,11 @@ def tangles_tester(noisy_circles, noisy_moons, blobs, no_structure, aniso, varie
 
     #data_points = [varied[0]]
     for i in range(numb):
-        t, nmi_score, labels_circle = test.tangles(noisy_circles[0], noisy_circles[1], int(750*0.95))
+        t, nmi_score, labels_circle = test.tangles(noisy_circles[0], noisy_circles[1], int(750*0.90))
         noisy_circles_time.append(t)
         noisy_circles_nmi.append(nmi_score)
        
-        t, nmi_score, labels_moon = test.tangles(noisy_moons[0], noisy_moons[1], int(750*0.95))
+        t, nmi_score, labels_moon = test.tangles(noisy_moons[0], noisy_moons[1], int(750*0.90))
         noisy_moons_time.append(t)
         noisy_moons_nmi.append(nmi_score)
 
@@ -854,12 +857,12 @@ def plots_cost_tester():
 
 def plots_cut_tester():
     import matplotlib.pyplot as plt
-    t_mean_overall =   [0.04132235050201416, 0.38848679065704345, 3.9925352334976196, 1401.8538063764572]
-    t_axis_overall =  [0.013480234146118163, 0.13179683685302734, 1.678103995323181, 21.335043334960936]
-    t_adjusted_overall =  [0.02162301540374756, 0.17568485736846923, 1.9210971355438233, 27.01286518573761]
-    nmi_mean_overall =  [0.9318709006545252, 0.9156464748818106, 0.8955890492169966, 0.8935427140240895]
-    nmi_axis_overall =  [0.9153459520872673, 0.8477772981103145, 0.7628101923177428, 0.7748911838051395]
-    nmi_adjusted_overall = [0.9098406601967228, 0.8784906574779419, 0.8685913477085825, 0.8525056269148029]
+    t_mean_overall =  [0.03646299839019775, 0.3784020900726318, 4.746135187149048, 120.4710624217987]
+    t_axis_overall =  [0.014738941192626953, 0.13544008731842042, 1.9432506322860719, 30.23695206642151]
+    t_adjusted_overall =  [0.019073796272277833, 0.16777973175048827, 2.341724419593811, 34.63127956390381]
+    nmi_mean_overall =  [0.9043758631408301, 0.8751553544830175, 0.9026162972192804, 0.8596547371810068]
+    nmi_axis_overall =  [0.9106196711353982, 0.8432934946211829, 0.805781267236061, 0.7897898730489521]
+    nmi_adjusted_overall =  [0.9226486847518605, 0.912507782678962, 0.9316958888124841, 0.9105074614171489]
  
 
     # Define the x and y coordinates of the points for Line 1
@@ -1049,8 +1052,61 @@ def plot_different_cluster_sizes():
     plt.show()
 
 
+def test_covert():
+    from ucimlrepo import fetch_ucirepo 
+    import pandas as pd
+    from sklearn.manifold import TSNE
+    
+    
+    from ucimlrepo import fetch_ucirepo 
+    
+    # fetch dataset 
+    breast_cancer_wisconsin_original = fetch_ucirepo(id=15) 
+    
+    # data (as pandas dataframes) 
+    X = breast_cancer_wisconsin_original.data.features 
+    y = breast_cancer_wisconsin_original.data.targets 
+
+
+    X = np.array(X)
+    # Define your thresholds
+    test = Test()
+    print("hep")
+    X = np.delete(X, 5, axis=1)
+    y = y["Class"].values
+    time, nmi, hard = test.tangles(X, y, 250)
+    
+    print(nmi)
+    
+    perplexity = min(20, len(X) - 1)
+    tsne = TSNE(n_components=2, perplexity=perplexity)
+    data = tsne.fit_transform(X)
+    
+    print(data[0,0])
+    print(data[0,1])
+    xv = [point[0] for point in data]
+    yv = [point[1] for point in data]
+
+    fig, axs = plt.subplots(1, 3, figsize=(12, 5))
+
+
+    color_mapping = {0: 'blue', 1: 'red', 2: 'blue', 3: 'green', 4: 'orange', 5: 'purple', 6: 'brown', 7: 'pink'}
+
+    colors = [color_mapping[val] for val in y]
+
+    axs[0].scatter(xv, yv, c=colors)
+    axs[0].set_title('Ground truth')
+    axs[1].scatter(xv, yv, c=hard)
+    axs[1].set_title('Tangles mean')
+
+  
+
+    plt.tight_layout()
+    plt.show()
+
+
 if __name__ == "__main__":
-    cut_tester()
+    test_covert()
 
 
     
