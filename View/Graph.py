@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import networkx as nx
 import numpy as np
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QFileDialog, QLabel, QLineEdit, QApplication, QSizePolicy, QComboBox, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QFileDialog, QLabel, QLineEdit, QApplication, QSizePolicy, QComboBox, QMessageBox, QCheckBox
 from PyQt5 import QtCore
 from sklearn.metrics import normalized_mutual_info_score
 
@@ -42,9 +42,11 @@ class GraphWindow(QMainWindow):
         self.tangles_time = None
         self.spectral_time = None
         self.louvain_time = None
+        self.prob = None
 
         # Flag to track if a random graph has been generated
         self.graph_generated_flag = False
+        self.prob_checked = False
 
         # Add buttons
         button_layout = QHBoxLayout()
@@ -64,6 +66,11 @@ class GraphWindow(QMainWindow):
         button_layout.addWidget(self.generate_tangles_button)
         self.generate_tangles_button.hide()
 
+        self.soft_clustering = QCheckBox("soft clustering")
+        self.soft_clustering.stateChanged.connect(self.soft_clustering_changed)
+        self.soft_clustering.hide()
+        layout.addWidget(self.soft_clustering)
+
         self.generate_spectral_button = QPushButton("Apply Spectral", self)
         button_layout.addWidget(self.generate_spectral_button)
         self.generate_spectral_button.hide()
@@ -72,16 +79,35 @@ class GraphWindow(QMainWindow):
         button_layout.addWidget(self.generate_louvain_button)
         self.generate_louvain_button.hide()
 
+        self.export_button = QPushButton("Export dataset as .gml", self)
+        button_layout.addWidget(self.export_button)
+        self.export_button.hide()
+
+        self.export_plot_button = QPushButton("Export plot as .jpg", self)
+        button_layout.addWidget(self.export_plot_button)
+        self.export_plot_button.hide()
+
         # Add label to prompt user to choose initial partitioning method
         self.partition_label = QLabel("Choose Initial Partitioning Method:", self)
         layout.addWidget(self.partition_label)
 
         # Create a combo box for choosing initial partitioning method
         self.partition_method_combobox = QComboBox()
-        self.partition_method_combobox.addItems(["K-Means", "Kernighan-Lin"])
+        self.partition_method_combobox.addItems(["K-Means-Bipartitions-cut", "Kernighan-Lin", "K-Means-Half", "K-Means-Both"])
         self.partition_label.hide()
         self.partition_method_combobox.hide()
         layout.addWidget(self.partition_method_combobox)
+
+         # Add label to prompt user to choose cost method
+        self.cost_label = QLabel("Choose Cost Function:", self)
+        layout.addWidget(self.cost_label)
+
+        # Create a combo box for choosing initial partitioning method
+        self.cost_method_combobox = QComboBox()
+        self.cost_method_combobox.addItems(["Kernighan-Lin Cost Function", "Modularity cost", "Edge cut cost"])
+        self.cost_label.hide()
+        self.cost_method_combobox.hide()
+        layout.addWidget(self.cost_method_combobox)
 
 
         self.numb_nodes = QLineEdit()
@@ -152,15 +178,23 @@ class GraphWindow(QMainWindow):
         self.generate_louvain_button.show()  # Show Louvain button
         self.partition_label.show()
         self.partition_method_combobox.show()
+        self.cost_label.show()
+        self.cost_method_combobox.show()
         self.numb_nodes.show()
         self.numb_clusters.show()
         self.average_edges_to_same_cluster.show()
         self.average_edges_to_other_clusters.show()
         self.agreement_parameter.show()
         self.k_spectral.show()
+        self.soft_clustering.show()
+        self.export_button.show()
+        self.export_plot_button.show()
 
     def update_partition_method(self):
         self.selected_partition_method = self.partition_method_combobox.currentText()
+
+    def update_cost_method(self):
+        self.selected_cost_method = self.cost_method_combobox.currentText()
 
     def show_input_fields(self):
         self.numb_nodes.show()
@@ -169,6 +203,23 @@ class GraphWindow(QMainWindow):
         self.average_edges_to_other_clusters.show()
         self.agreement_parameter.show()
         self.k_spectral.show()
+        self.soft_clustering.show()
+
+    def soft_clustering_changed(self, state):
+        if state == 2:  # Checked
+            if self.tangles_plot is None:
+                QMessageBox.warning(self, "Error", "You must apply Tangles before using Soft Clustering.")
+                self.soft_clustering.setChecked(False)
+                self.prob_checked = False
+                
+            else:
+                self.prob_checked = True
+                self.setup_plots()
+        else:  # Unchecked
+            self.prob_checked = False
+            self.setup_plots()
+
+
     def setup_plots(self):
         self.figure.clear()
 
@@ -186,7 +237,10 @@ class GraphWindow(QMainWindow):
             if self.tangles_plot is not None:
                 plot = self.figure.add_subplot(122)
                 plot.set_title('Tangles (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_tangles, self.tangles_time))
-                self.visualize_graph(self.generated_graph, self.tangles_plot)
+                if self.prob_checked:
+                    self.visualize_graph_prob(self.generated_graph, self.tangles_plot)
+                else:
+                    self.visualize_graph(self.generated_graph, self.tangles_plot)
 
         elif self.numb_plots == 3:
             if self.generated_graph is not None:
@@ -197,7 +251,10 @@ class GraphWindow(QMainWindow):
             if self.tangles_plot is not None:
                 plot = self.figure.add_subplot(222)
                 plot.set_title('Tangles (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_tangles, self.tangles_time))
-                self.visualize_graph(self.generated_graph, self.tangles_plot)
+                if self.prob_checked:
+                    self.visualize_graph_prob(self.generated_graph, self.tangles_plot)
+                else:
+                    self.visualize_graph(self.generated_graph, self.tangles_plot)
 
             if self.spectral_plot is not None:
                 plot = self.figure.add_subplot(223)
@@ -213,7 +270,10 @@ class GraphWindow(QMainWindow):
             if self.tangles_plot is not None:
                 plot = self.figure.add_subplot(222)
                 plot.set_title('Tangles (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_tangles, self.tangles_time))
-                self.visualize_graph(self.generated_graph, self.tangles_plot)
+                if self.prob_checked:
+                    self.visualize_graph_prob(self.generated_graph, self.tangles_plot) 
+                else:
+                    self.visualize_graph(self.generated_graph, self.tangles_plot)
 
             if self.spectral_plot is not None:
                 plot = self.figure.add_subplot(223)
@@ -229,6 +289,8 @@ class GraphWindow(QMainWindow):
         self.canvas.draw()
 
 
+
+
     def visualize_graph(self, graph, plot):
         pos = nx.spring_layout(graph)
 
@@ -242,23 +304,28 @@ class GraphWindow(QMainWindow):
 
         nx.draw_networkx_edges(graph, pos, edge_color='black')
 
+    def visualize_graph_prob(self, graph, plot):
+        pos = nx.spring_layout(graph)
+
+        clusters = sorted(set(plot))
+        colors = plt.cm.viridis(np.linspace(0, 1, len(clusters)))
+        color_map = {cluster: color for cluster, color in zip(clusters, colors)}
+
+        # Adjusting the node colors based on probabilities
+        alpha_values = [self.prob[i] for i in range(len(plot))] if self.prob is not None else [1] * len(plot)
+
+        for node, (cluster, alpha) in enumerate(zip(plot, alpha_values)):
+            nx.draw_networkx_nodes(graph, pos, nodelist=[node], node_color=[color_map[cluster]], alpha=alpha, node_size=500)
+
+        nx.draw_networkx_labels(graph, pos, font_size=10)
+        nx.draw_networkx_edges(graph, pos, edge_color='black', width=1)
+
+
+
     def go_back_to_main_page(self):
-        if self.upload_data_button.isVisible() or self.generate_data_button.isVisible():
-            self.close()
-            self.main_page.show()
-        else:
-            self.generate_data_button.show()
-            self.upload_data_button.show()
-            self.generate_random_button.hide()
-            self.generate_tangles_button.hide()
-            self.generate_spectral_button.hide()
-            self.generate_louvain_button.hide()
-            self.numb_nodes.hide()
-            self.numb_clusters.hide()
-            self.average_edges_to_same_cluster.hide()
-            self.average_edges_to_other_clusters.hide()
-            self.agreement_parameter.hide()
-            self.k_spectral.hide()
+        self.close()  # Close the current window
+        # Show the main page again
+        self.main_page.show()
 
     def upload_data_show(self):
         self.upload_data_button.hide()
@@ -267,9 +334,15 @@ class GraphWindow(QMainWindow):
         self.generate_spectral_button.show()
         self.generate_tangles_button.show()
         self.generate_louvain_button.show()  # Show Louvain button
+        self.partition_label.show()
+        self.partition_method_combobox.show()
+        self.cost_label.show()
+        self.cost_method_combobox.show()
         self.numb_nodes.hide()
         self.numb_clusters.hide()
         self.average_edges_to_same_cluster.hide()
         self.average_edges_to_other_clusters.hide()
         self.agreement_parameter.show()
         self.k_spectral.show()
+        self.export_button.show()
+        self.export_plot_button.show()
