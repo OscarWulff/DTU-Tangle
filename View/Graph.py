@@ -148,7 +148,7 @@ class GraphWindow(QMainWindow):
         self.k_spectral = QLineEdit()
         self.k_spectral.setFixedSize(300, 30)
         self.k_spectral.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.k_spectral.setPlaceholderText("k for Spectral")
+        self.k_spectral.setPlaceholderText("k for Spectral/Tangles")
         self.k_spectral.hide()
         layout.addWidget(self.k_spectral)
 
