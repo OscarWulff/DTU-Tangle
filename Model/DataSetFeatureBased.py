@@ -193,11 +193,10 @@ class DataSetFeatureBased(DataType):
         sorted_points = [self.sort_for_list(values[dim], self.points) for dim in range(dimensions)]
         
         i = self.agreement_param + int(self.agreement_param * 0.05)
-        while n >= i + self.agreement_param:
+        while n >= i + self.agreement_param + interval:
             cuts = [Cut() for _ in range(dimensions)]  # Create cuts for each dimension
             for dim in range(dimensions):
                 cuts[dim].init()
-                cuts[dim].id = dim
                 mean_A = np.mean(np.array(sorted_points[dim])[(i-interval):i, :-1], axis=0)
                 mean_Ac = np.mean(np.array(sorted_points[dim])[i:(i+interval), :-1], axis=0)
 

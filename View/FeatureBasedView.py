@@ -51,6 +51,9 @@ class FeatureBasedWindow(QMainWindow):
         self.davies_checked = False
         self.ground_truth = None
         self.original_points = None
+        self.time_tangles = None
+        self.time_spectral = None
+        self.time_kmeans = None
 
 
         # Add buttons
@@ -62,9 +65,6 @@ class FeatureBasedWindow(QMainWindow):
         self.generate_data_button = QPushButton("Generate Data", self)
         self.generate_data_button.clicked.connect(self.generate_data)
         button_layout.addWidget(self.generate_data_button)
-
-        self.test_button = QPushButton("Create test", self)
-        button_layout.addWidget(self.test_button)
     
         self.generate_fixed_button = QPushButton("generate", self)
         button_layout.addWidget(self.generate_fixed_button)
@@ -78,18 +78,17 @@ class FeatureBasedWindow(QMainWindow):
         button_layout.addWidget(self.generate_tangles_button)
         self.generate_tangles_button.hide()
 
-        self.cuts_button = QPushButton("show cuts", self)
-        button_layout.addWidget(self.cuts_button)
-        self.cuts_button.hide()
-        
         self.generate_spectral_button = QPushButton("apply spectral", self)
         button_layout.addWidget(self.generate_spectral_button)
         self.generate_spectral_button.hide()
-
         
         self.generate_Kmeans_button = QPushButton("apply k-means", self)
         button_layout.addWidget(self.generate_Kmeans_button)
         self.generate_Kmeans_button.hide()
+
+        self.cuts_button = QPushButton("show cuts", self)
+        button_layout.addWidget(self.cuts_button)
+        self.cuts_button.hide()
 
         self.export_button = QPushButton("Export dataset", self)
         button_layout.addWidget(self.export_button)
@@ -169,7 +168,6 @@ class FeatureBasedWindow(QMainWindow):
         self.cost_function = QComboBox()
         self.cost_function.addItem("pairwise cost")
         self.cost_function.addItem("mean cost")
-        self.cost_function.addItem("density cost")
         self.cost_function.addItem("cure cost")
         self.cost_function.hide()
         layout.addWidget(self.cost_function)
@@ -232,12 +230,10 @@ class FeatureBasedWindow(QMainWindow):
         self.generate_data_button.hide()
         self.random_centers_button.show()
         self.fixed_centers_button.show()
-        self.test_button.hide()
 
     def show_buttons(self):
         self.random_centers_button.hide()
         self.fixed_centers_button.hide()
-        self.test_button.hide()
         self.generate_Kmeans_button.show()
         self.generate_spectral_button.show()
         self.generate_tangles_button.show()
@@ -269,7 +265,6 @@ class FeatureBasedWindow(QMainWindow):
 
     def upload_datas(self):
         self.canvas.draw()
-        self.test_button.hide()
         self.generate_Kmeans_button.show()
         self.generate_spectral_button.show()
         self.generate_tangles_button.show()
@@ -297,18 +292,18 @@ class FeatureBasedWindow(QMainWindow):
             self.plot_points(self.plotting_points, self.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(122)
-                plot.set_title('Tangles (NMI = {})'.format(self.nmi_score_tangles))
+                plot.set_title('Tangles - NMI: {}, Time: {} s'.format(self.nmi_score_tangles, self.time_tangles))
                 if self.prob_checked:
                     self.plot_points_prob(self.tangles_points, self.tangles_plot, plot)
                 else:
                     self.plot_points(self.tangles_points, self.tangles_plot, plot)
             if self.spectral_plot is not None: 
                 plot = self.figure.add_subplot(122)
-                plot.set_title('Spectral (NMI = {})'.format(self.nmi_score_spectral))
+                plot.set_title('Spectral - NMI: {}, Time: {} s'.format(self.nmi_score_spectral, self.time_spectral))
                 self.plot_points(self.spectral_points, self.spectral_plot, plot)
             if self.kmeans_plot is not None: 
                 plot = self.figure.add_subplot(122)
-                plot.set_title('K-means (NMI = {})'.format(self.nmi_score_kmeans))
+                plot.set_title('K-means - NMI: {}, Time: {} s'.format(self.nmi_score_kmeans, self.time_kmeans))
                 self.plot_points(self.kmeans_points, self.kmeans_plot, plot)
         else:
             plot = self.figure.add_subplot(221)
@@ -316,18 +311,18 @@ class FeatureBasedWindow(QMainWindow):
             self.plot_points(self.plotting_points, self.ground_truth, plot)
             if self.tangles_plot != None: 
                 plot = self.figure.add_subplot(222)
-                plot.set_title('Tangles (NMI = {})'.format(self.nmi_score_tangles))
+                plot.set_title('Tangles - NMI: {}, Time: {} s'.format(self.nmi_score_tangles, self.time_tangles))
                 if self.prob_checked:
                     self.plot_points_prob(self.tangles_points, self.tangles_plot, plot)
                 else:
                     self.plot_points(self.tangles_points, self.tangles_plot, plot)
             if self.spectral_plot is not None: 
                 plot = self.figure.add_subplot(223)
-                plot.set_title('Spectral (NMI = {})'.format(self.nmi_score_spectral))
+                plot.set_title('Spectral - NMI: {}, Time: {} s'.format(self.nmi_score_spectral, self.time_spectral))
                 self.plot_points(self.spectral_points, self.spectral_plot, plot)
             if self.kmeans_plot is not None: 
                 plot = self.figure.add_subplot(224)
-                plot.set_title('K-means (NMI = {})'.format(self.nmi_score_kmeans))
+                plot.set_title('K-means - NMI: {}, Time: {} s'.format(self.nmi_score_kmeans, self.time_kmeans))
                 self.plot_points(self.kmeans_points, self.kmeans_plot, plot)
 
         self.figure.subplots_adjust(hspace=0.5, wspace=0.5)
