@@ -79,38 +79,45 @@ class FeatureBasedController:
 
     def upload_data(self):
         # Logic to upload data
-        file_dialog = QFileDialog()
-        if file_dialog.exec_():
-            selected_file = file_dialog.selectedFiles()[0]  # Get the path of the selected file
-            X = read_file(selected_file)
-            data = tsne(X)
-        
-        self.view.original_points = data.tolist()
-        self.view.plotting_points = data.tolist()
 
-        self.view.ground_truth = [1] * len(data)
+        try: 
+            file_dialog = QFileDialog()
+            if file_dialog.exec_():
+                selected_file = file_dialog.selectedFiles()[0]  # Get the path of the selected file
+                X = read_file(selected_file)
+                data = tsne(X)
+            
+            self.view.original_points = data.tolist()
+            self.view.plotting_points = data.tolist()
 
-        self.view.upload_datas()
-        self.view.setup_plots()
+            self.view.ground_truth = [1] * len(data)
+
+            self.view.upload_datas()
+            self.view.setup_plots()
+        except Exception as e:
+            QMessageBox.warning(self.view, "Upload Data", f"Error: {e}")
 
     def upload_data_PCA(self):
-        file_dialog = QFileDialog()
-        if file_dialog.exec_():
-            selected_file = file_dialog.selectedFiles()[0]  # Get the path of the selected file
-            X = read_file(selected_file)
-            eigenvalues, data = pca(X)
-        
-        self.view.original_points = data.tolist()
-        self.view.plotting_points = data.tolist()
+        try: 
+            file_dialog = QFileDialog()
+            if file_dialog.exec_():
+                selected_file = file_dialog.selectedFiles()[0]  # Get the path of the selected file
+                X = read_file(selected_file)
+                eigenvalues, data = pca(X)
+            
+            self.view.original_points = data.tolist()
+            self.view.plotting_points = data.tolist()
 
-        self.view.ground_truth = [1] * len(data)
+            self.view.ground_truth = [1] * len(data)
 
-        var = calculate_explained_varince(eigenvalues)
-        self.view.variance.setText(f"Explained variance = {round((var[0]+var[1]) * 100)}%")
-        self.view.variance.show()
+            var = calculate_explained_varince(eigenvalues)
+            self.view.variance.setText(f"Explained variance = {round((var[0]+var[1]) * 100)}%")
+            self.view.variance.show()
 
-        self.view.upload_datas()
-        self.view.setup_plots()
+            self.view.upload_datas()
+            self.view.setup_plots()
+        except Exception as e:
+            QMessageBox.warning(self.view, "Upload Data", f"Error: {e}")
 
 
     def tangles(self):

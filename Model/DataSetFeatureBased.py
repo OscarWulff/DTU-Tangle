@@ -192,8 +192,8 @@ class DataSetFeatureBased(DataType):
 
         sorted_points = [self.sort_for_list(values[dim], self.points) for dim in range(dimensions)]
         
-        i = self.agreement_param + int(self.agreement_param * 0.05)
-        while n >= i + self.agreement_param + interval:
+        i = self.agreement_param
+        while n >= i + self.agreement_param:
             cuts = [Cut() for _ in range(dimensions)]  # Create cuts for each dimension
             for dim in range(dimensions):
                 cuts[dim].init()
@@ -208,7 +208,7 @@ class DataSetFeatureBased(DataType):
                         cuts[dim].Ac.add(point[-1])
                         cuts[dim].Ac_points.append(point[:-1])
                 self.cuts.append(cuts[dim])
-            i += self.agreement_param + int(self.agreement_param * 0.05)
+            i += self.agreement_param
 
     
     def adjusted_cut(self):
