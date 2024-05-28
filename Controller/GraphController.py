@@ -77,10 +77,10 @@ class GraphController:
             initital_cost = self.view.cost_method_combobox.currentText()
             if initital_cost == "Kernighan-Lin Cost Function":
                 data.cost_function_Graph(cost_function="Kernighan-Lin Cost Function")
-            elif initital_cost == "Modularity":
-                data.cost_function_Graph(cost_function="Modularity")
+            elif initital_cost == "Modularity cost":
+                data.cost_function_Graph(cost_function="Modularity cost")
             else:
-                data.cost_function_Graph(cost_function="Ratio Cut")
+                data.cost_function_Graph(cost_function="Edge cut cost")
             root = create_searchtree(data)
             root_condense = condense_tree(root)
             contracting_search_tree(root_condense)

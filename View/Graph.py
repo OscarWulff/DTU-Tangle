@@ -344,3 +344,5 @@ class GraphWindow(QMainWindow):
         self.average_edges_to_other_clusters.hide()
         self.agreement_parameter.show()
         self.k_spectral.show()
+        self.export_button.show()
+        self.export_plot_button.show()
