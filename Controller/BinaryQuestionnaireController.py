@@ -212,5 +212,5 @@ class BinaryQuestionnaireController:
         fileName, _ = QFileDialog.getSaveFileName(self.view, "Save Plot", "", "JPEG Files (*.jpg);;All Files (*)", options=options)
         if fileName:
             print("Saving plot to:", fileName)
-            export_fig_to_jpg(self.view.figure ,fileName)
+            export_fig_to_jpg(self.view.figure ,fileName + ".jpg")
     

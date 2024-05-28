@@ -79,13 +79,21 @@ class GraphWindow(QMainWindow):
         button_layout.addWidget(self.generate_louvain_button)
         self.generate_louvain_button.hide()
 
+        self.export_button = QPushButton("Export dataset", self)
+        button_layout.addWidget(self.export_button)
+        self.export_button.hide()
+
+        self.export_plot_button = QPushButton("Export plot", self)
+        button_layout.addWidget(self.export_plot_button)
+        self.export_plot_button.hide()
+
         # Add label to prompt user to choose initial partitioning method
         self.partition_label = QLabel("Choose Initial Partitioning Method:", self)
         layout.addWidget(self.partition_label)
 
         # Create a combo box for choosing initial partitioning method
         self.partition_method_combobox = QComboBox()
-        self.partition_method_combobox.addItems(["K-Means", "Kernighan-Lin", "K-Means-Half", "K-Means-Both"])
+        self.partition_method_combobox.addItems(["K-Means-Bipartitions-cut", "Kernighan-Lin", "K-Means-Half", "K-Means-Both"])
         self.partition_label.hide()
         self.partition_method_combobox.hide()
         layout.addWidget(self.partition_method_combobox)
@@ -179,6 +187,8 @@ class GraphWindow(QMainWindow):
         self.agreement_parameter.show()
         self.k_spectral.show()
         self.soft_clustering.show()
+        self.export_button.show()
+        self.export_plot_button.show()
 
     def update_partition_method(self):
         self.selected_partition_method = self.partition_method_combobox.currentText()
@@ -324,6 +334,10 @@ class GraphWindow(QMainWindow):
         self.generate_spectral_button.show()
         self.generate_tangles_button.show()
         self.generate_louvain_button.show()  # Show Louvain button
+        self.partition_label.show()
+        self.partition_method_combobox.show()
+        self.cost_label.show()
+        self.cost_method_combobox.show()
         self.numb_nodes.hide()
         self.numb_clusters.hide()
         self.average_edges_to_same_cluster.hide()

@@ -447,9 +447,9 @@ class CompareCostFunctions:
 if __name__ == "__main__":
     test = CompareCostFunctions()
     num_of_clusters = 10
-    agreement_parameter = [14, 28, 42, 56, 70]
-    avg_edges_to_same_cluster = 0.6
-    avg_edges_to_other_clusters = 0.4
+    agreement_parameter = [13, 26, 39, 42, 55]
+    avg_edges_to_same_cluster = 0.8
+    avg_edges_to_other_clusters = 0.2
     k = num_of_clusters
     num_iterations = 10
 

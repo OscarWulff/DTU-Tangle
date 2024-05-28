@@ -4,6 +4,7 @@ from Model.DataSetGraph import DataSetGraph
 from sklearn.cluster import SpectralClustering
 from PyQt5.QtWidgets import QFileDialog, QCheckBox, QComboBox, QLineEdit, QPushButton, QMainWindow, QMessageBox
 from Model.TangleCluster import *
+from Model.GenerateTestData import export_fig_to_jpg
 import time
 import community as community_louvain
 
@@ -16,6 +17,7 @@ class GraphController:
         self.view.generate_tangles_button.clicked.connect(self.tangles)
         self.view.generate_spectral_button.clicked.connect(self.spectral)
         self.view.generate_louvain_button.clicked.connect(self.louvain)
+        self.view.export_plot_button.clicked.connect(self.export_plot)
         self.random_graph_generator = None  # Initialize random_graph_generator attribute
 
 
@@ -82,9 +84,9 @@ class GraphController:
             root_condense = condense_tree(root)
             contracting_search_tree(root_condense)
             soft = soft_clustering(root_condense)
-            self.view.prob = [max(soft[i]) for i in range(len(soft))]
             hard = hard_clustering(soft)
             end_time = time.time()
+            self.view.prob = [max(soft[i]) for i in range(len(soft))]
 
             if self.view.tangles_plot is None:
                 self.view.numb_plots += 1
@@ -205,3 +207,13 @@ class GraphController:
         except Exception as e:
             print("Error:", e)
     
+
+
+    def export_plot(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        # Change the dialog to save JPG files
+        fileName, _ = QFileDialog.getSaveFileName(self.view, "Save Plot", "", "JPEG Files (*.jpg);;All Files (*)", options=options)
+        if fileName:
+            print("Saving plot to:", fileName)
+            export_fig_to_jpg(self.view.figure ,fileName + ".jpg")
