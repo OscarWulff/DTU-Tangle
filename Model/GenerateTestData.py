@@ -325,3 +325,5 @@ def export_to_csv(data, filename):
 def export_fig_to_jpg(fig ,file_path):
     fig.savefig(file_path, format='jpg')
     
+def export_to_gml(G, filename):
+    nx.write_gml(G, filename)

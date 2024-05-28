@@ -4,7 +4,7 @@ from Model.DataSetGraph import DataSetGraph
 from sklearn.cluster import SpectralClustering
 from PyQt5.QtWidgets import QFileDialog, QCheckBox, QComboBox, QLineEdit, QPushButton, QMainWindow, QMessageBox
 from Model.TangleCluster import *
-from Model.GenerateTestData import export_fig_to_jpg
+from Model.GenerateTestData import export_fig_to_jpg, export_to_gml
 import time
 import community as community_louvain
 
@@ -17,6 +17,7 @@ class GraphController:
         self.view.generate_tangles_button.clicked.connect(self.tangles)
         self.view.generate_spectral_button.clicked.connect(self.spectral)
         self.view.generate_louvain_button.clicked.connect(self.louvain)
+        self.view.export_button.clicked.connect(self.export_data)
         self.view.export_plot_button.clicked.connect(self.export_plot)
         self.random_graph_generator = None  # Initialize random_graph_generator attribute
 
@@ -207,6 +208,16 @@ class GraphController:
         except Exception as e:
             print("Error:", e)
     
+    def export_data(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self.view, "Save GML", "", "GML Files (*.gml);;All Files (*)", options=options)
+        if fileName:
+            print("Saving data to:", fileName)
+            # add ground truth to the graph
+            for i, node in enumerate(self.view.generated_graph.nodes()):
+                self.view.generated_graph.nodes[node]['gt'] = self.view.generated_ground_truth[i]
+            export_to_gml(self.view.generated_graph, fileName + ".gml")
 
 
     def export_plot(self):

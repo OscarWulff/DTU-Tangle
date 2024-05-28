@@ -79,11 +79,11 @@ class GraphWindow(QMainWindow):
         button_layout.addWidget(self.generate_louvain_button)
         self.generate_louvain_button.hide()
 
-        self.export_button = QPushButton("Export dataset", self)
+        self.export_button = QPushButton("Export dataset as .gml", self)
         button_layout.addWidget(self.export_button)
         self.export_button.hide()
 
-        self.export_plot_button = QPushButton("Export plot", self)
+        self.export_plot_button = QPushButton("Export plot as .jpg", self)
         button_layout.addWidget(self.export_plot_button)
         self.export_plot_button.hide()
 
