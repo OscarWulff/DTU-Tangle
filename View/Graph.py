@@ -148,7 +148,7 @@ class GraphWindow(QMainWindow):
         self.k_spectral = QLineEdit()
         self.k_spectral.setFixedSize(300, 30)
         self.k_spectral.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.k_spectral.setPlaceholderText("k for Spectral")
+        self.k_spectral.setPlaceholderText("k for Spectral/Tangles")
         self.k_spectral.hide()
         layout.addWidget(self.k_spectral)
 
@@ -236,7 +236,7 @@ class GraphWindow(QMainWindow):
 
             if self.tangles_plot is not None:
                 plot = self.figure.add_subplot(122)
-                plot.set_title('Tangles (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_tangles, self.tangles_time))
+                plot.set_title('Tangles - NMI: {:.3f}, Time: {:.3f} s'.format(self.nmi_score_tangles, self.tangles_time))
                 if self.prob_checked:
                     self.visualize_graph_prob(self.generated_graph, self.tangles_plot)
                 else:
@@ -250,7 +250,7 @@ class GraphWindow(QMainWindow):
 
             if self.tangles_plot is not None:
                 plot = self.figure.add_subplot(222)
-                plot.set_title('Tangles (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_tangles, self.tangles_time))
+                plot.set_title('Tangles - NMI: {:.3f}, Time: {:.3f} s'.format(self.nmi_score_tangles, self.tangles_time))
                 if self.prob_checked:
                     self.visualize_graph_prob(self.generated_graph, self.tangles_plot)
                 else:
@@ -258,7 +258,7 @@ class GraphWindow(QMainWindow):
 
             if self.spectral_plot is not None:
                 plot = self.figure.add_subplot(223)
-                plot.set_title('Spectral (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_spectral, self.spectral_time))
+                plot.set_title('Spectral - NMI: {:.3f}, Time: {:.3f} s'.format(self.nmi_score_spectral, self.spectral_time))
                 self.visualize_graph(self.generated_graph, self.spectral_plot)
 
         elif self.numb_plots == 4:
@@ -269,7 +269,7 @@ class GraphWindow(QMainWindow):
 
             if self.tangles_plot is not None:
                 plot = self.figure.add_subplot(222)
-                plot.set_title('Tangles (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_tangles, self.tangles_time))
+                plot.set_title('Tangles - NMI: {:.3f}, Time: {:.3f} s'.format(self.nmi_score_tangles, self.tangles_time))
                 if self.prob_checked:
                     self.visualize_graph_prob(self.generated_graph, self.tangles_plot) 
                 else:
@@ -277,12 +277,12 @@ class GraphWindow(QMainWindow):
 
             if self.spectral_plot is not None:
                 plot = self.figure.add_subplot(223)
-                plot.set_title('Spectral (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_spectral, self.spectral_time))
+                plot.set_title('Spectral - NMI: {:.3f}, Time: {:.3f} s'.format(self.nmi_score_spectral, self.spectral_time))
                 self.visualize_graph(self.generated_graph, self.spectral_plot)
 
             if self.louvain_plot is not None:
                 plot = self.figure.add_subplot(224)
-                plot.set_title('Louvain (NMI = {:.3f}), Time = {:.3f} sec'.format(self.nmi_score_louvain, self.louvain_time))
+                plot.set_title('Louvain - NMI: {:.3f}, Time: {:.3f} s'.format(self.nmi_score_louvain, self.louvain_time))
                 self.visualize_graph(self.generated_graph, self.louvain_plot)
 
         self.figure.subplots_adjust(hspace=0.5, wspace=0.5)
