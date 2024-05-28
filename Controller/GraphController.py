@@ -183,9 +183,8 @@ class GraphController:
                         ground_truth = []
                         for node_id, data in G.nodes(data=True):
                             if 'value' in data:
-                                # Convert 'value' to an integer if it's not already
-                                value = int(data['value']) if not isinstance(data['value'], int) else data['value']
-                                ground_truth.append(value)
+                                # 'value' can be an integer or a string, append it directly
+                                ground_truth.append(data['value'])
                             elif 'gt' in data:
                                 # Ground truth is a string, append it directly
                                 ground_truth.append(data['gt'])
@@ -204,9 +203,9 @@ class GraphController:
                         self.view.upload_data_show()
                         self.view.setup_plots()
                     else:
-                        print("Error: Graph is None")
+                        QMessageBox.warning(self.view, "Upload Data", "Error: Graph is None")
         except Exception as e:
-            print("Error:", e)
+            QMessageBox.warning(self.view, "Upload Data", f"Error: {e}")
     
     def export_data(self):
         options = QFileDialog.Options()
