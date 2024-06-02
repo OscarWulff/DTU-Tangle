@@ -34,12 +34,6 @@ Follow these steps to set up the environment:
    conda activate tangles-env
 
 ## Running the Application
+   
    ```bash
    python main.py
-
-
-
-
-
-
-
