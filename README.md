@@ -17,27 +17,22 @@ Follow these steps to set up the environment:
 
    ```bash
    git clone https://github.com/OscarWulff/DTU-Tangle.git
-   cd yourproject
 
-2. **Create a virtual environment:**
-
-   ```bash
-   python -m venv venv
-
-3. **Activate the virtual environment:**
-
-   * On Windows: 
-   venv\Scripts\activate
-   
-
-   * On macOS and Linux: 
-   source venv/bin/activate
-
-5. **Install the required depedencies**
+2. **Initialize conda**
 
    ```bash
-   pip install -r requirements.txt
-   
+   conda init
+
+3. **Create a virtual environment:**
+
+   ```bash
+   conda env create -f environment.yml
+
+4. **Activate the virtual environment:**
+
+   ```bash
+   conda activate tangles-env
+
 ## Running the Application
    ```bash
    python main.py
