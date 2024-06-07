@@ -7,7 +7,7 @@ from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire, perform
 from Model.DataSetFeatureBased import read_file, tsne
 from Model.GenerateTestData import GenerateDataBinaryQuestionnaire, GenerateDataFeatureBased, export_fig_to_jpg, export_to_csv
 from Model.TangleCluster import create_searchtree
-from Model.SearchTree import condense_tree, soft_clustering, hard_clustering, contracting_search_tree
+from Model.SearchTree import condense_tree, print_tree, soft_clustering, hard_clustering, contracting_search_tree
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
 
@@ -52,6 +52,9 @@ class BinaryQuestionnaireController:
         self.view.generated_data.generate_biased_binary_questionnaire_answers()
         self.view.generated_data.res_to_points(dim_choice)
 
+        # print(self.view.generated_data.result)
+        # print(self.view.generated_data.questionaire)
+
         
 
         
@@ -74,7 +77,7 @@ class BinaryQuestionnaireController:
         except ValueError: 
             self.view.show_error_message("Error: Invalid input")
             return
-        print(self.view.generated_data.questionaire)
+        
         # Creating the tangles
         data = DataSetBinaryQuestionnaire(a).cut_generator_binary(self.view.generated_data.questionaire, self.view.sim_fun.currentText())
         
@@ -95,9 +98,13 @@ class BinaryQuestionnaireController:
         max_values = prob_array[np.arange(prob_array.shape[0]), max_indices]
 
         self.view.prob = max_values
-        print(soft)
+        
         
         hard = hard_clustering(soft)
+
+        
+
+       
 
         self.view.time_tangles = round(time.time() - start_tangle, 2)
 
@@ -181,8 +188,13 @@ class BinaryQuestionnaireController:
             selected_file = file_dialog.selectedFiles()[0]
             
             X = read_file(selected_file)  # Get the path of the selected file
-            print(X)
+            if X is None:
+                self.view.show_error_message("Error: Invalid file")
+                return
+            
             self.data = tsne(X)
+        else:
+            return
            
         self.view.upload_data_button.hide()
         self.view.generate_data_button.hide()

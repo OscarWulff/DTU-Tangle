@@ -5,7 +5,6 @@ from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 
 # from Model.Cut import Cuts
-from Model.DataSet import extract_data
 from Model.DataType import DataType
 from Model.Cut import Cut
 

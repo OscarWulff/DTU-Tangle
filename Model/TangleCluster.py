@@ -1,7 +1,6 @@
 
 import copy
 from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire
-from Model.DataSet import extract_data
 from Model.SearchTree import *
 
 from Model.DataSetFeatureBased import DataSetFeatureBased
