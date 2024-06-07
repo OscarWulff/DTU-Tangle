@@ -8,6 +8,8 @@ import numpy as np
 
 class Searchtree():
 
+    # constructor for the searchtree
+
     def __init__(self, parent_node, cut_id):
         self.parent_node : Searchtree = parent_node
         self.left_node : Searchtree = None
@@ -38,9 +40,11 @@ def h(cost):
 
     
 def condense_tree(root: Searchtree):
+    # function to condense the tree
     nodes = []
     leaves = []
 
+    # function to prune the tree
     def prune_tree(leaves):
         """ 
         Kan max bruges til at 'max_branch_length' op til 2
@@ -58,7 +62,7 @@ def condense_tree(root: Searchtree):
 
         return new_leaves
 
-
+    # function to traverse the tree
     def traverse(current_node):
         if current_node is not None:
             if current_node.leaf:
@@ -70,8 +74,10 @@ def condense_tree(root: Searchtree):
 
     traverse(root)
 
-    #leaves = prune_tree(leaves)
+    # we do not prune the tree at the moment
+    # leaves = prune_tree(leaves)
 
+    # function to condense the leaf
     def condense_leaf(leaf):
         nonlocal root
         if leaf.parent_node != None:
@@ -93,6 +99,7 @@ def condense_tree(root: Searchtree):
             elif leaf.parent_node.left_node != None and leaf.parent_node.right_node != None:
                 condense_leaf(leaf.parent_node)
     
+    # condense the leafs
     for id, leaf in enumerate(leaves): 
         leaf.leaf_id = id
         condense_leaf(leaf)
@@ -101,21 +108,13 @@ def condense_tree(root: Searchtree):
     return root
 
 
-
+# function to contract the search tree
 def contracting_search_tree(node : Searchtree):
-    """ 
-    contracting the searchtree 
-    
-    Parameters:
-    Search tree
-
-    Returns:
-    contracted Search tree
-
-    """
     if node != None:
         if node.leaf == False:
+            # contract the left node
             contracting_search_tree(node.left_node)
+            # contract the right node
             contracting_search_tree(node.right_node)
             if node.left_node != None and node.right_node != None:
                 for co in node.left_node.condensed_oritentations:
@@ -125,28 +124,28 @@ def contracting_search_tree(node : Searchtree):
                             if str(cut.id) == co[:len(co)-1]:
                                 node.cuts.add(cut)
                     else:
+                        # find the cut number and orientation
                         cut_nr = co[:len(co)-1]
                         cut_or = co[len(co)-1]
+
+                        # find the opposite orientation
                         if cut_or == "L":
                             op_orientation = cut_nr+"R"
                         else:
                             op_orientation = cut_nr+"L"
+                        
+                        # check if the opposite orientation is in the right node
                         if op_orientation in node.right_node.condensed_oritentations:
                             for cut in node.right_node.cuts:
                                 if str(cut.id) == cut_nr:
+                                    # add the cut as characterizing cut to the node
                                     node.characterizing_cuts.add(cut)
                                     break
 
-def soft_clustering(node):
-    """ 
-    from a searchtree create a soft clustering of the objects 
-    
-    Parameters: 
-    node, point, accumumlated, dictionary of the tangles
 
-    Returns:
-    Soft clustering of the point
-    """
+# function to calculate the soft clustering of all the points
+def soft_clustering(node):
+    # recurivse function to calculate the soft clustering for nodes childrens
     def calculate_softclustering(node, v, softClustering, accumulated : float = 1.0):
         if node.leaf:
             softClustering[v][node.leaf_id] = accumulated
@@ -157,7 +156,7 @@ def soft_clustering(node):
             if node.right_node != None: 
                 calculate_softclustering(node.right_node, v, softClustering, accumulated * (1-pl))
 
-    
+    # calculates the probability of a point v being in the left branch
     def p_l(node, v):
         sum_branch = 0.0
         sum_all = 0.0
@@ -175,26 +174,25 @@ def soft_clustering(node):
             return 0
         return float (sum_branch/sum_all)
 
+    # finds number of points
     numb_points = len(node.cut.A.union(node.cut.Ac))
+
+    # creates a matrix to store the soft clustering
     softClustering = np.zeros((numb_points, node.numb_tangles), dtype=float)
+
+    # calculates the soft clustering for all the points
     for k in range(numb_points):
         calculate_softclustering(node, k, softClustering)
     return softClustering
 
 
+# function to calculate the hard clustering of all the points
 def hard_clustering(softClustering):
-    """   
-    based on the soft clustering create a hard clustering of the point 
     
-    Parameters: 
-    Soft clustering
-
-    Returns:
-    Hard clustering 
-
-    """
+    # creates a list to store the hard clustering
     hard_clustering = []
 
+    # goes through all the points and finds the tangle with the highest probability for each point
     for i in range(len(softClustering)):
         max_prob = 0
         max_tangle = 0
@@ -206,6 +204,7 @@ def hard_clustering(softClustering):
 
     return hard_clustering
 
+# function to print the search tree
 def print_tree(node, indent=0, prefix="Root: "):
     if node is not None:
         print("  " * indent + prefix + f"{node.cut_id}")
@@ -214,7 +213,7 @@ def print_tree(node, indent=0, prefix="Root: "):
             print_tree(node.right_node, indent + 1, "R--- ")
 
 
-            
+# function to plot the search tree      
 def plot_search_tree(tree, pos=None, parent_name=None, graph=None, x_pos=0, y_pos=0, horizontal_gap=1.0, level_height=1.0):
     if graph is None:
         graph = nx.Graph()

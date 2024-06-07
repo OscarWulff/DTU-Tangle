@@ -61,9 +61,7 @@ class Test:
         start_time = time.time()
         
         tangle.mean_cut()
-        print("cuts")
         tangle.mean_cost()
-        print("costs")
         root = create_searchtree(tangle)
         tangle_root = condense_tree(root)
         contracting_search_tree(tangle_root)
@@ -93,21 +91,17 @@ class Test:
         start_time = time.time()
         
         tangle.cut_generator_axis_dimensions()
-        print("cuts")
         tangle.mean_cost()
-        print("costs")
 
         root = create_searchtree(tangle)
-        print("searchtree")
         tangle_root = condense_tree(root)
         contracting_search_tree(tangle_root)
-        print("contracting")
         if tangle_root.numb_tangles == 0:
             print("No tangles found")
         
         soft = soft_clustering(tangle_root)
         hard = hard_clustering(soft)
-        print("clustering")
+
 
         end_time = time.time()
 
@@ -127,6 +121,38 @@ class Test:
         start_time = time.time()
         
         tangle.adjusted_cut()
+        tangle.mean_cost()
+
+
+        root = create_searchtree(tangle)
+        tangle_root = condense_tree(root)
+        contracting_search_tree(tangle_root)
+
+        if tangle_root.numb_tangles == 0:
+            print("No tangles found")
+        
+        soft = soft_clustering(tangle_root)
+        hard = hard_clustering(soft)
+    
+
+        end_time = time.time()
+
+        total_time = end_time - start_time
+        try: 
+            nmi_score = normalized_mutual_info_score(ground_truth, hard)
+        except:
+            nmi_score = 0
+        return total_time, nmi_score, hard
+    
+    def tangles4(self, points, ground_truth, a):
+         # Creating the tangles
+        tangle = DataSetFeatureBased(a)
+
+        tangle.points = points
+
+        start_time = time.time()
+        
+        tangle.cut_spectral()
         tangle.mean_cost()
 
 
@@ -447,11 +473,11 @@ def tangles_tester(noisy_circles, noisy_moons, blobs, no_structure, aniso, varie
 
     #data_points = [varied[0]]
     for i in range(numb):
-        t, nmi_score, labels_circle = test.tangles(noisy_circles[0], noisy_circles[1], int(750*0.90))
+        t, nmi_score, labels_circle = test.tangles(noisy_circles[0], noisy_circles[1], int(750*0.95))
         noisy_circles_time.append(t)
         noisy_circles_nmi.append(nmi_score)
        
-        t, nmi_score, labels_moon = test.tangles(noisy_moons[0], noisy_moons[1], int(750*0.90))
+        t, nmi_score, labels_moon = test.tangles(noisy_moons[0], noisy_moons[1], int(750*0.95))
         noisy_moons_time.append(t)
         noisy_moons_nmi.append(nmi_score)
 
@@ -735,45 +761,56 @@ def cut_tester():
     t_mean_overall = []
     t_pair_overall = []
     t_cure_overall = []
+    t_spectral_overall = []
     nmi_mean_overall = []
     nmi_pair_overall = []
     nmi_cure_overall = []
+    nmi_spectral_overall = []
 
     while numb_points < 1000000:
         t_mean = []
         t_pair = []
         t_cure = []
+        t_spectral = []
         score_mean = []
         score_pair = []
         score_cure = []
+        score_spectral = []
         a  = numb_points
         for i in range(10):
             test = Test()
             data = test.random_data(k, 1.5, numb_points, 2, 0.7)
-            time_mean, nmi_mean, _ = test.tangles(data.points, data.ground_truth, int(numb_points * 0.95))
-            time_pair, nmi_pair, _ = test.tangles2(data.points, data.ground_truth, a)
-            time_cure, nmi_cure, _ = test.tangles3(data.points, data.ground_truth, int(numb_points * 0.95))
-            t_mean.append(time_mean)
-            t_pair.append(time_pair)
-            t_cure.append(time_cure)
-            score_mean.append(nmi_mean)
-            score_pair.append(nmi_pair)
-            score_cure.append(nmi_cure)
+            # time_mean, nmi_mean, _ = test.tangles(data.points, data.ground_truth, int(numb_points * 0.95))
+            # time_pair, nmi_pair, _ = test.tangles2(data.points, data.ground_truth, a)
+            # time_cure, nmi_cure, _ = test.tangles3(data.points, data.ground_truth, int(numb_points * 0.95))
+            time_spectral, nmi_spectral, _ = test.tangles4(data.points, data.ground_truth, k)
+            # t_mean.append(time_mean)
+            # t_pair.append(time_pair)
+            # t_cure.append(time_cure)
+            t_spectral.append(time_spectral)
+            # score_mean.append(nmi_mean)
+            # score_pair.append(nmi_pair)
+            # score_cure.append(nmi_cure)
+            score_spectral.append(nmi_spectral)
 
-        t_mean_overall.append(sum(t_mean)/len(t_mean))
-        t_pair_overall.append(sum(t_pair)/len(t_pair))
-        t_cure_overall.append(sum(t_cure)/len(t_cure))
-        nmi_mean_overall.append(sum(score_mean)/len(score_mean))
-        nmi_pair_overall.append(sum(score_pair)/len(score_pair))
-        nmi_cure_overall.append(sum(score_cure)/len(score_cure))
+        # t_mean_overall.append(sum(t_mean)/len(t_mean))
+        # t_pair_overall.append(sum(t_pair)/len(t_pair))
+        # t_cure_overall.append(sum(t_cure)/len(t_cure))
+        t_spectral_overall.append(sum(t_spectral)/len(t_spectral))
+        # nmi_mean_overall.append(sum(score_mean)/len(score_mean))
+        # nmi_pair_overall.append(sum(score_pair)/len(score_pair))
+        # nmi_cure_overall.append(sum(score_cure)/len(score_cure))
+        nmi_spectral_overall.append(sum(score_spectral)/len(score_spectral))
 
         numb_points *= 10
-        print("t_mean_overall: ", t_mean_overall)
-        print("t_axis_overall: ", t_pair_overall)
-        print("t_adjusted_overall: ", t_cure_overall)
-        print("nmi_mean_overall: ", nmi_mean_overall)
-        print("nmi_axis_overall: ", nmi_pair_overall)
-        print("nmi_adjusted_overall: ", nmi_cure_overall)
+        # print("t_mean_overall: ", t_mean_overall)
+        # print("t_axis_overall: ", t_pair_overall)
+        # print("t_adjusted_overall: ", t_cure_overall)
+        print("t_spectral_overall: ", t_spectral_overall)
+        # print("nmi_mean_overall: ", nmi_mean_overall)
+        # print("nmi_axis_overall: ", nmi_pair_overall)
+        # print("nmi_adjusted_overall: ", nmi_cure_overall)
+        print("nmi_spectral_overall: ", nmi_spectral_overall)
     
     # Define the x and y coordinates of the points for Line 1
     x1 = [1, 2, 3, 4]
@@ -1106,7 +1143,7 @@ def test_covert():
 
 
 if __name__ == "__main__":
-    test_covert()
+    cut_tester()
 
 
     

@@ -12,15 +12,20 @@ from Model.DataSetGraph import DataSetGraph
 from Model.DataType import DataType
 from Model.DataType import DataType
 
+
+# function to check if the cut is consistent with the tangle
 def consistent(chosen_cut, node, agreement_parameter):
+    # if-statement the tangle is empty, check if the chosen cut is greater than the agreement parameter
     if len(node.tangle) == 0:
         return len(chosen_cut) >= agreement_parameter
+    # if-statement the tangle is of size 1, check if the intersection between the chosen cut and the tangle is greater than the agreement parameter
     elif len(node.tangle) == 1: 
         for a in node.tangle:
              l = set.intersection(a[0], chosen_cut)
              
              if len(l) < agreement_parameter:
                  return False
+    # else-statement check if the intersection between the chosen cut and every two tangles is greater than the agreement parameter
     else:
         unique_tangles = []
         seen = set()
@@ -37,18 +42,10 @@ def consistent(chosen_cut, node, agreement_parameter):
 
     return True
 
-# Skal ændres i forhold til 'data'
+# function to create the search tree
 def create_searchtree(data : DataType):
-    """ 
-    create searchtree from the cuts 
     
-    Paramaters:
-    cuts
-
-    Returns: 
-    Search tree
-    """
-
+    # function to create a child node and append a child node to the parent node
     def create_child(node, orientation, cut, id):
         child = Searchtree(node, node.cut_id+1)
         child.cut_orientation = orientation
@@ -65,11 +62,11 @@ def create_searchtree(data : DataType):
             node.add_right_child(child)
         return child
 
-
+    # create the root node
     root = Searchtree(None, 0)
-
     leaves = [root]
 
+    # order the cuts
     cuts_ordered = data.order_function()
     #cuts_ordered = [cuts_ordered[1]]
 
@@ -80,6 +77,7 @@ def create_searchtree(data : DataType):
     #     print("________________")
 
 
+    # goes through the ordered cuts and creates the search tree
     id = 0
     for cutId, cut in enumerate(cuts_ordered, start=1):
         new_leaves = []

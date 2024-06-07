@@ -58,34 +58,73 @@ class GraphWindow(QMainWindow):
         self.generate_data_button.clicked.connect(self.generate_data)
         button_layout.addWidget(self.generate_data_button)
 
-        self.generate_random_button = QPushButton("Generate Graph", self)
+        self.generate_random_button = QPushButton("generate", self)
         button_layout.addWidget(self.generate_random_button)
         self.generate_random_button.hide()
 
-        self.generate_tangles_button = QPushButton("Apply Tangles", self)
+        self.generate_tangles_button = QPushButton("apply Tangles", self)
         button_layout.addWidget(self.generate_tangles_button)
         self.generate_tangles_button.hide()
 
-        self.soft_clustering = QCheckBox("soft clustering")
-        self.soft_clustering.stateChanged.connect(self.soft_clustering_changed)
-        self.soft_clustering.hide()
-        layout.addWidget(self.soft_clustering)
-
-        self.generate_spectral_button = QPushButton("Apply Spectral", self)
+        self.generate_spectral_button = QPushButton("apply Spectral", self)
         button_layout.addWidget(self.generate_spectral_button)
         self.generate_spectral_button.hide()
 
-        self.generate_louvain_button = QPushButton("Apply Louvain", self)  # Add Louvain button
+        self.generate_louvain_button = QPushButton("apply Louvain", self)  # Add Louvain button
         button_layout.addWidget(self.generate_louvain_button)
         self.generate_louvain_button.hide()
 
-        self.export_button = QPushButton("Export dataset as .gml", self)
+        self.export_button = QPushButton("export dataset as .gml", self)
         button_layout.addWidget(self.export_button)
         self.export_button.hide()
 
-        self.export_plot_button = QPushButton("Export plot as .jpg", self)
+        self.export_plot_button = QPushButton("export plot as .jpg", self)
         button_layout.addWidget(self.export_plot_button)
         self.export_plot_button.hide()
+
+
+        self.numb_nodes = QLineEdit()
+        self.numb_nodes.setFixedSize(300, 30)
+        self.numb_nodes.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.numb_nodes.setPlaceholderText("number of Nodes")
+        self.numb_nodes.hide()
+        layout.addWidget(self.numb_nodes)
+
+        self.numb_clusters = QLineEdit()
+        self.numb_clusters.setFixedSize(300, 30)
+        self.numb_clusters.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.numb_clusters.setPlaceholderText("number of Clusters")
+        self.numb_clusters.hide()
+        layout.addWidget(self.numb_clusters)
+
+        self.agreement_parameter = QLineEdit()
+        self.agreement_parameter.setFixedSize(300, 30)
+        self.agreement_parameter.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.agreement_parameter.setPlaceholderText("agreement Parameter")
+        self.agreement_parameter.hide()
+        layout.addWidget(self.agreement_parameter)
+
+        self.average_edges_to_same_cluster = QLineEdit()
+        self.average_edges_to_same_cluster.setFixedSize(300, 30)
+        self.average_edges_to_same_cluster.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.average_edges_to_same_cluster.setPlaceholderText("avg. edges to same cluster (p)")
+        self.average_edges_to_same_cluster.hide()
+        layout.addWidget(self.average_edges_to_same_cluster)
+
+        self.average_edges_to_other_clusters = QLineEdit()
+        self.average_edges_to_other_clusters.setFixedSize(300, 30)
+        self.average_edges_to_other_clusters.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.average_edges_to_other_clusters.setPlaceholderText("avg. edges to other clusters (q)")
+        self.average_edges_to_other_clusters.hide()
+        layout.addWidget(self.average_edges_to_other_clusters)
+
+        self.k_spectral = QLineEdit()
+        self.k_spectral.setFixedSize(300, 30)
+        self.k_spectral.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.k_spectral.setPlaceholderText("k for spectral/tangles")
+        self.k_spectral.hide()
+        layout.addWidget(self.k_spectral)
+
 
         # Add label to prompt user to choose initial partitioning method
         self.partition_label = QLabel("Choose Initial Partitioning Method:", self)
@@ -109,48 +148,10 @@ class GraphWindow(QMainWindow):
         self.cost_method_combobox.hide()
         layout.addWidget(self.cost_method_combobox)
 
-
-        self.numb_nodes = QLineEdit()
-        self.numb_nodes.setFixedSize(300, 30)
-        self.numb_nodes.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.numb_nodes.setPlaceholderText("Number of Nodes")
-        self.numb_nodes.hide()
-        layout.addWidget(self.numb_nodes)
-
-        self.numb_clusters = QLineEdit()
-        self.numb_clusters.setFixedSize(300, 30)
-        self.numb_clusters.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.numb_clusters.setPlaceholderText("Number of Clusters")
-        self.numb_clusters.hide()
-        layout.addWidget(self.numb_clusters)
-
-        self.agreement_parameter = QLineEdit()
-        self.agreement_parameter.setFixedSize(300, 30)
-        self.agreement_parameter.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.agreement_parameter.setPlaceholderText("Agreement Parameter")
-        self.agreement_parameter.hide()
-        layout.addWidget(self.agreement_parameter)
-
-        self.average_edges_to_same_cluster = QLineEdit()
-        self.average_edges_to_same_cluster.setFixedSize(300, 30)
-        self.average_edges_to_same_cluster.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.average_edges_to_same_cluster.setPlaceholderText("Avg. Edges to Same Cluster (p)")
-        self.average_edges_to_same_cluster.hide()
-        layout.addWidget(self.average_edges_to_same_cluster)
-
-        self.average_edges_to_other_clusters = QLineEdit()
-        self.average_edges_to_other_clusters.setFixedSize(300, 30)
-        self.average_edges_to_other_clusters.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.average_edges_to_other_clusters.setPlaceholderText("Avg. Edges to Other Clusters (q)")
-        self.average_edges_to_other_clusters.hide()
-        layout.addWidget(self.average_edges_to_other_clusters)
-
-        self.k_spectral = QLineEdit()
-        self.k_spectral.setFixedSize(300, 30)
-        self.k_spectral.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.k_spectral.setPlaceholderText("k for Spectral/Tangles")
-        self.k_spectral.hide()
-        layout.addWidget(self.k_spectral)
+        self.soft_clustering = QCheckBox("soft clustering")
+        self.soft_clustering.stateChanged.connect(self.soft_clustering_changed)
+        self.soft_clustering.hide()
+        layout.addWidget(self.soft_clustering)
 
         self.variance = QLabel(self)
         self.variance.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTop)

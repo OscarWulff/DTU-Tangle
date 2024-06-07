@@ -81,7 +81,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
         button_layout.addWidget(self.generate_tangles_button)
         self.generate_tangles_button.hide()
         
-        self.generate_DBSCAN_button = QPushButton("Apply DBSCAN", self)
+        self.generate_DBSCAN_button = QPushButton("apply DBSCAN", self)
         button_layout.addWidget(self.generate_DBSCAN_button)
         self.generate_DBSCAN_button.hide()
 
@@ -91,11 +91,11 @@ class BinaryQuestionnaireWindow(QMainWindow):
         button_layout.addWidget(self.generate_Kmeans_button)
         self.generate_Kmeans_button.hide()
 
-        self.export_button = QPushButton("Export dataset", self)
+        self.export_button = QPushButton("export dataset", self)
         button_layout.addWidget(self.export_button)
         self.export_button.hide()
 
-        self.export_plot_button = QPushButton("Export plot", self)
+        self.export_plot_button = QPushButton("export plot", self)
         button_layout.addWidget(self.export_plot_button)
         self.export_plot_button.hide()
 
@@ -103,70 +103,70 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.numb_questions = QLineEdit()
         self.numb_questions.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.numb_questions.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.numb_questions.setPlaceholderText("Number of questions")
+        self.numb_questions.setPlaceholderText("number of questions")
         self.numb_questions.hide()
         layout.addWidget(self.numb_questions)
 
         self.numb_clusters = QLineEdit()
         self.numb_clusters.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.numb_clusters.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.numb_clusters.setPlaceholderText("Number of clusters")
+        self.numb_clusters.setPlaceholderText("number of clusters")
         self.numb_clusters.hide()
         layout.addWidget(self.numb_clusters)
 
         self.numb_participants = QLineEdit()
         self.numb_participants.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.numb_participants.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.numb_participants.setPlaceholderText("Number of participants")
+        self.numb_participants.setPlaceholderText("number of participants")
         self.numb_participants.hide()
         layout.addWidget(self.numb_participants)
 
         self.epsilon = QLineEdit()
         self.epsilon.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.epsilon.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.epsilon.setPlaceholderText("Epsilon")
+        self.epsilon.setPlaceholderText("epsilon")
         self.epsilon.hide()
         layout.addWidget(self.epsilon)
 
         self.overlap = QLineEdit()
         self.overlap.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.overlap.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.overlap.setPlaceholderText("Allowed overlap")
+        self.overlap.setPlaceholderText("allowed overlap")
         self.overlap.hide()
         layout.addWidget(self.overlap)
 
         self.centroids = QLineEdit()
         self.centroids.setFixedSize(300, 30)  # Set a fixed size for the input field
         self.centroids.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.centroids.setPlaceholderText("Assign centers, i.e. [(2, 2), (4, 1)]")
+        self.centroids.setPlaceholderText("assign centers, i.e. [(2, 2), (4, 1)]")
         self.centroids.hide()
         layout.addWidget(self.centroids)
 
         self.k_spectral = QLineEdit()
         self.k_spectral.setFixedSize(300, 30)  # Set a fixed size for the input field
         self.k_spectral.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.k_spectral.setPlaceholderText("K for spectral")
+        self.k_spectral.setPlaceholderText("k for spectral")
         self.k_spectral.hide()
         layout.addWidget(self.k_spectral)
 
         self.k_kmeans = QLineEdit()
         self.k_kmeans.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.k_kmeans.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.k_kmeans.setPlaceholderText("K for kmeans")
+        self.k_kmeans.setPlaceholderText("k for kmeans")
         self.k_kmeans.hide()
         layout.addWidget(self.k_kmeans)
 
         self.min_samples = QLineEdit()
         self.min_samples.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.min_samples.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.min_samples.setPlaceholderText("Min samples for DBSCAN")
+        self.min_samples.setPlaceholderText("min samples for DBSCAN")
         self.min_samples.hide()
         layout.addWidget(self.min_samples)
 
         self.agreement_parameter = QLineEdit()
         self.agreement_parameter.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.agreement_parameter.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.agreement_parameter.setPlaceholderText("Agreement parameter")
+        self.agreement_parameter.setPlaceholderText("agreement parameter")
         self.agreement_parameter.hide()
         layout.addWidget(self.agreement_parameter)
 

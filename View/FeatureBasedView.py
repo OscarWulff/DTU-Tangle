@@ -49,6 +49,7 @@ class FeatureBasedWindow(QMainWindow):
         self.davies_score_kmeans = None
         self.davies_score_spectral = None
         self.davies_checked = False
+        self.show_cuts = False
         self.ground_truth = None
         self.original_points = None
         self.time_tangles = None
@@ -90,11 +91,11 @@ class FeatureBasedWindow(QMainWindow):
         button_layout.addWidget(self.cuts_button)
         self.cuts_button.hide()
 
-        self.export_button = QPushButton("Export dataset", self)
+        self.export_button = QPushButton("export dataset", self)
         button_layout.addWidget(self.export_button)
         self.export_button.hide()
 
-        self.export_plot_button = QPushButton("Export plot", self)
+        self.export_plot_button = QPushButton("export plot", self)
         button_layout.addWidget(self.export_plot_button)
         self.export_plot_button.hide()
 
@@ -102,7 +103,7 @@ class FeatureBasedWindow(QMainWindow):
         self.cluster_points = QLineEdit()
         self.cluster_points.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.cluster_points.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.cluster_points.setPlaceholderText("Data-points pr cluster")
+        self.cluster_points.setPlaceholderText("data-points pr cluster")
         self.cluster_points.hide()
         layout.addWidget(self.cluster_points)
 
@@ -123,21 +124,21 @@ class FeatureBasedWindow(QMainWindow):
         self.std = QLineEdit()
         self.std.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.std.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.std.setPlaceholderText("Standard deviation")
+        self.std.setPlaceholderText("standard deviation")
         self.std.hide()
         layout.addWidget(self.std)
 
         self.overlap = QLineEdit()
         self.overlap.setFixedSize(150, 30)  # Set a fixed size for the input field
         self.overlap.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.overlap.setPlaceholderText("Allowed overlap")
+        self.overlap.setPlaceholderText("allowed overlap")
         self.overlap.hide()
         layout.addWidget(self.overlap)
 
         self.centroids = QLineEdit()
         self.centroids.setFixedSize(300, 30)  # Set a fixed size for the input field
         self.centroids.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.centroids.setPlaceholderText("Assign centers, i.e. [(2, 2), (4, 1)]")
+        self.centroids.setPlaceholderText("assign centers, i.e. [(2, 2), (4, 1)]")
         self.centroids.hide()
         layout.addWidget(self.centroids)
 
@@ -251,8 +252,8 @@ class FeatureBasedWindow(QMainWindow):
         self.agreement_parameter.show()
         self.cut_generator.show()
         self.cost_function.show()
-        self.nmi.show()
-        self.davies.show()
+        # self.nmi.show()
+        # self.davies.show()
         self.soft_clustering.show()
         self.cuts_button.show()
         self.plot_tree.show()
@@ -355,7 +356,19 @@ class FeatureBasedWindow(QMainWindow):
                 plot.text(0.95, 0.85, f'davies = {self.davies_score_spectral}', verticalalignment='top', horizontalalignment='right', transform=plot.transAxes, fontsize=9)
             if (plot.get_title() == "K-means"):
                 plot.text(0.95, 0.85, f'davies = {self.davies_score_kmeans}', verticalalignment='top', horizontalalignment='right', transform=plot.transAxes, fontsize=9)
-    
+
+
+        # if self.show_cuts == True:
+        #     char_cuts = self.find_characterising_cuts(self.tangle_root)
+
+        #     for cut in char_cuts:
+        #         if cut.line
+        #         vertical_line_x = cut[0]
+        #         horizontal_line_y = cut[1]
+        #         plot.axvline(x=vertical_line_x, color='black', linestyle='--')  # Vertical line
+        #         plot.axhline(y=horizontal_line_y, color='black', linestyle='--')
+
+
         # Plot the points with color
         for point, truth in zip(points, labels):
             plot.scatter(point[0], point[1], color=color_map[truth])
@@ -416,4 +429,16 @@ class FeatureBasedWindow(QMainWindow):
             self.plot_tree.setChecked(False)
         else: 
             pass
-    
+
+    def find_characterising_cuts(self, root):
+        if root is not None:
+            if root.parent_node is None:
+                self.view.characterising_cuts += root.characterizing_cuts
+            if root.left_node is not None or root.right_node is not None:
+                if root.left_node is not None:
+                    self.view.characterising_cuts += root.left_node.characterizing_cuts
+                    self.find_characterising_cuts(root.left_node)
+                if root.right_node is not None:
+                    self.view.characterising_cuts += root.right_node.characterizing_cuts
+                    self.find_characterising_cuts(root.right_node)
+        return self.view.characterising_cuts

@@ -176,7 +176,7 @@ class DataSetFeatureBased(DataType):
         self.cuts = []
         n = len(self.points)
         dimensions = len(self.points[0])
-        interval = self.agreement_param//2
+        interval = self.agreement_param//3
         
         # Add index to keep track of original order
         if type(self.points) == np.ndarray:
@@ -308,7 +308,7 @@ class DataSetFeatureBased(DataType):
         n_partitions = 2
 
         n_clusters = len(self.points)//self.agreement_param
-        n_neighbors = (len(self.points)//n_clusters)//12
+        n_neighbors = 2
 
 
         for i in range(n_partitions):
@@ -331,18 +331,14 @@ class DataSetFeatureBased(DataType):
             
                 for i in range(index):
                     cut.A.update(np.where(part == i)[0])
-                    print(cut.A)
                     selected_points = [self.points[idx] for idx in np.where(part == i)[0]]
                     # Append the selected points to cut.A_points
                     cut.A_points = selected_points
-                    print(cut.A_points)
                 for i in range(index, n_clusters):
                     cut.Ac.update(np.where(part == i)[0])
-                    print(cut.Ac)
                     selected_points = [self.points[idx] for idx in np.where(part == i)[0]]
                     # Append the selected points to cut.A_points
                     cut.Ac_points = selected_points
-                    print(cut.Ac_points)
                 self.cuts.append(cut)
 
                 if index == math.ceil(n_clusters/2):
