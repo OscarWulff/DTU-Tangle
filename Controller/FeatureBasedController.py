@@ -25,6 +25,7 @@ class FeatureBasedController:
         self.view.davies.stateChanged.connect(self.davies_changed)
         self.view.export_button.clicked.connect(self.export_data)
         self.view.export_plot_button.clicked.connect(self.export_plot)
+        self.view.export_groundtruth_button.clicked.connect(self.export_groundtruth)
 
 
     def generate_fixed(self):
@@ -342,3 +343,15 @@ class FeatureBasedController:
                 export_fig_to_jpg(self.view.figure ,fileName + ".jpg")
         except Exception as e:
             QMessageBox.warning(self.view, "Export Plot", f"Error: {e}")
+
+    def export_groundtruth(self):
+        # Logic to export data
+        try: 
+            options = QFileDialog.Options()
+            options |= QFileDialog.DontUseNativeDialog
+            fileName, _ = QFileDialog.getSaveFileName(self.view, "Save ground truth", "", "CSV Files (*.csv);;All Files (*)", options=options)
+            if fileName:
+                print("Saving data to:", fileName)
+                export_to_csv(self.view.ground_truth, fileName + ".csv")
+        except Exception as e:
+            QMessageBox.warning(self.view, "Export Data", f"Error: {e}")

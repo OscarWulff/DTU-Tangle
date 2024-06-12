@@ -99,6 +99,10 @@ class FeatureBasedWindow(QMainWindow):
         button_layout.addWidget(self.export_plot_button)
         self.export_plot_button.hide()
 
+        self.export_groundtruth_button = QPushButton("export ground truth", self)
+        button_layout.addWidget(self.export_groundtruth_button)
+        self.export_groundtruth_button.hide()
+
 
         self.cluster_points = QLineEdit()
         self.cluster_points.setFixedSize(150, 30)  # Set a fixed size for the input field
@@ -246,6 +250,7 @@ class FeatureBasedWindow(QMainWindow):
         self.cluster_points.show()
         self.export_button.show()
         self.export_plot_button.show()
+        self.export_groundtruth_button.show()
         self.std.show()
         self.k_spectral.show()
         self.k_kmeans.show()

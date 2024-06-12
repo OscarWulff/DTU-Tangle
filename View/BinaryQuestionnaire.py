@@ -99,6 +99,9 @@ class BinaryQuestionnaireWindow(QMainWindow):
         button_layout.addWidget(self.export_plot_button)
         self.export_plot_button.hide()
 
+        self.export_groundtruth_button = QPushButton("export ground truth", self)
+        button_layout.addWidget(self.export_groundtruth_button)
+        self.export_groundtruth_button.hide()
 
         self.numb_questions = QLineEdit()
         self.numb_questions.setFixedSize(150, 30)  # Set a fixed size for the input field
@@ -268,6 +271,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.agreement_parameter.show()
         self.export_button.show()
         self.export_plot_button.show()
+        self.export_groundtruth_button.show()
         self.epsilon.show()
         self.min_samples.show()
         self.k_kmeans.show()

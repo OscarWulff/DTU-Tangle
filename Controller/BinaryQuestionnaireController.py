@@ -2,7 +2,7 @@
 import ast
 import time
 import numpy as np
-from PyQt5.QtWidgets import QFileDialog, QCheckBox, QComboBox, QLineEdit, QPushButton, QMainWindow
+from PyQt5.QtWidgets import QFileDialog, QCheckBox, QComboBox, QLineEdit, QPushButton, QMainWindow, QMessageBox
 from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire, perform_tsne
 from Model.DataSetFeatureBased import read_file, tsne
 from Model.GenerateTestData import GenerateDataBinaryQuestionnaire, GenerateDataFeatureBased, export_fig_to_jpg, export_to_csv
@@ -22,6 +22,7 @@ class BinaryQuestionnaireController:
         self.view.generate_Kmeans_button.clicked.connect(self.kmeans)
         self.view.export_button.clicked.connect(self.export_data)
         self.view.export_plot_button.clicked.connect(self.export_plot)
+        self.view.export_groundtruth_button.clicked.connect(self.export_groundtruth)
 
 
 
@@ -226,3 +227,14 @@ class BinaryQuestionnaireController:
             print("Saving plot to:", fileName)
             export_fig_to_jpg(self.view.figure ,fileName + ".jpg")
     
+    def export_groundtruth(self):
+        # Logic to export data
+        try: 
+            options = QFileDialog.Options()
+            options |= QFileDialog.DontUseNativeDialog
+            fileName, _ = QFileDialog.getSaveFileName(self.view, "Save ground truth", "", "CSV Files (*.csv);;All Files (*)", options=options)
+            if fileName:
+                print("Saving data to:", fileName)
+                export_to_csv(self.view.generated_data.ground_truth, fileName + ".csv")
+        except Exception as e:
+            QMessageBox.warning(self.view, "Export Data", f"Error: {e}")
