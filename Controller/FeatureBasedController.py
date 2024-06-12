@@ -2,7 +2,7 @@ import ast
 import time
 import numpy as np
 from PyQt5.QtWidgets import QFileDialog, QCheckBox, QComboBox, QLineEdit, QPushButton, QMainWindow, QMessageBox
-from Model.GenerateTestData import GenerateDataFeatureBased, export_fig_to_jpg, export_to_csv
+from Model.GenerateTestData import GenerateDataFeatureBased, export_fig_to_jpg, export_to_csv, export_to_csv_groundtruth
 from Model.DataSetFeatureBased import tsne, read_file, pca, calculate_explained_varince, DataSetFeatureBased
 from Model.TangleCluster import create_searchtree
 from Model.SearchTree import condense_tree, soft_clustering, hard_clustering, contracting_search_tree
@@ -35,14 +35,10 @@ class FeatureBasedController:
             # Get the parameters
             cluster_points = int(self.view.cluster_points.text())
             std = float(self.view.std.text())
-            overlap = float(self.view.overlap.text())
-            centroids = int(self.view.centroids.text())
+            centroids = ast.literal_eval(self.view.centroids.text())
 
             # create a generated data object
             generated_data = GenerateDataFeatureBased(cluster_points, std)
-
-            if overlap != None: 
-                generated_data.overlap = overlap
             
             # generate the fixed clusters
             generated_data.fixed_clusters(cluster_points, centroids)
@@ -327,7 +323,7 @@ class FeatureBasedController:
             fileName, _ = QFileDialog.getSaveFileName(self.view, "Save CSV", "", "CSV Files (*.csv);;All Files (*)", options=options)
             if fileName:
                 print("Saving data to:", fileName)
-                export_to_csv(self.view.generated_data.questionaire, fileName + ".csv")
+                export_to_csv(self.view.original_points, fileName + ".csv")
         except Exception as e:
             QMessageBox.warning(self.view, "Export Data", f"Error: {e}")
 
@@ -352,6 +348,6 @@ class FeatureBasedController:
             fileName, _ = QFileDialog.getSaveFileName(self.view, "Save ground truth", "", "CSV Files (*.csv);;All Files (*)", options=options)
             if fileName:
                 print("Saving data to:", fileName)
-                export_to_csv(self.view.ground_truth, fileName + ".csv")
+                export_to_csv_groundtruth(self.view.ground_truth, fileName + ".csv")
         except Exception as e:
             QMessageBox.warning(self.view, "Export Data", f"Error: {e}")

@@ -260,7 +260,7 @@ class FeatureBasedWindow(QMainWindow):
         # self.nmi.show()
         # self.davies.show()
         self.soft_clustering.show()
-        self.cuts_button.show()
+        #self.cuts_button.show()
         self.plot_tree.show()
 
     def fixed_centers(self):

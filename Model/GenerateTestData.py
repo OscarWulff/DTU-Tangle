@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.metrics.cluster import normalized_mutual_info_score
 from sklearn.cluster import KMeans, SpectralClustering, DBSCAN
 from sklearn.metrics import davies_bouldin_score
-
+import csv
 from Model.DataSetBinaryQuestionnaire import perform_pca, perform_tsne
 
 
@@ -367,6 +367,14 @@ class GenerateDataBinaryQuestionnaire():
         return kmeans.labels_
     
 def export_to_csv(data, filename):
+    try:
+        with open(filename, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerows(data)
+    except Exception as e:
+        raise e
+
+def export_to_csv_groundtruth(data, filename):
     np.savetxt(filename, data, delimiter=",", fmt='%d')
 
 def export_fig_to_jpg(fig ,file_path):
