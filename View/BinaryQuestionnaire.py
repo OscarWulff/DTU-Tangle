@@ -270,13 +270,13 @@ class BinaryQuestionnaireWindow(QMainWindow):
         QMessageBox.critical(self, "Error", error_message)
        
     def go_back(self):
-        print("go back")
         self.numb_clusters.hide()
         self.numb_participants.hide()
         self.numb_questions.hide()
         self.agreement_parameter.hide()
         self.export_button.hide()
         self.export_plot_button.hide()
+        self.export_groundtruth_button.hide()
         self.epsilon.hide()
         self.min_samples.hide()
         self.k_kmeans.hide()
@@ -311,6 +311,7 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.agreement_parameter.show()
         self.export_button.show()
         self.export_plot_button.show()
+        self.export_groundtruth_button.show()
         self.epsilon.show()
         self.min_samples.show()
         self.k_kmeans.show()

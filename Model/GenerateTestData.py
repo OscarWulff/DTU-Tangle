@@ -32,15 +32,14 @@ class GenerateRandomGraph:
             for j in range(i + 1, self.num_of_nodes):
                 if G.nodes[i]['cluster'] == G.nodes[j]['cluster']:
                     if random.random() < self.average_edges_to_same_cluster:
-                        G.add_edge(i, j, weight=self.average_edges_to_same_cluster)
-
-        # Generate edges between different clusters with weight q
-        for i in range(self.num_of_nodes):
-            for j in range(i + 1, self.num_of_nodes):
-                if G.nodes[i]['cluster'] != G.nodes[j]['cluster']:
+                        if not G.has_edge(i, j):
+                            G.add_edge(i, j, weight=self.average_edges_to_same_cluster)
+                else:
                     if random.random() < self.average_edges_to_other_clusters:
-                        G.add_edge(i, j, weight=self.average_edges_to_other_clusters)
+                        if not G.has_edge(i, j):
+                            G.add_edge(i, j, weight=self.average_edges_to_other_clusters)
 
+                    
         # Assign ground truth labels
         self.ground_truth = [G.nodes[i]['cluster'] for i in range(self.num_of_nodes)]
 
