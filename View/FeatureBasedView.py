@@ -23,6 +23,8 @@ class FeatureBasedWindow(QMainWindow):
 
         layout = QVBoxLayout()
 
+        self.showMaximized()
+
         # Add spacer
         layout.addStretch()
 

@@ -23,6 +23,8 @@ class GraphWindow(QMainWindow):
         # Add spacer
         layout.addStretch()
 
+        self.showMaximized()
+
         # Create a Matplotlib figure and canvas
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)

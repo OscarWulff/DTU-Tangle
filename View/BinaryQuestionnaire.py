@@ -26,6 +26,8 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.setCentralWidget(central_widget)
 
         layout = QVBoxLayout()
+        # Full screen always
+        self.showMaximized()
 
         # Add spacer
         layout.addStretch()

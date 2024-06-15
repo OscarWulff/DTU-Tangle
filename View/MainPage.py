@@ -22,6 +22,8 @@ class MainPage(QMainWindow):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
 
+        self.showMaximized()
+
         layout = QVBoxLayout()
         layout.setContentsMargins(50, 50, 50, 50)
 
