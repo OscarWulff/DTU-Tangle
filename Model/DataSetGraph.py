@@ -123,7 +123,7 @@ class DataSetGraph(DataType):
         generated_partitions = set()
         
         # Generate 10 unique half/half cuts
-        for _ in range(10):
+        for _ in range(self.k):
             # Select the first half of the centroids
             centroids_A = centroids_list[:self.k // 2]
             
@@ -176,7 +176,7 @@ class DataSetGraph(DataType):
         generated_partitions = set()
         centroids_list = list(range(self.k))
         # Generate 10 unique half/half cuts
-        for _ in range(10):
+        for _ in range(self.k):
             # Select the first half of the centroids
             centroids_A = centroids_list[:self.k // 2]
             

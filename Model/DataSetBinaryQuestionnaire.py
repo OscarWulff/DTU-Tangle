@@ -163,7 +163,6 @@ def perform_tsne(matrix, num_components=2, random_state=37, perplexity=None, lea
     
     # Create a DataFrame with the t-SNE coordinates
     tsne_coordinates = pd.DataFrame(data=tsne_result, columns=[f'Dim{i+1}' for i in range(num_components)])
-    print(tsne_coordinates)
 
     return tsne_coordinates
 

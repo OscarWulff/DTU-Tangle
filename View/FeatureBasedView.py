@@ -228,6 +228,11 @@ class FeatureBasedWindow(QMainWindow):
         self.back_button.clicked.connect(self.go_back_to_main_page)
         layout.addWidget(self.back_button)
 
+        #self.go_back_button = QPushButton("Back", self)
+        #self.go_back_button.clicked.connect(self.go_back)
+        #ayout.addWidget(self.go_back_button)
+        #self.go_back_button.hide()
+
         central_widget.setLayout(layout)
 
     def go_back_to_main_page(self):

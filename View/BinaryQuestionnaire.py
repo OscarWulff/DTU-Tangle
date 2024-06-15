@@ -248,6 +248,16 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.back_button.clicked.connect(self.go_back_to_main_page)
         layout.addWidget(self.back_button)
 
+        self.go_back_button = QPushButton("Back", self)
+        self.go_back_button.clicked.connect(self.go_back)
+        layout.addWidget(self.go_back_button)
+        self.go_back_button.hide()
+
+        self.go_back_button_upload = QPushButton("Back", self)
+        self.go_back_button_upload.clicked.connect(self.upload_data_hide)
+        layout.addWidget(self.go_back_button_upload)
+        self.go_back_button_upload.hide()
+
         central_widget.setLayout(layout)
 
     def go_back_to_main_page(self):
@@ -259,10 +269,40 @@ class BinaryQuestionnaireWindow(QMainWindow):
     # Add a title parameter to the critical method call
         QMessageBox.critical(self, "Error", error_message)
        
+    def go_back(self):
+        self.numb_clusters.hide()
+        self.numb_participants.hide()
+        self.numb_questions.hide()
+        self.agreement_parameter.hide()
+        self.export_button.hide()
+        self.export_plot_button.hide()
+        self.export_groundtruth_button.hide()
+        self.epsilon.hide()
+        self.min_samples.hide()
+        self.k_kmeans.hide()
+        self.dim_red.hide()
+        self.sim_fun.hide()
+        self.generate_random_button.hide()
+        self.soft_clustering.hide()
+        self.generate_tangles_button.hide()
+        self.generate_Kmeans_button.hide()
+        self.generate_DBSCAN_button.hide()
+        self.plot_tree.hide()
+        self.variance.hide()
+        self.nmi.hide()
+        self.show_tangle.hide()
+        self.cost_function.hide()
+        self.cut_generator.hide()
+        self.go_back_button.hide()
 
+        self.upload_data_button.show()
+        self.generate_data_button.show()
+        self.back_button.show()
     
 
     def show_buttons(self):
+        self.back_button.hide()
+        self.go_back_button.hide()
         self.upload_data_button.hide()
         self.generate_data_button.hide()
         self.numb_clusters.show()
@@ -280,14 +320,14 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.generate_random_button.show()
         self.soft_clustering.show()
         
-
-        
        
         self.generate_tangles_button.show()
         self.generate_Kmeans_button.show()
         self.generate_DBSCAN_button.show()
         
         self.plot_tree.show()
+        self.go_back_button.show()
+
 
     def fixed_centers(self):
         self.show_buttons()
@@ -500,6 +540,25 @@ class BinaryQuestionnaireWindow(QMainWindow):
         # Add labels and title
         plot.set_xlabel('X')
         plot.set_ylabel('Y')
+
+    def upload_data_hide(self):
+        self.back_button.hide()
+        self.generate_Kmeans_button.hide()
+        self.generate_DBSCAN_button.hide()
+        self.generate_tangles_button.hide()
+        self.epsilon.hide()
+        self.min_samples.hide()
+        self.k_kmeans.hide()
+        self.sim_fun.hide()
+        self.agreement_parameter.hide()
+        self.soft_clustering.hide()
+
+        self.upload_data_button.show()
+        self.generate_data_button.show()
+        self.back_button.show()
+        self.go_back_button_upload.hide()
+
+
     def upload_data_show(self):
         self.canvas.draw()
        
@@ -512,5 +571,8 @@ class BinaryQuestionnaireWindow(QMainWindow):
         self.sim_fun.show()
         self.agreement_parameter.show()
         self.soft_clustering.show()
+        self.upload_data_button.show()
+        self.back_button.hide()
+        self.go_back_button_upload.show()
         
 
