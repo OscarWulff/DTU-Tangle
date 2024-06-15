@@ -366,7 +366,11 @@ class GenerateDataBinaryQuestionnaire():
 
         return kmeans.labels_
     
-def export_to_csv(data, filename):
+
+def export_to_csv_binary(data, filename):
+    np.savetxt(filename, data, delimiter=",", fmt='%d')
+
+def export_to_csv_feature(data, filename):
     try:
         with open(filename, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)

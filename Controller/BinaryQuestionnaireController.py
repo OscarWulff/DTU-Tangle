@@ -5,7 +5,7 @@ import numpy as np
 from PyQt5.QtWidgets import QFileDialog, QCheckBox, QComboBox, QLineEdit, QPushButton, QMainWindow, QMessageBox
 from Model.DataSetBinaryQuestionnaire import DataSetBinaryQuestionnaire, perform_tsne
 from Model.DataSetFeatureBased import read_file, tsne
-from Model.GenerateTestData import GenerateDataBinaryQuestionnaire, GenerateDataFeatureBased, export_fig_to_jpg, export_to_csv, export_to_csv_groundtruth
+from Model.GenerateTestData import GenerateDataBinaryQuestionnaire, GenerateDataFeatureBased, export_fig_to_jpg, export_to_csv_feature, export_to_csv_groundtruth, export_to_csv_binary
 from Model.TangleCluster import create_searchtree
 from Model.SearchTree import condense_tree, print_tree, soft_clustering, hard_clustering, contracting_search_tree
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -234,7 +234,7 @@ class BinaryQuestionnaireController:
             fileName, _ = QFileDialog.getSaveFileName(self.view, "Save CSV", "", "CSV Files (*.csv);;All Files (*)", options=options)
             if fileName:
                 print("Saving data to:", fileName)
-                export_to_csv(self.view.generated_data.questionaire, fileName)
+                export_to_csv_binary(self.view.generated_data.questionaire, fileName)
         except Exception as e:
             QMessageBox.warning(self.view, "Export Data", f"Error: {e}")
 

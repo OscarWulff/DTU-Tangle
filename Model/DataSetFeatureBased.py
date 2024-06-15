@@ -303,19 +303,20 @@ class DataSetFeatureBased(DataType):
         self.cuts = []
 
     def cut_spectral(self):
+        print("running")
         self.cuts = []
         partitions = []
-        n_partitions = 2
+        n_partitions = 1
 
         n_clusters = len(self.points)//self.agreement_param
-        n_neighbors = 2
+        n_neighbors = (len(self.points)//n_clusters)//12
 
 
         for i in range(n_partitions):
             # Create a SpectralClustering object
 
             # set n_jobs = -1 , to obtain parallel computation
-            spectral_clustering = SpectralClustering(n_clusters=n_clusters, affinity='nearest_neighbors', n_neighbors = n_neighbors, n_init=1, n_jobs =-1, random_state=43)
+            spectral_clustering = SpectralClustering(n_clusters=n_clusters, affinity='nearest_neighbors', n_neighbors = n_neighbors, n_init=1, n_jobs =-1)
             
             # Fit the spectral clustering model to the data
             labels = spectral_clustering.fit_predict(self.points)
@@ -333,12 +334,12 @@ class DataSetFeatureBased(DataType):
                     cut.A.update(np.where(part == i)[0])
                     selected_points = [self.points[idx] for idx in np.where(part == i)[0]]
                     # Append the selected points to cut.A_points
-                    cut.A_points = selected_points
+                    cut.A_points += selected_points
                 for i in range(index, n_clusters):
                     cut.Ac.update(np.where(part == i)[0])
                     selected_points = [self.points[idx] for idx in np.where(part == i)[0]]
                     # Append the selected points to cut.A_points
-                    cut.Ac_points = selected_points
+                    cut.Ac_points += selected_points
                 self.cuts.append(cut)
 
                 if index == math.ceil(n_clusters/2):
