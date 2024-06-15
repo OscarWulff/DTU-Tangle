@@ -137,8 +137,6 @@ class BinaryQuestionnaireController:
             dbscan_time = time.time()
             min_s = self.view.min_samples.text()
             eps = self.view.epsilon.text()
-            print("min s :", min_s)
-            print("eps :", eps)
 
             try:       
                 min_s = int(min_s)
@@ -234,7 +232,7 @@ class BinaryQuestionnaireController:
             fileName, _ = QFileDialog.getSaveFileName(self.view, "Save CSV", "", "CSV Files (*.csv);;All Files (*)", options=options)
             if fileName:
                 print("Saving data to:", fileName)
-                export_to_csv_binary(self.view.generated_data.questionaire, fileName)
+                export_to_csv_binary(self.view.generated_data.questionaire, fileName + ".csv")
         except Exception as e:
             QMessageBox.warning(self.view, "Export Data", f"Error: {e}")
 

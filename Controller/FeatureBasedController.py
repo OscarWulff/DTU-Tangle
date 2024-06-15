@@ -2,7 +2,7 @@ import ast
 import time
 import numpy as np
 from PyQt5.QtWidgets import QFileDialog, QCheckBox, QComboBox, QLineEdit, QPushButton, QMainWindow, QMessageBox
-from Model.GenerateTestData import GenerateDataFeatureBased, export_fig_to_jpg, export_to_csv, export_to_csv_groundtruth
+from Model.GenerateTestData import GenerateDataFeatureBased, export_fig_to_jpg, export_to_csv_feature, export_to_csv_groundtruth
 from Model.DataSetFeatureBased import tsne, read_file, pca, calculate_explained_varince, DataSetFeatureBased
 from Model.TangleCluster import create_searchtree
 from Model.SearchTree import condense_tree, soft_clustering, hard_clustering, contracting_search_tree
@@ -323,7 +323,7 @@ class FeatureBasedController:
             fileName, _ = QFileDialog.getSaveFileName(self.view, "Save CSV", "", "CSV Files (*.csv);;All Files (*)", options=options)
             if fileName:
                 print("Saving data to:", fileName)
-                export_to_csv(self.view.original_points, fileName + ".csv")
+                export_to_csv_feature(self.view.original_points, fileName + ".csv")
         except Exception as e:
             QMessageBox.warning(self.view, "Export Data", f"Error: {e}")
 
