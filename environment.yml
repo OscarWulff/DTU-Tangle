@@ -38,4 +38,4 @@ dependencies:
   # GUI
   - pyqt
   - ucimlrepo
-  - community
+  - python-louvain
